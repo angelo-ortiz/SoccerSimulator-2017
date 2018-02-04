@@ -10,11 +10,22 @@ class StateFoot(object):
         self.key = (id_team,id_player)
     def my_position(self):
         return self.state.player_state(*self.key).position
+    def my_vitesse(self):
+        return self.state.player_state(*self.key).vitesse
     def ball_position(self):
         return self.state.ball.position
-    def aller_vers_balle(self):
-        p = Vector2D()
-        return self.aller(p)
+    def ball_vitesse(self):
+        return self.state.ball.vitesse
+    def go_to_ball(self):
+        # n = 10
+        v = self.my_vitesse()
+        r = self.my_position()
+        vb = self.ball_vitesse()
+        rb = self.ball_position()
+        ax = (10*(v.x-vb.x)+r.x-rb.x)/(-50)
+        ay = (10*(v.y-vb.y)+r.y-rb.y)/(-50)
+        dest = Vector2D(ax,ay)
+        return self.aller(dest)
     def aller(self,p):
         return SoccerAction(p-self.my_position())
     def shoot(self,p):
@@ -23,11 +34,18 @@ class StateFoot(object):
         return (self.ball_position()-p).norm
     def distance_ball_joueur(self):
         return self.distance_ball(self.my_position())
-    def est_plus_proche(self,p):
-        dist_ball_p = self.distance_ball(p)
-        return self.distance_ball_joueur() < dist_ball_p
+    def est_plus_proche(self,liste_p):
+        #dist_ball_p = self.distance_ball(p)
+        #return self.distance_ball_joueur() < dist_ball_p
+        for p in liste_p:
+            if self.distance_ball_joueur() >= self.distance_ball(p.position):
+                return False
+        return True
     def adversaire_1v1(self):
         return self.state.player_state(3-self.key[0],0)
+    def adversaires(self):
+        team = 3-self.key[0]
+        return [self.state.player_state(team,i) for i in range(self.state.nb_players(team))]
     def can_shoot(self):
         dist_ball_joueur = self.distance_ball(self.my_position())
         ball_est_proche = dist_ball_joueur <= PLAYER_RADIUS + BALL_RADIUS
@@ -81,6 +99,8 @@ class DefendreStrategy(Strategy):
         myState = StateFoot(state,id_team,id_player)
         if myState.can_shoot():
             return myState.shoot(myState.cage_but())
-        if myState.est_plus_proche(myState.adversaire_1v1().position):
-            return myState.aller(myState.ball_position())
+        #if myState.est_plus_proche(myState.adversaire_1v1().position):
+        if myState.est_plus_proche(myState.adversaires()):
+            #return myState.aller(myState.ball_position())
+            return myState.go_to_ball()
         return myState.aller(myState.ma_cage())
