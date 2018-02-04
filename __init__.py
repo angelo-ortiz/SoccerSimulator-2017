@@ -1,4 +1,4 @@
-from .strategies import RandomStrategy, FonceurStrategy
+from .strategies import RandomStrategy, FonceurStrategy,DefendreStrategy
 from soccersimulator import SoccerTeam
 
 def get_team(nb_players):
