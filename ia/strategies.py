@@ -1,5 +1,21 @@
 from tools import *
 
+
+###définir les actions
+
+###def tirer(state):
+###    return state.shoot(state.but_dav)
+
+###def dribbler(state):
+#    if state.distance()<...:
+#        return tirer(state)
+#    return petitepasse(satte)
+
+
+#   def compute_strategy(self,state,idt,idp):
+#       mystate =...
+#       return tirer(mystate)
+
 ## Strategie aleatoire
 class RandomStrategy(Strategy):
     def __init__(self):
@@ -33,6 +49,7 @@ class DribblerStrategy(Strategy):
         ecart_player_ball.norm = maxPlayerAcceleration
         return SoccerAction(ecart_player_ball)
 
+
 ## Strategie Defendre
 class DefendreStrategy(Strategy):
     def __init__(self):
@@ -42,7 +59,7 @@ class DefendreStrategy(Strategy):
         if myState.can_shoot():
             return myState.degager()
             #return myState.shoot(myState.cage_but())
-        if myState.doit_intercepter() and myState.est_plus_proche(myState.adversaires()): 
+        if myState.doit_intercepter(): #and myState.est_plus_proche(myState.adversaires())""" 
             #return myState.aller_dest(myState.ball_position())
             tempsInterception = interceptionLongue
             if myState.distance_ball_joueur() < distanceInterceptionCourte:

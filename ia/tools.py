@@ -3,14 +3,17 @@ from soccersimulator  import Strategy, SoccerAction, Vector2D
 from soccersimulator import SoccerTeam, Simulation
 from soccersimulator import show_simu
 from soccersimulator.settings import *
+from math import sqrt,ceil
 
 accelerationShoot = 3.5
 profondeurDegagement = GAME_WIDTH/4.8
 distanceHorizontaleMaxInterception = GAME_WIDTH/6.
 distanceMaxInterception = GAME_WIDTH/3.
-interceptionCourte = 3.
-interceptionLongue = 10.
 distanceInterceptionCourte = GAME_WIDTH/15.
+interceptionCourte = 3
+interceptionLongue = 10
+n_inst = [100.]*4
+courte = [False]*4
 
 ## StateFoot ...
 class StateFoot(object):
@@ -34,7 +37,7 @@ class StateFoot(object):
     def ball_vitesse(self):
         return self.state.ball.vitesse
     def coeff_vitesse_reduite(self,n,fc):
-        return (1-(1-fc)**(n+1))/fc
+        return (1.-fc)*(1.-(1.-fc)**n)/fc
     def go_to_ball(self,n):
         # n = 10
         v = self.my_vitesse()
@@ -45,8 +48,9 @@ class StateFoot(object):
         #ay = (10*(v.y-vb.y)+r.y-rb.y)/(-50)
         #ax = 2.*(n*v.x-vb.x*self.coeff_vitesse_reduite(n,ballBrakeConstant)+r.x-rb.x)/(n*n)
         #ay = 2.*(n*v.y-vb.y*self.coeff_vitesse_reduite(n,ballBrakeConstant)+r.y-rb.y)/(n*n)
-        ax = -ballBrakeConstant*((v.x-vb.x)*self.coeff_vitesse_reduite(n,ballBrakeConstant)+r.x-rb.x)/(n-(1-ballBrakeConstant)*self.coeff_vitesse_reduite(n-1,ballBrakeConstant))
-        ay = -ballBrakeConstant*((v.y-vb.y)*self.coeff_vitesse_reduite(n,ballBrakeConstant)+r.y-rb.y)/(n-(1-ballBrakeConstant)*self.coeff_vitesse_reduite(n-1,ballBrakeConstant))
+        fc = ballBrakeConstant
+        ax = -fc*((v.x-vb.x)*self.coeff_vitesse_reduite(n,fc)+r.x-rb.x)/(n-self.coeff_vitesse_reduite(n,fc))
+        ay = -fc*((v.y-vb.y)*self.coeff_vitesse_reduite(n,fc)+r.y-rb.y)/(n-self.coeff_vitesse_reduite(n,fc))
         return self.aller_acc(Vector2D(ax,ay))
     def aller_acc(self,p):
         return SoccerAction(p)

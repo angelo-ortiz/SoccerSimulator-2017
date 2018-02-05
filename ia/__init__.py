@@ -1,10 +1,10 @@
-from .strategies import RandomStrategy, FonceurStrategy,DefendreStrategy
+from .strategies import RandomStrategy, FonceurStrategy, DefendreStrategy
 from soccersimulator import SoccerTeam
 
 def get_team(nb_players):
     myteam = SoccerTeam(name="MaTeam")
     if nb_players == 1:
-        myteam.add("Joueur " ,FonceurStrategy())
+        myteam.add("Joueur ", FonceurStrategy())
     if nb_players == 2:
 	myteam.add("Joueur 1", DefendreStrategy())
 	myteam.add("Joueur 2", FonceurStrategy())
