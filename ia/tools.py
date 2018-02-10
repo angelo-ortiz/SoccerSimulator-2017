@@ -3,7 +3,6 @@ from soccersimulator  import Strategy, SoccerAction, Vector2D
 from soccersimulator import SoccerTeam, Simulation
 from soccersimulator import show_simu
 from soccersimulator.settings import *
-from math import sqrt,ceil
 
 fonceurNormPower = 2.65
 fonceurSRPower = 4.6
