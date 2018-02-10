@@ -1,10 +1,12 @@
 from .tools import *
 
-def shoot(state,dest,puissance):
+def shoot(state,dest,puissance=maxPlayerShoot):
     return SoccerAction(Vector2D(),normaliser_diff(state.ball_position, dest, puissance))
    
 def foncer(state):
-    return shoot(state,state.cage_adverse,shootPower)
+    if distance(state.cage_adverse,state.position) < distanceMaxFonceurShoot:
+        return shoot(state,state.cage_adverse,fonceurSRPower)
+    return shoot(state,state.cage_adverse,fonceurNormPower)
 
 def dribbler(state):
     return shoot(state,state.cage_adverse,dribblePower)
@@ -21,7 +23,7 @@ def aller_acc(acc):
     return SoccerAction(acc)
 
 def aller_dest(state,dest):
-    return aller_acc(dest-state.position)
+    return aller_acc(normaliser_diff(state.position, dest, maxPlayerAcceleration))
 
 def aller_vers_balle(state):
     return aller_dest(state,state.ball_position)

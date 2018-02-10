@@ -5,11 +5,13 @@ from soccersimulator import show_simu
 from soccersimulator.settings import *
 from math import sqrt,ceil
 
-shootPower = 3.5
+fonceurNormPower = 2.65
+fonceurSRPower = 4.6
 dribblePower = 1.2
 profondeurDegagement = GAME_WIDTH/4.8
 distanceHorizontaleMaxInterception = GAME_WIDTH/6.
 distanceMaxInterception = GAME_WIDTH/3.
+distanceMaxFonceurShoot = GAME_WIDTH/3.
 distanceInterceptionCourte = GAME_WIDTH/15.
 longueurSurfaceReparation = GAME_WIDTH/6.
 interceptionCourte = 3
