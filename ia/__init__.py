@@ -1,8 +1,8 @@
-from .strategies import RandomStrategy, FonceurStrategy, DefendreStrategy
+from .strategies import RandomStrategy, FonceurStrategy, FonceurChallenge1Strategy, DefendreStrategy
 from soccersimulator import SoccerTeam
 
 def get_team(nb_players):
-    myteam = SoccerTeam(name="MaTeam")
+    myteam = SoccerTeam(name="ChPerFusion")
     if nb_players == 1:
         myteam.add("Joueur ", FonceurStrategy())
     if nb_players == 2:
@@ -16,7 +16,7 @@ def get_team(nb_players):
     return myteam	
 
 def get_team_challenge(num):
-	myteam = SoccerTeam(name="MaTeamChallenge")
+	myteam = SoccerTeam(name="ChPerFusion")
 	if num == 1:
-		myteam.add("Joueur Chal "+str(num),FonceurStrategy())
+		myteam.add("Joueur Chal "+str(num),FonceurChallenge1Strategy())
 	return myteam

@@ -3,15 +3,10 @@ from soccersimulator  import Strategy, SoccerAction, Vector2D
 from soccersimulator import SoccerTeam, Simulation
 from soccersimulator import show_simu
 from soccersimulator.settings import *
-from math import sqrt,ceil
 
-fonceurNormPower = 2.65
-fonceurSRPower = 4.6
-dribblePower = 1.2
 profondeurDegagement = GAME_WIDTH/4.8
 distanceHorizontaleMaxInterception = GAME_WIDTH/6.
 distanceMaxInterception = GAME_WIDTH/3.
-distanceMaxFonceurShoot = GAME_WIDTH/3.
 distanceInterceptionCourte = GAME_WIDTH/15.
 longueurSurfaceReparation = GAME_WIDTH/6.
 interceptionCourte = 3
@@ -55,11 +50,6 @@ class StateFoot(object):
         return self.id_team == 1
     def est_en_dessus(self,j):
         return self.position.y < j.position.y
-    def doit_intercepter(self):
-        if distance_horizontale(self.cage, self.position) > distanceHorizontaleMaxInterception or \
-                self.distance_cage_joueur() > distanceMaxInterception:
-                    return False
-        return self.est_plus_proche() 
     def distance_ball(self,p):
         return distance(self.ball_position,p)
     def distance_ball_joueur(self):
@@ -86,10 +76,6 @@ class StateFoot(object):
     def adversaires(self):
         team = self.id_team_adverse
         return [self.state.player_state(team,i) for i in range(self.state.nb_players(team))]
-    def can_shoot(self):
-        dist_ball_joueur = self.distance_ball_joueur()
-        ball_est_proche = dist_ball_joueur <= PLAYER_RADIUS + BALL_RADIUS
-        return ball_est_proche and self.state.player_state(*self.key).can_shoot()
     def is_in_goal_box(self):
         return distance_horizontale(ma_position, cage_adverse) <= longueurSurfaceReparation
 

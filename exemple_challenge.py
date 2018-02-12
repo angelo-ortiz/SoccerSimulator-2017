@@ -1,8 +1,8 @@
 from soccersimulator import ChallengeFonceurButeur, SoccerTeam,show_simu
-from ia.strategies import RandomStrategy, FonceurStrategy
+from ia.strategies import FonceurChallenge1Strategy
 
-team = SoccerTeam("FonceurEquipe")
-team.add("FonceurJoueur",FonceurStrategy())
+team = SoccerTeam("ChPerFusion")
+team.add("FonceurCh1Joueur",FonceurChallenge1Strategy())
 
 challenge = ChallengeFonceurButeur(team,max_but=20)
 show_simu(challenge)

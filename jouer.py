@@ -8,7 +8,8 @@ pyteam.add("PyPlayer",FonceurStrategy()) #Strategie qui ne fait rien
 #pyteam.add("DribbleurPyPlayer1",DribblerStrategy()) #Strategie qui ne fait rien
 #pyteam.add("DribbleurPyPlayer2",DefendreStrategy()) #Strategie qui ne fait rien
 
-thon.add("GardienThonPlayer2",DefendreStrategy())   #Strategie qui ne fait rien
+thon.add("Gardien",DefendreStrategy())   #Strategie qui ne fait rien
+#thon.add("FoncCh1ThonPlayer2",FonceurChallenge1Strategy())   #Strategie qui ne fait rien
 #thon.add("ThonPlayer",FonceurStrategy())   #Strategie aleatoire
 #thon.add("DribbleurThonPlayer1",DribblerStrategy())   #Strategie qui ne fait rien
 #thon.add("ThonPlayer",DribblerStrategy())   #Strategie qui ne fait rien
