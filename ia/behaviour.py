@@ -6,19 +6,17 @@ fonceurCh1HPPower = 4.6
 fonceur100Power = 6.
 fonceurHPPower = 4.3
 dribblePower = 1.2
-interceptionCourte = 3
-interceptionLongue = 10
 
 def shoot(state,dest,puissance=maxPlayerShoot):
     return SoccerAction(Vector2D(),normaliser_diff(state.ball_position, dest, puissance))
 
 def beh_fonceurNormal(state):
-    if high_precision_shoot(state):
+    if high_precision_shoot(state,distMaxFonceurNormShoot):
         return fonceurHPPower
     return fonceur100Power
 
 def beh_fonceurChallenge1(state):
-    if high_precision_shoot_ch1(state):
+    if high_precision_shoot(state,distMaxFonceurCh1Shoot):
         return fonceurCh1HPPower
     return fonceurCh1ApprochePower
 

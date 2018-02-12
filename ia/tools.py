@@ -5,14 +5,7 @@ from soccersimulator import show_simu
 from soccersimulator.settings import *
 
 profondeurDegagement = GAME_WIDTH/4.8
-distanceHorizontaleMaxInterception = GAME_WIDTH/6.
-distanceMaxInterception = GAME_WIDTH/3.
-distanceInterceptionCourte = GAME_WIDTH/15.
 longueurSurfaceReparation = GAME_WIDTH/6.
-interceptionCourte = 3
-interceptionLongue = 10
-n_inst = [100.]*4
-courte = [False]*4
 
 ## StateFoot ...
 class StateFoot(object):
@@ -87,6 +80,9 @@ def coeff_vitesse_reduite(n,fc):
 
 def distance(v1,v2):
     return (v1-v2).norm
+
+def est_dans_zone(state,ref,distLimite):
+    return distance(state.ball_position, ref) <= distLimite
 
 def distance_horizontale(v1, v2):
     return abs(v1.x-v2.x)
