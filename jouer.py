@@ -1,18 +1,21 @@
+from soccersimulator import SoccerTeam, Simulation
+from soccersimulator import show_simu
 from ia.strategies import *
 
 ## Creation d'une equipe
-pyteam = SoccerTeam(name="PyTeam")
-thon = SoccerTeam(name="ThonTeam")
-#pyteam.add("PyPlayer",DefendreStrategy()) #Strategie qui ne fait rien
-pyteam.add("PyPlayer",FonceurStrategy()) #Strategie qui ne fait rien
-#pyteam.add("PyPlayer",TestStrategy()) #Strategie qui ne fait rien
-#pyteam.add("DribbleurPyPlayer1",DribblerStrategy()) #Strategie qui ne fait rien
-#pyteam.add("DribbleurPyPlayer2",DefendreStrategy()) #Strategie qui ne fait rien
+pyteam = SoccerTeam(name="Left")
+thon = SoccerTeam(name="Right")
+pyteam.add("GardienL",GardienStrategy()) #Strategie gardien/defenseur
+#pyteam.add("FonceurL1",FonceurStrategy()) #Strategie fonceur
+#pyteam.add("FonceurL2",FonceurStrategy()) #Strategie fonceur
+#pyteam.add("DribbleurL1",DribblerStrategy()) #Strategie dribbleur
+#pyteam.add("DribbleurL2",DribblerStrategy()) #Strategie dribbleur
 
-thon.add("GardienThonPlayer2",GardienStrategy())   #Strategie qui ne fait rien
-#thon.add("ThonPlayer",FonceurStrategy())   #Strategie aleatoire
-#thon.add("DribbleurThonPlayer1",DribblerStrategy())   #Strategie qui ne fait rien
-#thon.add("ThonPlayer",DribblerStrategy())   #Strategie qui ne fait rien
+#thon.add("GardienR",GardienStrategy())   #Strategie gardien/defenseur
+thon.add("FonceurR1",FonceurStrategy())   #Strategie fonceur
+#thon.add("FonceurR21",FonceurStrategy())   #Strategie fonceur
+#thon.add("DribbleurR1",DribblerStrategy())   #Strategie dribbleur
+#thon.add("DribbleurR2",DribblerStrategy())   #Strategie dribbleur
 
 #Creation d'une partie
 simu = Simulation(pyteam,thon)
