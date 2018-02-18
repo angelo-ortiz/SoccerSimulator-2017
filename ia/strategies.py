@@ -1,50 +1,6 @@
 from .tools import *
-
-def shoot(state,dest,puissance=maxPlayerShoot):
-    return SoccerAction(Vector2D(),normaliser_diff(state.ball_position, dest, puissance))
-   
-def foncer(state):
-    if distance(state.cage_adverse,state.position) < distanceMaxFonceurShoot:
-        return shoot(state,state.cage_adverse,fonceurSRPower)
-    return shoot(state,state.cage_adverse,fonceurNormPower)
-
-def dribbler(state):
-    return shoot(state,state.cage_adverse,dribblePower)
-
-def degager(state):
-    ecart_x = profondeurDegagement
-    if not state.is_team_left() : ecart_x = -ecart_x 
-    x = state.position.x + ecart_x
-    v = state.vitesse
-    y = 0. if state.est_en_dessus(state.adversaire_le_plus_proche()) else GAME_HEIGHT
-    return shoot(state,Vector2D(x,y), maxPlayerShoot)
-
-def aller_acc(acc):
-    return SoccerAction(acc)
-
-def aller_dest(state,dest):
-    return aller_acc(normaliser_diff(state.position, dest, maxPlayerAcceleration))
-
-def aller_vers_balle(state):
-    return aller_dest(state,state.ball_position)
-
-def aller_vers_cage(state):
-    return aller_dest(state,state.cage)
-
-def intercepter_balle(state,n):
-    # n = 10
-    v = state.vitesse
-    r = state.position
-    vb = state.ball_vitesse
-    rb = state.ball_position
-    #ax = (10*(v.x-vb.x)+r.x-rb.x)/(-50)
-    #ay = (10*(v.y-vb.y)+r.y-rb.y)/(-50)
-    #ax = 2.*(n*v.x-vb.x*self.coeff_vitesse_reduite(n,ballBrakeConstant)+r.x-rb.x)/(n*n)
-    #ay = 2.*(n*v.y-vb.y*self.coeff_vitesse_reduite(n,ballBrakeConstant)+r.y-rb.y)/(n*n)
-    fc = ballBrakeConstant
-    ax = -fc*((v.x-vb.x)*coeff_vitesse_reduite(n,fc)+r.x-rb.x)/(n-coeff_vitesse_reduite(n,fc))
-    ay = -fc*((v.y-vb.y)*coeff_vitesse_reduite(n,fc)+r.y-rb.y)/(n-coeff_vitesse_reduite(n,fc))
-    return aller_acc(Vector2D(ax,ay))
+from .conditions import *
+from .behaviour import *
 
 ## Strategie aleatoire
 class RandomStrategy(Strategy):
@@ -59,8 +15,18 @@ class FonceurStrategy(Strategy):
         Strategy.__init__(self,"Fonceur")
     def compute_strategy(self,state,id_team,id_player):
         myState = StateFoot(state,id_team,id_player)
-        if myState.can_shoot():
-            return foncer(myState)
+        if can_shoot(myState):
+            return foncer(myState, beh_fonceur(myState, "normal"))
+        return aller_vers_balle(myState)
+
+## Strategie FonceurChallenge1
+class FonceurChallenge1Strategy(Strategy):
+    def __init__(self):
+        Strategy.__init__(self,"FonceurChallenge1")
+    def compute_strategy(self,state,id_team,id_player):
+        myState = StateFoot(state,id_team,id_player)
+        if can_shoot(myState):
+            return foncer(myState, beh_fonceur(myState, "ch1"))
         return aller_vers_balle(myState)
 
 ## Strategie Dribbler
@@ -69,22 +35,31 @@ class DribblerStrategy(Strategy):
         Strategy.__init__(self,"Dribbler")
     def compute_strategy(self,state,id_team,id_player):
         myState = StateFoot(state,id_team,id_player)
-        if myState.can_shoot():
+        if can_shoot(myState):
             return dribbler(myState)
         return aller_vers_balle(myState)
 
 ## Strategie Defendre
-class DefendreStrategy(Strategy):
+class GardienStrategy(Strategy):
     def __init__(self):
-        Strategy.__init__(self,"Defendre")
+        Strategy.__init__(self,"Gardien")
     def compute_strategy(self,state,id_team,id_player):
         myState = StateFoot(state,id_team,id_player)
-        if myState.can_shoot():
+        if can_shoot(myState):
             return degager(myState)
-        if myState.doit_intercepter():
-            #return aller_vers_balle()
-            tempsInterception = interceptionLongue
-            if myState.distance_ball_joueur() < distanceInterceptionCourte:
-                tempsInterception = interceptionCourte
-            return intercepter_balle(myState,tempsInterception)
+        if doit_intercepter_goal(myState):
+            return intercepter_balle(myState,temps_interception(myState))
         return aller_vers_cage(myState)
+
+## Strategie Test
+class TestStrategy(Strategy):
+    def __init__(self):
+        Strategy.__init__(self,"Test")
+    def compute_strategy(self,state,id_team,id_player):
+        vect = Vector2D(GAME_WIDTH*0.1+GAME_HEIGHT/2.,GAME_HEIGHT/2.)
+        myState = StateFoot(state,id_team,id_player)
+        if myState.position.x >= vect.x: 
+            print("0")
+            return SoccerAccion()
+        print("1")
+        return aller_dest(myState, vect)
