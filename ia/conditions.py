@@ -3,7 +3,7 @@ from .tools import Wrapper, StateFoot, is_in_radius_action
 from soccersimulator.settings import GAME_WIDTH, GAME_GOAL_HEIGHT, GAME_HEIGHT, BALL_RADIUS, \
         PLAYER_RADIUS
 
-distMaxInterceptionGoal = GAME_HEIGHT/2.
+surfRep = GAME_HEIGHT/2.
 distMaxInterception = GAME_WIDTH/6.
 n_inst = [10.]*4 #[40.]*4
 courte = [False]*4
@@ -16,8 +16,13 @@ def must_intercept(stateFoot):
         return False
     return stateFoot.is_nearest_ball() 
 
+def is_in_box(stateFoot, attaque=True):
+    goal = stateFoot.my_goal
+    if attaque: goal = stateFoot.opp_goal
+    return is_in_radius_action(stateFoot, goal, surfRep) 
+
 def must_intercept_gk(stateFoot):
-    return is_in_radius_action(stateFoot, stateFoot.my_goal, distMaxInterceptionGoal) and stateFoot.is_nearest_ball() 
+    return is_in_box(stateFoot, False) and stateFoot.is_nearest_ball() 
 
 def can_shoot(stateFoot):
     dist_ball_joueur = stateFoot.distance(stateFoot.ball_pos)

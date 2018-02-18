@@ -1,8 +1,8 @@
 from soccersimulator import Strategy, SoccerAction
 from .tools import StateFoot, get_random_strategy
-from .conditions import must_intercept_gk, can_shoot, temps_interception
-from .behaviour import shoot, beh_fonceurNormal, beh_fonceurChallenge1, beh_fonceur, \
-        dribbler, foncer, degager, aller_vers_balle, aller_dest, aller_vers_cage, intercepter_balle
+from .conditions import must_intercept_gk, can_shoot, temps_interception, is_in_box
+from .behaviour import shoot, beh_fonceurNormal, beh_fonceurChallenge1, beh_fonceur, dribbler, \
+        foncer, degager, aller_vers_balle, aller_dest, aller_vers_cage, intercepter_balle, fonceurCh1ApprochePower
 
 ## Strategie aleatoire
 class RandomStrategy(Strategy):
@@ -38,6 +38,8 @@ class DribblerStrategy(Strategy):
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if can_shoot(me):
+            if is_in_box(me):
+                return foncer(me, fonceurCh1ApprochePower)
             return dribbler(me)
         return aller_vers_balle(me)
 
