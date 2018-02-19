@@ -21,8 +21,8 @@ def is_in_box(stateFoot, attaque=True):
     if attaque: goal = stateFoot.opp_goal
     return is_in_radius_action(stateFoot, goal, surfRep) 
 
-def must_intercept_gk(stateFoot):
-    return is_in_box(stateFoot, False) and stateFoot.is_nearest_ball() 
+def must_intercept_gk(stateFoot, distance):
+    return is_in_radius_action(stateFoot, stateFoot.my_goal, distance) and stateFoot.is_nearest_ball() 
 
 def can_shoot(stateFoot):
     dist_ball_joueur = stateFoot.distance(stateFoot.ball_pos)

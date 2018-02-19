@@ -45,15 +45,17 @@ class DribblerStrategy(Strategy):
 
 ## Strategie Defendre
 class GardienStrategy(Strategy):
-    def __init__(self):
+    def __init__(self, n=None, distance=None):
         Strategy.__init__(self,"Gardien")
+        self.n = n
+        self.distance = distance
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if can_shoot(me):
             return degager(me)
-        if must_intercept_gk(me):
-            return intercepter_balle(me,temps_interception(me))
-        return aller_vers_cage(me)
+        if must_intercept_gk(me, self.distance):
+            return intercepter_balle(me,self.n)
+        return aller_vers_cage(me, self.distance)
 
 ## Strategie Test
 class TestStrategy(Strategy):
