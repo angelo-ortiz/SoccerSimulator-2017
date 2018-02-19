@@ -64,6 +64,10 @@ class StateFoot(Wrapper):
         return self.height/2.
 
     @property
+    def center_point(self):
+        return Vector2D(self.width/2., self.goal_height)
+
+    @property
     def nearest_opp(self):
         liste = self.opponents()
         opp = liste[0]
@@ -110,7 +114,7 @@ def distance_horizontale(v1, v2):
     return abs(v1.x-v2.x)
     
 def is_upside(state,vect):
-    return state.my_pos.y > vect.position.y
+    return state.my_pos.y > vect.y
     
 def get_random_vector():
     return Vector2D.create_random(-1.,1.)

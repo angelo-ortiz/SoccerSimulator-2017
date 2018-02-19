@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-from .tools import Wrapper, StateFoot, is_in_radius_action 
+from .tools import Wrapper, StateFoot, is_in_radius_action, distance_horizontale 
 from soccersimulator.settings import GAME_WIDTH, GAME_GOAL_HEIGHT, GAME_HEIGHT, BALL_RADIUS, \
         PLAYER_RADIUS
 
+profondeurDegagement = GAME_WIDTH/5.
+largeurDegagement = GAME_WIDTH/12.
 surfRep = GAME_HEIGHT/2.
 distMaxInterception = GAME_WIDTH/6.
 n_inst = [10.]*4 #[40.]*4
@@ -28,6 +30,9 @@ def can_shoot(stateFoot):
     dist_ball_joueur = stateFoot.distance(stateFoot.ball_pos)
     ball_est_proche = dist_ball_joueur <= PLAYER_RADIUS + BALL_RADIUS
     return ball_est_proche and stateFoot.player_state(*stateFoot.key).can_shoot()
+
+def is_defense_zone(state):
+    return distance_horizontale(state.my_pos, state.my_goal) < (state.width/2.-profondeurDegagement)
 
 def high_precision_shoot(state, dist):
     return state.my_pos.distance(state.opp_goal) < dist

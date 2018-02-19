@@ -2,12 +2,11 @@ from soccersimulator import SoccerAction, Vector2D
 from soccersimulator.settings import GAME_WIDTH, GAME_HEIGHT, maxPlayerShoot, maxPlayerAcceleration, \
         ballBrakeConstant
 from .tools import Wrapper, StateFoot, normalise_diff, coeff_vitesse_reduite, is_upside
-from .conditions import high_precision_shoot
+from .conditions import high_precision_shoot, profondeurDegagement, largeurDegagement
+from math import acos, exp
 
 distMaxFonceurCh1Shoot = GAME_WIDTH/3.
 distMaxFonceurNormShoot = GAME_WIDTH/4.
-profondeurDegagement = GAME_WIDTH/5.
-largeurDegagement = GAME_WIDTH/12.
 fonceurCh1ApprochePower = 2.65
 fonceurCh1HPPower = 4.6
 fonceur100Power = 6.
@@ -43,9 +42,17 @@ def degager(state):
     if not state.is_team_left(): ecart_x = -ecart_x 
     x = state.my_pos.x + ecart_x
     ecart_y = largeurDegagement
-    if not is_upside(state,state.nearest_opp):  ecart_y = -ecart_y
+    if not is_upside(state,state.nearest_opp.position):  ecart_y = -ecart_y
     y = state.my_pos.y + ecart_y
     return shoot(state,Vector2D(x,y), maxPlayerShoot)
+
+def decaler(state):
+    ecart_x = profondeurDegagement
+    if state.is_team_left(): ecart_x = -ecart_x 
+    ecart_y = largeurDegagement
+    if not is_upside(state,state.center_point):  ecart_y = -ecart_y
+    dec = Vector2D(ecart_x,ecart_y)
+    return aller_dest(state, dec + state.center_point)
 
 def aller_acc(acc):
     return SoccerAction(acc)
@@ -74,3 +81,10 @@ def intercepter_balle(state,n):
     ay = -fc*((v.y-vb.y)*coeff+r.y-rb.y)/(n-coeff)
     return aller_acc(Vector2D(ax,ay))
 
+
+def force(state, alpha, beta):
+    vect = Vector2D(-1.,0.)
+    u = state.opp_goal - state.my_pos
+    dist = u.norm 
+    theta = acos((vect.dot(u))/(u.norm*vect.norm))
+    return maxPlayerShoot*(1.-exp(-(alpha*dist)))*exp(-beta*theta)
