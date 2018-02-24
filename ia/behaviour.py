@@ -37,7 +37,7 @@ def foncer(state, power):
 def dribbler(state):
     return shoot(state,state.opp_goal,dribblePower)
 
-def degager(state):
+def degager_solo(state):
     ecart_x = profondeurDegagement
     if not state.is_team_left(): ecart_x = -ecart_x 
     x = state.my_pos.x + ecart_x
@@ -45,6 +45,15 @@ def degager(state):
     if not is_upside(state,state.nearest_opp.position):  ecart_y = -ecart_y
     y = state.my_pos.y + ecart_y
     return shoot(state,Vector2D(x,y), maxPlayerShoot)
+
+def degager(state):
+    tm = state.tt()[0]
+    ecart_x = profondeurDegagement - 10.
+    if not state.is_team_left(): ecart_x = -ecart_x 
+    ecart_y = largeurDegagement
+    if tm.position.y > state.center_point.y:  ecart_y = -ecart_y
+    dec = Vector2D(ecart_x, ecart_y)
+    return shoot(state,dec + state.center_point, maxPlayerShoot)
 
 def decaler(state):
     ecart_x = profondeurDegagement
@@ -86,5 +95,5 @@ def force(state, alpha, beta):
     vect = Vector2D(-1.,0.)
     u = state.opp_goal - state.my_pos
     dist = u.norm 
-    theta = acos((vect.dot(u))/(u.norm*vect.norm))
+    theta = acos((vect.dot(u))/(u.norm*vect.norm))/acos(0.)
     return maxPlayerShoot*(1.-exp(-(alpha*dist)))*exp(-beta*theta)

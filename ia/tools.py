@@ -76,7 +76,16 @@ class StateFoot(Wrapper):
             if self.distance_ball(p.position) < dist:
                 opp = p
         return opp
-   
+
+    def tt(self):
+        team = self.my_team
+        liste = []
+        for i in range(self.nb_players(team)):
+            if i != self.me:
+                liste.append(self.player_state(team,i))
+        #return [self.player_state(team,i) for i in range(self.nb_players(team))]
+        return liste
+
     def is_team_left(self):
         return self.my_team == 1
     
@@ -100,6 +109,7 @@ class StateFoot(Wrapper):
     def opponents(self):
         team = self.opp_team
         return [self.player_state(team,i) for i in range(self.nb_players(team))]
+    
 
 def normalise_diff(src, dst, norme):
     return (dst-src).norm_max(norme)

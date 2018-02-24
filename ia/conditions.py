@@ -23,6 +23,9 @@ def is_in_box(stateFoot, attaque=True):
     if attaque: goal = stateFoot.opp_goal
     return is_in_radius_action(stateFoot, goal, surfRep) 
 
+def is_close(stateFoot):
+    return is_in_radius_action(stateFoot, stateFoot.opp_goal, 35.)
+
 def must_intercept_gk(stateFoot):
     return is_in_box(stateFoot, False) and stateFoot.is_nearest_ball() 
 

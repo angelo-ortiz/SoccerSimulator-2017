@@ -34,13 +34,15 @@ class ParamSearchShoot(object):
         self.param_keys = list(self.params.keys())  # Name of all parameters
         #self.param_id = [self.params[key][0] for key in self.param_keys]
         self.param_id = [0] * len(self.params)  # Index of the parameter values
-        self.param_id_id = 0  # Index of the current parameter
+        self.param_id_id = len(self.params) - 1  # Index of the current parameter
         self.res = dict()  # Dictionary of results
 
     def begin_round(self, team1, team2, state):
         dist = self.params['dist'][0]
-        ball = Vector2D.create_random(low=0, high=1)
-        ball.normalize().scale(dist)
+        ball = Vector2D.create_random(low=-1, high=1)
+        if ball.x < 0. : ball.x = -ball.x 
+        aleat = Vector2D.create_random(low=15, high=dist)
+        ball.normalize().scale(aleat.x)
         ball.y += GAME_HEIGHT/2.
     
         # Player and ball postion (random)
@@ -79,12 +81,19 @@ class ParamSearchShoot(object):
             self.cpt = 0
 
             # Go to the next parameter value to try
-            key = self.param_keys[self.param_id_id]
+            key3 = self.param_keys[self.param_id_id]
+            key2 = self.param_keys[self.param_id_id-1]
+            key1 = self.param_keys[self.param_id_id-2]
             #TODO mettre à 0 les valeurs precedentes
-            if self.param_id[self.param_id_id] < len(self.params[key]) - 1:
+            if self.param_id[self.param_id_id] < len(self.params[key3]) - 1:
                 self.param_id[self.param_id_id] += 1
-            elif self.param_id_id < len(self.params) - 1:
-                self.param_id_id += 1
+            elif self.param_id[self.param_id_id-1] < len(self.params[key2]) - 1:
+                self.param_id[self.param_id_id] = 0
+                self.param_id[self.param_id_id-1] += 1
+            elif self.param_id[self.param_id_id-2] < len(self.params[key1]) - 1:
+                self.param_id[self.param_id_id] = 0
+                self.param_id[self.param_id_id-1] = 0
+                self.param_id[self.param_id_id-2] += 1
             else:
                 self.simu.end_match()
 
