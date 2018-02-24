@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from ia.optimization import ParamSearchShoot
 from ia.strategies import ShootTestStrategy
 import operator
@@ -18,3 +19,16 @@ for el in liste:
     if el[1] < 0.9:
         break
     print(el)
+=======
+from ia.optimization import ParamSearch
+from ia.strategies import FonceurStrategy
+from soccersimulator.settings import GAME_GOAL_HEIGHT, GAME_HEIGHT
+
+n_list = [i for i in range(1, 50)]
+d_list = [r for r in range(GAME_GOAL_HEIGHT/2, GAME_HEIGHT/2)]
+
+expe = ParamSearch(strategy=GardienStrategy(),
+                   params={'n': n_list, 'distance': d_list})
+expe.start()
+print(expe.get_res())
+>>>>>>> 03f05e031d9e8e684cecf33199096209b367564d
