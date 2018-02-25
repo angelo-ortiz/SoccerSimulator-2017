@@ -11,8 +11,8 @@ beta = [i/100. for i in range(70, 111, 5)]
 #        params={'dist': dist, 'alpha' : alpha, 'beta' : beta})
 
 #==============================================
-n_list = [i for i in range(2, 31)]
-d_list = [r for r in range(10, 36)]
+n_list = [i for i in range(6, 31)]
+d_list = [r for r in range(10, 26)]
 
 expe = ParamSearchGoal(strategy=GardienTestStrategy(),
                    params={'n': n_list, 'distance': d_list})
@@ -26,8 +26,8 @@ power = [i/100. for i in range(90,141)]
 expe.start()
 print(expe.get_res())
 mydict = expe.get_res()
-liste = sorted(mydict.items(), key=operator.itemgetter(1), reverse=True)
+liste = sorted(mydict.items(), key=operator.itemgetter(1), reverse=False)
 for el in liste:
-    if el[1] < 0.9:
+    if el[1] > 0.4: #< 0.9:
         break
     print(el)

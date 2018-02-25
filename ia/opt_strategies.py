@@ -16,17 +16,19 @@ class ShootTestStrategy(Strategy):
 class GardienTestStrategy(Strategy):
     def __init__(self, n=None, distance=None):
         Strategy.__init__(self,"GardienTest")
+        self.n_deb = n
         self.n = n
         self.distance = distance
     def compute_strategy(self,state,id_team,id_player):
-        self.n -= 1
-        #print(self.n)
-        if self.n <= 0 :
-            return get_empty_strategy()
         me = StateFoot(state,id_team,id_player)
         if can_shoot(me):
+            self.n = self.n_deb -1
             return degager_solo(me)
         if must_intercept_gk(me, self.distance):
+            self.n -= 1
+            #print(self.n)
+            if self.n <= 0 :
+                return get_empty_strategy()
             return intercepter_balle(me,self.n)
         return aller_vers_cage(me)
 

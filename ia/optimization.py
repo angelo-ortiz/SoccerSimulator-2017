@@ -159,15 +159,16 @@ class ParamSearchGoal(object):
         # Set the current value for the current parameter
         for i, (key, values) in zip(self.param_id, self.params.items()):
             setattr(self.strategy, key, values[i])
+        self.strategy.n_deb = self.params["n"][self.param_id[0]]
 
     def update_round(self, team1, team2, state):
         me = StateFoot(state, 1 ,0)
         if self.strategy.n <= 0:
             self.simu.end_round()
         
-        if can_shoot(me):
-            self.crit += 1
-            self.simu.end_round()
+        #if can_shoot(me):
+        #    self.crit += 1
+        #    self.simu.end_round()
         
         # Stop the round if it is too long
         if state.step > self.last + self.max_round_step:
@@ -175,6 +176,10 @@ class ParamSearchGoal(object):
 
     def end_round(self, team1, team2, state):
         # A round ends when there is a goal
+        me = StateFoot(state, 1 ,0)
+        if state.goal > 0 or self.strategy.n <= 0:
+            self.crit += 1  # Increment criterion
+        
         self.cpt += 1  # Increment number of trials
         if self.cpt >= self.trials:
             # Save the result

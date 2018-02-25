@@ -21,8 +21,8 @@ class FonceurStrategy(Strategy):
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if can_shoot(me):
-            #return foncer(me, beh_fonceur(me, "normal"))
-            return foncer(me, force(me, self.alpha, self.beta))
+            return foncer(me, beh_fonceur(me, "normal"))
+            #return foncer(me, force(me, self.alpha, self.beta))
         return aller_vers_balle(me)
 
 ## Strategie FonceurChallenge1
@@ -73,4 +73,16 @@ class GardienStrategy(Strategy):
             return degager(me)
         if must_intercept_gk(me):
             return intercepter_balle(me,temps_interception(me))
+        return aller_vers_cage(me)
+
+## Strategie Gardien
+class GardienPrecStrategy(Strategy):
+    def __init__(self):
+        Strategy.__init__(self,"Gardien")
+    def compute_strategy(self,state,id_team,id_player):
+        me = StateFoot(state,id_team,id_player)
+        if can_shoot(me):
+            return degager_solo(me)
+        if must_intercept_gk(me):
+            return intercepter_balle(me,10.)
         return aller_vers_cage(me)

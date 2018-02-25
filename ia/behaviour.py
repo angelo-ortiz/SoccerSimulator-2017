@@ -55,7 +55,7 @@ def degager_solo(state):
 
 def degager(state):
     tm = state.tt()[0]
-    ecart_x = profondeurDegagement - 10.
+    ecart_x = profondeurDegagement - 15.
     if not state.is_team_left(): ecart_x = -ecart_x 
     ecart_y = largeurDegagement
     if tm.position.y < state.center_point.y:  ecart_y = -ecart_y
