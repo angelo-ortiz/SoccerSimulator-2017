@@ -1,11 +1,10 @@
 # coding: utf-8
-<<<<<<< HEAD
-=======
 from __future__ import print_function, division
->>>>>>> 03f05e031d9e8e684cecf33199096209b367564d
 from soccersimulator import SoccerTeam, Simulation, Strategy, show_simu, Vector2D
 from soccersimulator.settings import GAME_WIDTH, GAME_HEIGHT
-
+from ia.strategies import FonceurStrategy
+from ia.tools import StateFoot
+from ia.conditions import can_shoot
 
 class ParamSearchShoot(object):
     def __init__(self, strategy, params, simu=None, trials=20, max_steps=1000000,
@@ -88,7 +87,6 @@ class ParamSearchShoot(object):
             key3 = self.param_keys[self.param_id_id]
             key2 = self.param_keys[self.param_id_id-1]
             key1 = self.param_keys[self.param_id_id-2]
-            #TODO mettre à 0 les valeurs precedentes
             if self.param_id[self.param_id_id] < len(self.params[key3]) - 1:
                 self.param_id[self.param_id_id] += 1
             elif self.param_id[self.param_id_id-1] < len(self.params[key2]) - 1:
@@ -139,18 +137,21 @@ class ParamSearch(object):
         self.cpt = 0  # Counter for trials
         self.param_keys = list(self.params.keys())  # Name of all parameters
         self.param_id = [0] * len(self.params)  # Index of the parameter values
-        self.param_id_id = 0  # Index of the current parameter
+        self.param_id_id = 1  # Index of the current parameter
         self.res = dict()  # Dictionary of results
 
     def begin_round(self, team1, team2, state):
-        ball = Vector2D.create_random(low=0, high=1)
-        ball.x *= GAME_WIDTH / 2
-        ball.x += GAME_WIDTH / 2
-        ball.y *= GAME_HEIGHT
-
+        ball = Vector2D.create_random(low=-1, high=1)
+        if ball.x < 0. : ball.x = -ball.x 
+        aleat = Vector2D.create_random(low=15, high=35.)
+        ball.normalize().scale(aleat.x)
+        ball.y += GAME_HEIGHT/2.
+        
         # Player and ball postion (random)
         self.simu.state.states[(2, 0)].position = ball.copy()  # Player position
         self.simu.state.states[(2, 0)].vitesse = Vector2D()  # Player acceleration
+        self.simu.state.states[(1, 0)].position = Vector2D(0., GAME_HEIGHT/2.)  # Player position
+        self.simu.state.states[(1, 0)].vitesse = Vector2D()  # Player acceleration
         self.simu.state.ball.position = ball.copy()  # Ball position
 
         # Last step of the game
@@ -162,6 +163,10 @@ class ParamSearch(object):
 
     def update_round(self, team1, team2, state):
         # Stop the round if it is too long
+        
+        me = StateFoot(state, 1 ,0)
+        if can_shoot(me):
+            self.crit += 1
         if state.step > self.last + self.max_round_step:
             self.simu.end_round()
 
@@ -183,7 +188,7 @@ class ParamSearch(object):
             # Go to the next parameter value to try
             key2 = self.param_keys[self.param_id_id]
             key1 = self.param_keys[self.param_id_id-1]
-            #TODO mettre à 0 les valeurs precedentes
+            #TODO decrementer les valeurs de n au fur et a mesure que le temps passe
             if self.param_id[self.param_id_id] < len(self.params[key2]) - 1:
                 self.param_id[self.param_id_id] += 1
             elif self.param_id[self.param_id_id-1] < len(self.params[key1]) - 1:
