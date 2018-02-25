@@ -4,7 +4,7 @@ from soccersimulator.settings import GAME_WIDTH, GAME_GOAL_HEIGHT, GAME_HEIGHT, 
         PLAYER_RADIUS
 
 profondeurDegagement = GAME_WIDTH/5.
-largeurDegagement = GAME_WIDTH/12.
+largeurDegagement = GAME_HEIGHT/4.
 surfRep = GAME_HEIGHT/2.
 distMaxInterception = GAME_WIDTH/6.
 n_inst = [10.]*4 #[40.]*4
@@ -23,16 +23,17 @@ def is_in_box(stateFoot, attaque=True):
     if attaque: goal = stateFoot.opp_goal
     return is_in_radius_action(stateFoot, goal, surfRep) 
 
-def is_close(stateFoot):
-    return is_in_radius_action(stateFoot, stateFoot.opp_goal, 35.)
+def is_close_ball(stateFoot):
+    return stateFoot.distance(stateFoot.ball_pos) <= PLAYER_RADIUS + BALL_RADIUS
 
-def must_intercept_gk(stateFoot, distance):
+def is_close_goal(stateFoot):
+    return is_in_radius_action(stateFoot, stateFoot.opp_goal, 27.)
+
+def must_intercept_gk(stateFoot, distance=30.):
     return is_in_radius_action(stateFoot, stateFoot.my_goal, distance) and stateFoot.is_nearest_ball() 
 
 def can_shoot(stateFoot):
-    dist_ball_joueur = stateFoot.distance(stateFoot.ball_pos)
-    ball_est_proche = dist_ball_joueur <= PLAYER_RADIUS + BALL_RADIUS
-    return ball_est_proche and stateFoot.player_state(*stateFoot.key).can_shoot()
+    return is_close_ball(stateFoot) and stateFoot.player_state(*stateFoot.key).can_shoot()
 
 def is_defense_zone(state):
     return distance_horizontale(state.my_pos, state.my_goal) < (state.width/2.-profondeurDegagement)

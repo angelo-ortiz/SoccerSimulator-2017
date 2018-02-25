@@ -34,8 +34,15 @@ def beh_fonceur(state, shooter="normal"):
 def foncer(state, power):
     return shoot(state,state.opp_goal,power)
 
-def dribbler(state):
-    return shoot(state,state.opp_goal,dribblePower)
+def power(state):
+    LONG_DRIBBLE = 0.98
+    SHORT_DRIBBLE = 0.97
+    if state.distance(state.opp_goal) < 50.:
+        return SHORT_DRIBBLE
+    return LONG_DRIBBLE
+
+def dribbler(state, power=dribblePower):
+    return shoot(state,state.opp_goal,power)
 
 def degager_solo(state):
     ecart_x = profondeurDegagement
@@ -51,7 +58,7 @@ def degager(state):
     ecart_x = profondeurDegagement - 10.
     if not state.is_team_left(): ecart_x = -ecart_x 
     ecart_y = largeurDegagement
-    if tm.position.y > state.center_point.y:  ecart_y = -ecart_y
+    if tm.position.y < state.center_point.y:  ecart_y = -ecart_y
     dec = Vector2D(ecart_x, ecart_y)
     return shoot(state,dec + state.center_point, maxPlayerShoot)
 

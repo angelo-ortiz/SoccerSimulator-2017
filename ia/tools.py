@@ -131,3 +131,6 @@ def get_random_vector():
 
 def get_random_strategy():
     return SoccerAction(get_random_vector(), get_random_vector())
+
+def get_empty_strategy():
+    return SoccerAction()
