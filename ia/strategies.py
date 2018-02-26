@@ -67,12 +67,21 @@ class DribblerStrategy(Strategy):
 class GardienStrategy(Strategy):
     def __init__(self):
         Strategy.__init__(self,"Gardien")
+        self.temps = 6
+        self.n = 6
+        self.distance = 15.
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if can_shoot(me):
-            return degager(me)
-        if must_intercept_gk(me):
-            return intercepter_balle(me,temps_interception(me))
+            self.n = self.temps - 1
+            return degager_solo(me)
+        if must_intercept_gk(me, self.distance):
+            self.n -= 1
+            print(self.n)
+            if self.n <= 0 :
+                self.n = self.temps - 1
+                return get_empty_strategy()
+            return intercepter_balle(me,self.n)
         return aller_vers_cage(me)
 
 ## Strategie Gardien
