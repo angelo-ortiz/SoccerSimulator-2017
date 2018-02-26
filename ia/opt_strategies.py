@@ -32,14 +32,27 @@ class GardienTestStrategy(Strategy):
             return intercepter_balle(me,self.n)
         return aller_vers_cage(me)
 
-class DribblerTestStrategy(Strategy):
+class ControlerTestStrategy(Strategy):
     def __init__(self, power=None):
-        Strategy.__init__(self,"DribblerTest")
+        Strategy.__init__(self,"ControlerTest")
         self.power = power
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if can_shoot(me):
-            return dribbler(me, self.power)
+            return controler(me, self.power)
+        if is_close_ball(me):
+            return get_empty_strategy()
+        return aller_vers_balle(me)
+
+class DribblerTestStrategy(Strategy):
+    def __init__(self, theta=None, power=None):
+        Strategy.__init__(self,"DribblerTest")
+        self.theta = theta
+        self.power = power
+    def compute_strategy(self,state,id_team,id_player):
+        me = StateFoot(state,id_team,id_player)
+        if can_shoot(me):
+            return dribbler(me, self.theta, self.power) #TODO
         if is_close_ball(me):
             return get_empty_strategy()
         return aller_vers_balle(me)

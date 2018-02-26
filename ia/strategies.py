@@ -1,7 +1,7 @@
 from soccersimulator import Strategy
-from .tools import StateFoot, get_random_strategy, get_empty_strategy
+from .tools import StateFoot, get_random_strategy, get_empty_strategy, is_in_radius_action
 from .conditions import must_intercept_gk, can_shoot, temps_interception, is_in_box, is_defense_zone, is_close_goal, is_close_ball
-from .behaviour import shoot, beh_fonceurNormal, beh_fonceurChallenge1, beh_fonceur, dribbler, decaler,\
+from .behaviour import shoot, beh_fonceurNormal, beh_fonceurChallenge1, beh_fonceur, controler, decaler,\
         foncer, degager, degager_solo, aller_vers_balle, aller_vers_cage, intercepter_balle, \
         fonceurCh1ApprochePower, force, power
 
@@ -46,21 +46,21 @@ class AttaquantStrategy(Strategy):
         if can_shoot(me):
             if is_close_goal(me):
                 return foncer(me, force(me, self.alpha, self.beta))
-            return dribbler(me, power(me))
+            return dribbler(me)
         if is_defense_zone(me):
             return decaler(me)
         return aller_vers_balle(me)
 
 ## Strategie Dribbler
-class DribblerStrategy(Strategy):
+class BalleAuPiedStrategy(Strategy):
     def __init__(self):
-        Strategy.__init__(self,"Dribbler")
+        Strategy.__init__(self,"BalleAuPied")
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if can_shoot(me):
             if is_in_box(me):
                 return foncer(me, fonceurCh1ApprochePower)
-            return dribbler(me, power(me))
+            return controler(me, power(me))
         return aller_vers_balle(me)
 
 ## Strategie Gardien
@@ -74,10 +74,10 @@ class GardienStrategy(Strategy):
         me = StateFoot(state,id_team,id_player)
         if can_shoot(me):
             self.n = self.temps - 1
-            return degager_solo(me)
+            return degager(me)
         if must_intercept_gk(me, self.distance):
             self.n -= 1
-            print(self.n)
+            #print(self.n)
             if self.n <= 0 :
                 self.n = self.temps - 1
                 return get_empty_strategy()
@@ -94,4 +94,16 @@ class GardienPrecStrategy(Strategy):
             return degager_solo(me)
         if must_intercept_gk(me):
             return intercepter_balle(me,10.)
+        return aller_vers_cage(me)
+
+## Strategie GardienBase
+class GardienBaseStrategy(Strategy):
+    def __init__(self):
+        Strategy.__init__(self,"GardienBase")
+    def compute_strategy(self,state,id_team,id_player):
+        me = StateFoot(state,id_team,id_player)
+        if can_shoot(me):
+            return degager_solo(me)
+        if is_in_radius_action(me, me.my_pos, 35.):
+            return aller_vers_balle(me)
         return aller_vers_cage(me)

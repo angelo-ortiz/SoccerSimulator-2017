@@ -134,3 +134,16 @@ def get_random_strategy():
 
 def get_empty_strategy():
     return SoccerAction()
+
+def free_continue(state, liste, distRef):
+    j = liste[0]
+    dist_min = state.distance_ball(j.position)
+    for i in liste[1::]:
+        dist_i = self.distance_ball(i.position)
+        if dist_i < dist_min:
+            j = i
+            dist_min = dist_i
+    if dist_min <= distRef:
+        return j
+    return True
+

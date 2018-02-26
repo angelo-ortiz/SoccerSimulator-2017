@@ -20,7 +20,7 @@ expe = ParamSearchGoal(strategy=GardienTestStrategy(),
 #==============================================
 power = [i/100. for i in range(90,141)]
 
-#expe = ParamSearchDribble(strategy=DribblerTestStrategy(),
+#expe = ParamSearchControle(strategy=ControlerTestStrategy(),
 #                   params={'power': power})
 
 expe.start()

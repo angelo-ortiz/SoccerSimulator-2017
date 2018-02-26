@@ -1,7 +1,7 @@
 from soccersimulator import SoccerAction, Vector2D
 from soccersimulator.settings import GAME_WIDTH, GAME_HEIGHT, maxPlayerShoot, maxPlayerAcceleration, \
         ballBrakeConstant
-from .tools import Wrapper, StateFoot, normalise_diff, coeff_vitesse_reduite, is_upside
+from .tools import Wrapper, StateFoot, normalise_diff, coeff_vitesse_reduite, is_upside, free_continue
 from .conditions import high_precision_shoot, profondeurDegagement, largeurDegagement
 from math import acos, exp
 
@@ -11,7 +11,7 @@ fonceurCh1ApprochePower = 2.65
 fonceurCh1HPPower = 4.6
 fonceur100Power = 6.
 fonceurHPPower = 4.3
-dribblePower = 1.2
+controlPower = 1.2
 
 def shoot(state,dest,puissance=maxPlayerShoot):
     return SoccerAction(Vector2D(),normalise_diff(state.ball_pos, dest, puissance))
@@ -34,15 +34,29 @@ def beh_fonceur(state, shooter="normal"):
 def foncer(state, power):
     return shoot(state,state.opp_goal,power)
 
-def power(state):
-    LONG_DRIBBLE = 0.98
-    SHORT_DRIBBLE = 0.97
-    if state.distance(state.opp_goal) < 50.:
-        return SHORT_DRIBBLE
-    return LONG_DRIBBLE
+def power(state, dribble):
+    CONTROL = 0.98
+    DRIBBLE = 0.47#TODO
+    if dribble:
+        return DRIBBLE
+    return CONTROL
 
-def dribbler(state, power=dribblePower):
+def controler(state, power=controlPower):
     return shoot(state,state.opp_goal,power)
+
+def dribbler(state, theta, powerD):
+    can_continue = free_continue(state, state.opponents(), 10.)
+    if can_continue == True:
+        controler(state, power(state, dribble=False))
+    destDribble =  
+    return shoot(state,destDribble,powerD)
+
+def dribbler(state, theta, powerD):#TODO dribbler un adversaire => creer meth. approche (control + dribble), attaqueSR(dribble + shoot)
+    can_continue = free_continue(state, state.opponents(), 10.)
+    if can_continue == True:
+        controler(state, power(state, dribble=False))
+    destDribble =  
+    return shoot(state,destDribble,powerD)
 
 def degager_solo(state):
     ecart_x = profondeurDegagement
