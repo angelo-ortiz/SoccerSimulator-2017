@@ -1,7 +1,7 @@
 from soccersimulator import Strategy, Vector2D, GAME_WIDTH, GAME_HEIGHT
 from .tools import StateFoot,  get_empty_strategy
 from .conditions import must_intercept_gk, can_shoot, is_close_ball
-from .behaviour import dribbler, foncer, degager_solo, aller_vers_balle, aller_dest, aller_vers_cage, intercepter_balle, force, power
+from .behaviour import dribbler, foncer, degager_solo, aller_vers_balle, aller_dest, aller_vers_cage, intercepter_balle, forceShoot, power, essayerBut
 
 class ShootTestStrategy(Strategy):
     def __init__(self, dist=None, alpha=None, beta=None):
@@ -11,7 +11,7 @@ class ShootTestStrategy(Strategy):
         self.beta = beta
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
-        return foncer(me, force(me, self.alpha, self.beta))
+        return foncer(me, forceShoot(me, self.alpha, self.beta))
 
 class GardienTestStrategy(Strategy):
     def __init__(self, n=None, distance=None):
@@ -47,12 +47,14 @@ class ControlerTestStrategy(Strategy):
 class DribblerTestStrategy(Strategy):
     def __init__(self, theta=None, power=None):
         Strategy.__init__(self,"DribblerTest")
+        self.alpha = 0.2
+        self.beta = 0.7
         self.theta = theta
         self.power = power
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if can_shoot(me):
-            return dribbler(me, self.theta, self.power) #TODO
+            return essayerBut(me, self.alpha, self.beta, self.theta, self.power)
         if is_close_ball(me):
             return get_empty_strategy()
         return aller_vers_balle(me)

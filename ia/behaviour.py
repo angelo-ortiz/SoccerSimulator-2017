@@ -34,7 +34,7 @@ def beh_fonceur(state, shooter="normal"):
 def foncer(state, power):
     return shoot(state,state.opp_goal,power)
 
-def power(state, dribble):
+def power(dribble):
     CONTROL = 0.98
     DRIBBLE = 0.47#TODO
     if dribble:
@@ -44,19 +44,21 @@ def power(state, dribble):
 def controler(state, power=controlPower):
     return shoot(state,state.opp_goal,power)
 
-def dribbler(state, theta, powerD):
-    can_continue = free_continue(state, state.opponents(), 10.)
-    if can_continue == True:
-        controler(state, power(state, dribble=False))
-    destDribble =  
-    return shoot(state,destDribble,powerD)
+def dribbler(state, opp, theta, power):
+    destDribble = Vector2D() 
+    return shoot(state,destDribble,power)
 
-def dribbler(state, theta, powerD):#TODO dribbler un adversaire => creer meth. approche (control + dribble), attaqueSR(dribble + shoot)
+def avancerBalle(state, theta, power):
     can_continue = free_continue(state, state.opponents(), 10.)
     if can_continue == True:
-        controler(state, power(state, dribble=False))
-    destDribble =  
-    return shoot(state,destDribble,powerD)
+        controler(state, power(False))
+    return dribbler(state, can_continue, theta, power(True))
+
+def essayerBut(state, alpha, beta, theta, power):
+    can_continue = free_continue(state, state.opponents(), 10.)
+    if can_continue == True or state.distance(state.opp_goal) < can_continue.position.distance(state.opp_goal):
+        return foncer(state, forceShoot(state, alpha, beta))
+    return dribbler(state,can_continue,theta, power) #power(True)
 
 def degager_solo(state):
     ecart_x = profondeurDegagement
@@ -112,7 +114,7 @@ def intercepter_balle(state,n):
     return aller_acc(Vector2D(ax,ay))
 
 
-def force(state, alpha, beta):
+def forceShoot(state, alpha, beta):
     vect = Vector2D(-1.,0.)
     u = state.opp_goal - state.my_pos
     dist = u.norm 

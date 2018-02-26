@@ -3,7 +3,7 @@ from .tools import StateFoot, get_random_strategy, get_empty_strategy, is_in_rad
 from .conditions import must_intercept_gk, can_shoot, temps_interception, is_in_box, is_defense_zone, is_close_goal, is_close_ball
 from .behaviour import shoot, beh_fonceurNormal, beh_fonceurChallenge1, beh_fonceur, controler, decaler,\
         foncer, degager, degager_solo, aller_vers_balle, aller_vers_cage, intercepter_balle, \
-        fonceurCh1ApprochePower, force, power
+        fonceurCh1ApprochePower, forceShoot, power
 
 ## Strategie aleatoire
 class RandomStrategy(Strategy):
@@ -22,7 +22,7 @@ class FonceurStrategy(Strategy):
         me = StateFoot(state,id_team,id_player)
         if can_shoot(me):
             return foncer(me, beh_fonceur(me, "normal"))
-            #return foncer(me, force(me, self.alpha, self.beta))
+            #return foncer(me, forceShoot(me, self.alpha, self.beta))
         return aller_vers_balle(me)
 
 ## Strategie FonceurChallenge1
@@ -45,7 +45,7 @@ class AttaquantStrategy(Strategy):
         me = StateFoot(state,id_team,id_player)
         if can_shoot(me):
             if is_close_goal(me):
-                return foncer(me, force(me, self.alpha, self.beta))
+                return essayerBut(me, self.alpha, self.beta, self.theta)
             return dribbler(me)
         if is_defense_zone(me):
             return decaler(me)
