@@ -35,7 +35,7 @@ def getDistinctTuple(low=0, high):
 @total_ordering
 class dictParams(object):
     def __init__(self):
-        self.params = {"alpha": 0., "beta":0., "power":0.,"tempsI":0, "angle":0.}
+        self.params = {'alpha': 0., 'beta':0., 'power':0.,'tempsI':0, 'angle':0.}
         self.pts = 0 # le nombre de points obtenus (V,N,D) = (3,1,0)
         self.fg = 0     # le nombre de buts marques
         self.ag = 0     # le nombre de buts encaisses
@@ -54,8 +54,8 @@ class dictParams(object):
             Renvoie un dictionnaire avec les bornes de chaque 
             parametre
         """
-        return {"alpha": (0.,0.), "beta":(0.,0.), "power":(0.,0.),"tempsI":(0.,0.), \
-                "angle":(0.,0.)}
+        return {'alpha': (0.,0.), 'beta':(0.,0.), 'power':(0.,0.),'tempsI':(0.,0.), \
+                'angle':(0.,0.)}
     
     def random(self, parameters):
         """
@@ -86,39 +86,46 @@ class dictParams(object):
         self.fg = 0
         self.ag = 0
         
+    def printParams(self, parameters):
+        for p in parameters:
+            print(p, ":", self.params[p])
+
+
 class GKStrikerTeam(object):
     def __init__(self, size=20, keep=0.4, coProb=0.7, mProb=0.08):
+        self.name = "GKStrikerTeam"
         self.team = None
         self.keep = keep # pourcentage de conservation
         self.coProb = coProb # probabilite de croisement
         self.mProb = mProb # probabilite de mutation
         self.gk = GardienStrategy() # strategie goalkeeper (gk)
         self.st = FonceurStrategy() # strategie striker (st)
-        self.params = [dictParams()]*size # vecteurs de parametres
-        self.gk_params = ["tempsI"] # parametres du gk
-        self.st_params = ["alpha", "beta", "angle"] # parametres du st
+        self.vectors = [dictParams()]*size # vecteurs de parametres
+        self.gk_params = ['tempsI'] # parametres du gk
+        self.st_params = ['alpha', 'beta', 'angle'] # parametres du st
 
     def random(self):
         """
             Randomise tous les vecteurs
         """
         pList = self.gk_params + self.st_params
-        for p in self.params:
-            p.random(pList)
+        for v in self.vectors:
+            v.random(pList)
 
     def restart(self):
         """
             Remet a zero tous les compteurs de chaque vecteur
         """
-        for p in self.params:
-            p.restart()
+        for v in self.vectors:
+            v.restart()
 
     def getTeam(self, i):
         """
             Renvoie l'equipe composee des strategies contenues 
-            dans l'instance avec l'i-ieme vecteur de parametres
+            dans l'instance avec l'i-ieme vecteur de parametres, 
+            ie une SoccerTeam
         """
-        params = self.params[i]
+        params = self.vectors[i].params
         for p in self.gk_params:
             self.gk.dictGK[p] = params[p]
         for p in self.st_params:
@@ -130,34 +137,34 @@ class GKStrikerTeam(object):
 
     def getVector(self, i):
         """
-            Renvoie l'i-ieme vecteur de parametres
+            Renvoie l'i-ieme vecteur de parametres, ie un dictParams
         """
-        return self.params[i]
+        return self.vectors[i]
 
     def crossover(self, i, j, k):
         """
             Fait un croisement entre les vecteurs i- et j-ieme 
             et le met dans le k-ieme vecteur
         """
-        pi = self.params[i]
-        pj = self.params[j]
-        pk = pi.deepcopy()
+        vi = self.vectors[i]
+        vj = self.vectos[j]
+        vk = vi.deepcopy()
         pList = self.gk_params + self.st_params
         index = random.randrange(0, len(pList))
         for l in range(index):
-            pk.params[pList[l]] = pj.params[pList[l]]
+            vk.params[pList[l]] = vj.params[pList[l]]
 
     def addNoise(self, i, p):
         """
             Ajoute du bruit au parametre p de l'i-ieme vecteur 
             de parametres
         """
-        val = self.params[i].params[p]
+        val = self.vectors[i].params[p]
         while True:
             valNoise = val * random.uniform(0.9,1.1)
-            if valNois == val: continue
-            self.params[i].params[p] = valNoise
-            if self.params[i].isValid(p):
+            if valNoise == val: continue
+            self.vectors[i].params[p] = valNoise
+            if self.vectors[i].isValid(p):
                 break
     
     def mutation(self, i, j, k):
@@ -178,15 +185,25 @@ class GKStrikerTeam(object):
             soit une mutation, soit un croisement des meilleurs
             scores
         """
-        self.params.sort()
-        size = len(self.params)
+        self.vectors.sort()
+        size = len(self.vectors)
         nKeep = int(size * self.keep)
         for k in range(nKeep, size):
-            #TODO la, on ne modifie pas tous les mauvais resultats,
-            # il faut utiliser une boucle infinie avec break lorsque 
-            # le mauvais resultat a disparu
-            i, j = getDistinctTuple(high=nKeep)
-            if random.random() < self.mProb:
-                self.mutation(i, j, k)
-            elif random.random() < self.coProb:
-                self.crossover(i, j, k)
+            while True:
+                i, j = getDistinctTuple(high=nKeep)
+                if random.random() < self.mProb:
+                    self.mutation(i, j, k)
+                    break
+                elif random.random() < self.coProb:
+                    self.crossover(i, j, k)
+                    break
+
+    def printVectors(self, nVect):
+        print(self.name)
+        pList = self.gk_params + self.st_params
+        for i range(nVect):
+            print(i+1, end='')
+            self.vectors[i].printParams(pList)
+
+    def printAllVectors(self):
+        self.printVectors(len(self.vectors))
