@@ -26,8 +26,8 @@ def is_in_box(stateFoot, attaque=True):
 def is_close_ball(stateFoot):
     return stateFoot.distance(stateFoot.ball_pos) <= PLAYER_RADIUS + BALL_RADIUS
 
-def is_close_goal(stateFoot):
-    return is_in_radius_action(stateFoot, stateFoot.opp_goal, 27.)
+def is_close_goal(stateFoot, distShoot=27.):
+    return is_in_radius_action(stateFoot, stateFoot.opp_goal, distShoot)
 
 def must_intercept_gk(stateFoot, distance=20.):
     return is_in_radius_action(stateFoot, stateFoot.my_goal, distance) 

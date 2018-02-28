@@ -3,7 +3,7 @@ from soccersimulator.settings import GAME_WIDTH, GAME_HEIGHT, maxPlayerShoot, ma
         ballBrakeConstant
 from .tools import Wrapper, StateFoot, normalise_diff, coeff_vitesse_reduite, is_upside, free_continue
 from .conditions import high_precision_shoot, profondeurDegagement, largeurDegagement
-from math import acos, exp
+from math import acos, exp, atan2, sin, cos
 
 distMaxFonceurCh1Shoot = GAME_WIDTH/3.
 distMaxFonceurNormShoot = GAME_WIDTH/4.
@@ -44,21 +44,25 @@ def power(dribble):
 def controler(state, power=controlPower):
     return shoot(state,state.opp_goal,power)
 
-def dribbler(state, opp, theta, power):
-    destDribble = Vector2D() 
-    return shoot(state,destDribble,power)
+def dribbler(state, opp, theta, powerDribble):
+    destDribble = Vector2D()
+    oPos = opp.position
+    angle = atan2(oPos.y-state.my_pos.y,oPos.x-state.my_pos.x) + theta
+    destDribble.x = cos(angle)
+    destDribble.y = sin(angle)
+    return shoot(state,state.ball_pos + destDribble,powerDribble)
 
-def avancerBalle(state, theta, power):
-    can_continue = free_continue(state, state.opponents(), 10.)
+def avancerBalle(state, theta, powerDribble, distDribble):
+    can_continue = free_continue(state, state.opponents(), distDribble)
     if can_continue == True:
-        controler(state, power(False))
-    return dribbler(state, can_continue, theta, power(True))
+        return controler(state, 0.98) #power(False)
+    return dribbler(state, can_continue, theta, powerDribble) #power(True)
 
-def essayerBut(state, alpha, beta, theta, power):
-    can_continue = free_continue(state, state.opponents(), 10.)
+def essayerBut(state, alpha, beta, theta, powerDribble, distDribble):
+    can_continue = free_continue(state, state.opponents(), distDribble)
     if can_continue == True or state.distance(state.opp_goal) < can_continue.position.distance(state.opp_goal):
         return foncer(state, forceShoot(state, alpha, beta))
-    return dribbler(state,can_continue,theta, power) #power(True)
+    return dribbler(state,can_continue,theta, powerDribble) #power(True)
 
 def degager_solo(state):
     ecart_x = profondeurDegagement

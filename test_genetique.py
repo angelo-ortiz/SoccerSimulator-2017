@@ -1,13 +1,15 @@
 from soccersimulator import SoccerTeam, Simulation
 from soccersimulator import show_simu
-from ia.opt_generique import setCounters, dictParams, GKStrikerTeam, GKCForwardTeam
+from ia.opt_genetique import setCounters, dictParams, GKStrikerTeam#, GKCForwardTeam
+import random
 
-size = 30
-nbIter = 1000
-gk_st_team = GKStrikerTeam(size)
-gk_st_team.random()
-gk_cf_team = GKCForwardTeam(size)
-gk_cf_team.random()
+size = 50
+nbIter = 500
+nVect = 5
+gk_st_team = GKStrikerTeam(size=size)
+gk_st_team.start()
+gk_cf_team = GKStrikerTeam(size=size) #GKCForwardTeam(size)
+gk_cf_team.start()
 for i in range(nbIter):
     gk_st_team.restart()
     gk_cf_team.restart()
@@ -22,5 +24,11 @@ for i in range(nbIter):
                 team[1], team[2] = team[2], team[1]
             simu = Simulation(team[1][0],team[2][0])
             setCounters(simu, team[1][1], team[2][1])
+            #show_simu(simu)
+    gk_st_team.update()
+    gk_cf_team.update()
 
-#show_simu(simu)
+gk_st_team.printVectors(nVect)
+gk_cf_team.printVectors(nVect)
+simu = Simulation(gk_st_team.getBestTeam(),gk_cf_team.getBestTeam())
+show_simu(simu)

@@ -2,7 +2,10 @@
 from __future__ import print_function, division
 from soccersimulator import SoccerTeam
 from ia.strategies import FonceurStrategy, GardienStrategy, AttaquantStrategy
+from functools import total_ordering
 import random
+import copy
+import math
 
 def setCounters(simu, team1, team2):
     """
@@ -21,7 +24,7 @@ def setCounters(simu, team1, team2):
     else:
         team2.pts += 3
 
-def getDistinctTuple(low=0, high):
+def getDistinctTuple(low=0, high=30):
     """
     Renvoie un couple d'entiers distincts compris entre 
     low (inclus) et high (exlu)
@@ -35,16 +38,17 @@ def getDistinctTuple(low=0, high):
 @total_ordering
 class dictParams(object):
     def __init__(self):
-        self.params = {'alpha': 0., 'beta':0., 'power':0.,'tempsI':0, 'angle':0.}
+        self.params = {'alpha': 0., 'beta': 0., 'powerDribble': 0.,'tempsI': 0, 'angle': 0., \
+                'n': 0, 'distInter': 0., 'distShoot' : 0., 'distDribble' : 0.}
         self.pts = 0 # le nombre de points obtenus (V,N,D) = (3,1,0)
         self.fg = 0     # le nombre de buts marques
         self.ag = 0     # le nombre de buts encaisses
 
-    def __lt__(self, ther):
+    def __lt__(self, other):
         return ((self.pts, self.fg - self.ag, self.fg) < \
                 (other.pts, other.fg - other.ag, other.fg))
     
-    def __eq__(self, ther):
+    def __eq__(self, other):
         return ((self.pts, self.fg - self.ag, self.fg) == \
                 (other.pts, other.fg - other.ag, other.fg))
 
@@ -54,8 +58,9 @@ class dictParams(object):
             Renvoie un dictionnaire avec les bornes de chaque 
             parametre
         """
-        return {'alpha': (0.,0.), 'beta':(0.,0.), 'power':(0.,0.),'tempsI':(0.,0.), \
-                'angle':(0.,0.)}
+        return {'alpha': (0.,1.), 'beta': (0.4,1.), 'powerDribble': (0.,6.),'tempsI': (0,50), \
+                'angle': (-math.pi/2.,math.pi/2.), 'n': (0,50), 'distInter': (0., 100), \
+                'distShoot' : (0., 70.), 'distDribble' : (0., 50.)}
     
     def random(self, parameters):
         """
@@ -95,20 +100,23 @@ class GKStrikerTeam(object):
     def __init__(self, size=20, keep=0.4, coProb=0.7, mProb=0.08):
         self.name = "GKStrikerTeam"
         self.team = None
+        self.size = size # nombre de vecteurs
         self.keep = keep # pourcentage de conservation
         self.coProb = coProb # probabilite de croisement
         self.mProb = mProb # probabilite de mutation
         self.gk = GardienStrategy() # strategie goalkeeper (gk)
-        self.st = FonceurStrategy() # strategie striker (st)
-        self.vectors = [dictParams()]*size # vecteurs de parametres
-        self.gk_params = ['tempsI'] # parametres du gk
-        self.st_params = ['alpha', 'beta', 'angle'] # parametres du st
+        self.st = AttaquantStrategy() #FonceurStrategy() # strategie striker (st)
+        self.vectors = [] # vecteurs de parametres
+        self.gk_params = ['tempsI', 'n', 'distInter'] # parametres du gk
+        self.st_params = ['alpha', 'beta', 'angle', 'powerDribble', 'distShoot', 'distDribble'] # parametres du st
 
-    def random(self):
+    def start(self):
         """
-            Randomise tous les vecteurs
+            Cree et randomise tous les vecteurs
         """
         pList = self.gk_params + self.st_params
+        for i in range(self.size):
+            self.vectors.append(dictParams())
         for v in self.vectors:
             v.random(pList)
 
@@ -135,6 +143,13 @@ class GKStrikerTeam(object):
         self.team.add(self.st.name, self.st)
         return self.team
 
+    def getBestTeam(self):
+        """
+            Renvoie l'equipe qui reussit le mieux les matches
+        """
+        self.vectors.sort()
+        return self.getTeam(0)
+
     def getVector(self, i):
         """
             Renvoie l'i-ieme vecteur de parametres, ie un dictParams
@@ -147,8 +162,8 @@ class GKStrikerTeam(object):
             et le met dans le k-ieme vecteur
         """
         vi = self.vectors[i]
-        vj = self.vectos[j]
-        vk = vi.deepcopy()
+        vj = self.vectors[j]
+        vk = copy.deepcopy(vi)
         pList = self.gk_params + self.st_params
         index = random.randrange(0, len(pList))
         for l in range(index):
@@ -176,7 +191,7 @@ class GKStrikerTeam(object):
         self.crossover(i, j, k)
         pList = self.gk_params + self.st_params
         pl = random.randrange(0, len(pList))
-        self.addNoise(self, k, pList[pl])
+        self.addNoise(k, pList[pl])
 
     def update(self):
         """
@@ -191,19 +206,28 @@ class GKStrikerTeam(object):
         for k in range(nKeep, size):
             while True:
                 i, j = getDistinctTuple(high=nKeep)
-                if random.random() < self.mProb:
+                r = random.random()
+                if r < self.mProb:
                     self.mutation(i, j, k)
                     break
-                elif random.random() < self.coProb:
+                elif r < self.coProb:
                     self.crossover(i, j, k)
                     break
 
     def printVectors(self, nVect):
+        """
+            Affiche les nVect premiers vecteurs de parametres 
+        """
         print(self.name)
         pList = self.gk_params + self.st_params
-        for i range(nVect):
-            print(i+1, end='')
+        for i in range(nVect):
+            print(i+1, "/ ", end='')
             self.vectors[i].printParams(pList)
+            print()
 
     def printAllVectors(self):
+        """
+            Affiche tous les vecteurs de parametres
+        """
         self.printVectors(len(self.vectors))
+        print("==================================================")

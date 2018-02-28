@@ -139,11 +139,11 @@ def free_continue(state, liste, distRef):
     j = liste[0]
     dist_min = state.distance_ball(j.position)
     for i in liste[1::]:
-        dist_i = self.distance_ball(i.position)
+        dist_i = state.distance_ball(i.position)
         if dist_i < dist_min:
             j = i
             dist_min = dist_i
-    if dist_min <= distRef:
+    if dist_min <= distRef and state.distance(state.opp_goal) > j.position.distance(state.opp_goal):
         return j
     return True
 
