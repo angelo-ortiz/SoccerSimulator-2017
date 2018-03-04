@@ -67,6 +67,20 @@ class StateFoot(Wrapper):
     def center_point(self):
         return Vector2D(self.width/2., self.goal_height)
 
+    def quadrant(self):
+        mp = self.my_pos
+        cp = self.center_point
+        if mp.x < cp.x:
+            if mp.y > cp.y:
+                return "II"
+            else:
+                return "III"
+        else:
+            if mp.y > cp.y:
+                return "I"
+            else:
+                return "IV"
+
     @property
     def nearest_opp(self):
         liste = self.opponents()

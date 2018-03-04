@@ -37,15 +37,37 @@ class FonceurChallenge1Strategy(Strategy):
 
 ## Strategie Attaquant
 class AttaquantStrategy(Strategy):
-    def __init__(self, alpha=0.2, beta=0.7, angle=0., powerDribble=6., distShoot=27., distDribble=10.):
+    #def __init__(self, alpha=0.2, beta=0.7, angleDribble=0., powerDribble=6., distShoot=27., distDribble=10., angleGardien=0.):
+    #def __init__(self, alpha=0.5700617892748253, beta=0.9687075326265157, angleDribble=-0.05111838400840796, powerDribble=1.1307188761187168, distShoot=44.05783413958745, distDribble=15.204489315456959, angleGardien=0.20031270839106471):
+    #def __init__(self, alpha=0.34872582965235477, beta=0.5938091014432113, angleDribble=-1.3571175260326729, powerDribble=5.492782232619749, distShoot=56.168043983702184, distDribble=26.165301649104013, angleGardien=0.14071454319593008):
+    #def __init__(self, alpha=0.029328380536960852, beta=0.8102839933444099, angleDribble=0.2383687440209621, powerDribble=5.408480987627415, distShoot=39.31577385201216, distDribble=22.964594297665375, angleGardien=0.22071454319593008):
+    #def __init__(self, alpha=0.713577041027907, beta=0.9539444724213427, angleDribble=1.4359552093859227, powerDribble=5.836715877613142, distShoot=40.35131904440021, distDribble=21.019052895101332, angleGardien=0.22071454319593008, coeffAD=1.2968508106333991):
+    def __init__(self, alpha=0.2, beta=0.7, angleDribble=1.4359552093859227, powerDribble=5.836715877613142, distShoot=60.35131904440021, distDribble=21.019052895101332, angleGardien=0.22071454319593008, coeffAD=1.2968508106333991):
         Strategy.__init__(self,"Attaquant")
-        self.dictST = {'alpha': alpha, 'beta': beta, 'angle': angle, 'powerDribble': powerDribble, 'distShoot': distShoot}
+        self.dictST = {'alpha': alpha, 'beta': beta, 'angleDribble': angleDribble, 'powerDribble': powerDribble, 'distShoot': distShoot, 'distDribble': distDribble, 'angleGardien': angleGardien, 'coeffAD': coeffAD}
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if can_shoot(me):
             if is_close_goal(me, self.dictST['distShoot']):
-                return essayerBut(me, self.dictST['alpha'], self.dictST['beta'], self.dictST['angle'], self.dictST['powerDribble'], self.dictST['distDribble'])
-            return avancerBalle(me, self.dictST['angle'], self.dictST['powerDribble'], self.dictST['distDribble'])
+                return essayerBut(me, self.dictST['alpha'], self.dictST['beta'], self.dictST['angleDribble'], self.dictST['powerDribble'], self.dictST['distDribble'], self.dictST['angleGardien'], self.dictST['coeffAD'])
+            return avancerBalle(me, self.dictST['angleDribble'], self.dictST['powerDribble'], self.dictST['distDribble'], self.dictST['coeffAD'])
+        if is_defense_zone(me):
+            return decaler(me)
+        return aller_vers_balle(me)
+
+## Strategie Attaquant
+class AttaquantPrecStrategy(Strategy):
+    def __init__(self, alpha=0.2, beta=0.7, angleDribble=0., powerDribble=6., distShoot=27., distDribble=10., angleGardien=0.):
+        Strategy.__init__(self,"Attaquant")
+        self.dictST = {'alpha': alpha, 'beta': beta, 'angleDribble': angleDribble, 'powerDribble': powerDribble, 'distShoot': distShoot, 'distDribble': distDribble, 'angleGardien': angleGardien}
+    def compute_strategy(self,state,id_team,id_player):
+        me = StateFoot(state,id_team,id_player)
+        if can_shoot(me):
+            if is_close_goal(me, self.dictST['distShoot']):
+                foncer(me, power(self.dictST['alpha'], self.dictST['beta']))
+                #return essayerBut(me, self.dictST['alpha'], self.dictST['beta'], self.dictST['angleDribble'], self.dictST['powerDribble'], self.dictST['distDribble'], self.dictST['angleGardien'])
+            #return avancerBalle(me, self.dictST['angleDribble'], self.dictST['powerDribble'], self.dictST['distDribble'])
+            return controler(me, power(me))
         if is_defense_zone(me):
             return decaler(me)
         return aller_vers_balle(me)
@@ -64,8 +86,11 @@ class BalleAuPiedStrategy(Strategy):
 
 ## Strategie Gardien
 class GardienStrategy(Strategy):
-    def __init__(self, tempsI=6, n=6, distInter=15.):
+    #def __init__(self, tempsI=6, n=6, distInter=15.):
+    def __init__(self, tempsI=12, n=0, distInter=30):
+    #def __init__(self, tempsI=15.189582048077039, n=0, distInter=27.308626539829262):
         Strategy.__init__(self,"Gardien")
+        n = tempsI #TODO ajout ???
         self.dictGK = {'tempsI': tempsI, 'n': n, 'distInter': distInter}
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
@@ -88,7 +113,8 @@ class GardienPrecStrategy(Strategy):
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if can_shoot(me):
-            return degager_solo(me)
+            #return degager_solo(me)
+            return degager(me)
         if must_intercept_gk(me):
             return intercepter_balle(me,10.)
         return aller_vers_cage(me)

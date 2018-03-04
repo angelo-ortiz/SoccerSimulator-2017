@@ -53,3 +53,14 @@ def temps_interception(state):
     if n_inst[idp] == 0:
         n_inst[idp] = interceptionCourte if courte[idp] else interceptionLongue 
     return n_inst[idp]
+
+def empty_goal(state, opp, angle):
+    vGoal = (state.opp_goal - state.ball_pos).normalize()
+    vOpp = (opp.position - state.ball_pos).normalize()
+    if vGoal.dot(vOpp) >= angle:
+        return True
+    try:
+        state.dribbleGardien = not state.dribbleGardien
+    except AttributeError:
+        state.dribbleGardien = True
+    return not state.dribbleGardien

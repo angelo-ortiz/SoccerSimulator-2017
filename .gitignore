@@ -2,3 +2,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 jouer.py
+Foot/
+module/
+confronter_best.py
+match_2equipes.py

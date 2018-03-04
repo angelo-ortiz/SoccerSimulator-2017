@@ -6,6 +6,7 @@ from ia.strategies import FonceurStrategy, FonceurChallenge1Strategy
 from ia.tools import StateFoot
 from ia.conditions import can_shoot
 from math import cos, sin, pi
+from Foot import Fonceur as FSF
 
 class ParamSearchShoot(object):
     def __init__(self, strategy, params, simu=None, trials=20, max_steps=1000000,
@@ -108,7 +109,7 @@ class ParamSearchShoot(object):
         return self.res
 
 class ParamSearchGoal(object):
-    def __init__(self, strategy, params, simu=None, trials=20, max_steps=1000000,
+    def __init__(self, strategy, params, simu=None, trials=40, max_steps=1000000,
                  max_round_step=40):
         self.strategy = strategy
         self.params = params.copy()
@@ -122,7 +123,7 @@ class ParamSearchGoal(object):
             team1 = SoccerTeam("Team Goal")
             team2 = SoccerTeam("Team Shooter")
             team1.add(self.strategy.name, self.strategy)
-            team2.add(FonceurStrategy().name, FonceurStrategy())
+            team2.add(FSF().name, FSF())
             self.simu = Simulation(team1, team2, max_steps=self.max_steps)
         self.simu.listeners += self
 

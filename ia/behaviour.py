@@ -2,8 +2,9 @@ from soccersimulator import SoccerAction, Vector2D
 from soccersimulator.settings import GAME_WIDTH, GAME_HEIGHT, maxPlayerShoot, maxPlayerAcceleration, \
         ballBrakeConstant
 from .tools import Wrapper, StateFoot, normalise_diff, coeff_vitesse_reduite, is_upside, free_continue
-from .conditions import high_precision_shoot, profondeurDegagement, largeurDegagement
-from math import acos, exp, atan2, sin, cos
+from .conditions import high_precision_shoot, profondeurDegagement, largeurDegagement, empty_goal, is_close_goal
+from math import acos, exp, atan, atan2, sin, cos
+import random
 
 distMaxFonceurCh1Shoot = GAME_WIDTH/3.
 distMaxFonceurNormShoot = GAME_WIDTH/4.
@@ -44,25 +45,40 @@ def power(dribble):
 def controler(state, power=controlPower):
     return shoot(state,state.opp_goal,power)
 
-def dribbler(state, opp, theta, powerDribble):
+def dribbler(state, opp, angleDribble, powerDribble, coeffAD):
     destDribble = Vector2D()
     oPos = opp.position
-    angle = atan2(oPos.y-state.my_pos.y,oPos.x-state.my_pos.x) + theta
+    angle = atan2(oPos.y-state.my_pos.y,oPos.x-state.my_pos.x)
+    theta = atan((abs(oPos.y-state.my_pos.y) / abs(oPos.x-state.my_pos.x)))/acos(0.)
+    rand = exp(-coeffAD*theta)/2.
+    quad = state.quadrant()
+    if random.random() < rand:
+        # mauvais angle (trop proche de la ligne des cages)
+        if quad == "II" or quad == "IV":
+            angleDribble = -angleDribble
+    else:
+        # bon angle
+        if quad == "I" or quad == "III":
+            angleDribble = -angleDribble
+    angle += angleDribble
     destDribble.x = cos(angle)
     destDribble.y = sin(angle)
     return shoot(state,state.ball_pos + destDribble,powerDribble)
 
-def avancerBalle(state, theta, powerDribble, distDribble):
+def avancerBalle(state, angleDribble, powerDribble, distDribble, coeffAD):
     can_continue = free_continue(state, state.opponents(), distDribble)
     if can_continue == True:
         return controler(state, 0.98) #power(False)
-    return dribbler(state, can_continue, theta, powerDribble) #power(True)
+    return dribbler(state, can_continue, angleDribble, powerDribble, coeffAD) #power(True)
 
-def essayerBut(state, alpha, beta, theta, powerDribble, distDribble):
+def essayerBut(state, alpha, beta, angleDribble, powerDribble, distDribble, angleGardien, coeffAD):
     can_continue = free_continue(state, state.opponents(), distDribble)
-    if can_continue == True or state.distance(state.opp_goal) < can_continue.position.distance(state.opp_goal):
-        return foncer(state, forceShoot(state, alpha, beta))
-    return dribbler(state,can_continue,theta, powerDribble) #power(True)
+    if can_continue == True or state.distance(state.opp_goal) < can_continue.position.distance(state.opp_goal):# or empty_goal(state, can_continue, angleGardien):
+        if is_close_goal(state, 40.):
+            return foncer(state, forceShoot(state, alpha, beta))
+        else:
+            return controler(state, 0.98)
+    return dribbler(state,can_continue,angleDribble, powerDribble, coeffAD) #power(True)
 
 def degager_solo(state):
     ecart_x = profondeurDegagement
@@ -75,7 +91,7 @@ def degager_solo(state):
 
 def degager(state):
     tm = state.tt()[0]
-    ecart_x = profondeurDegagement - 15.
+    ecart_x = profondeurDegagement# - 15.
     if not state.is_team_left(): ecart_x = -ecart_x 
     ecart_y = largeurDegagement
     if tm.position.y < state.center_point.y:  ecart_y = -ecart_y
@@ -122,5 +138,5 @@ def forceShoot(state, alpha, beta):
     vect = Vector2D(-1.,0.)
     u = state.opp_goal - state.my_pos
     dist = u.norm 
-    theta = acos((vect.dot(u))/(u.norm*vect.norm))/acos(0.)
+    theta = acos(abs(vect.dot(u))/u.norm)/acos(0.)
     return maxPlayerShoot*(1.-exp(-(alpha*dist)))*exp(-beta*theta)

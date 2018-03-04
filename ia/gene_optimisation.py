@@ -24,6 +24,19 @@ def setCounters(simu, team1, team2):
     else:
         team2.pts += 3
 
+def setCountersSolo(simu, team1):
+    """
+        Met a jour les compteurs des deux vecteurs qui 
+        ont participe au dernier match avec les regles 
+        connues du football (buts et points)
+    """
+    team1.fg = simu.get_score_team(1)
+    team1.ag = simu.get_score_team(2)
+    if team1.fg > team1.ag:
+        team1.pts += 3
+    elif team1.fg == team1.ag:
+        team1.pts += 1
+
 def getDistinctTuple(low=0, high=30):
     """
     Renvoie un couple d'entiers distincts compris entre 
@@ -38,8 +51,9 @@ def getDistinctTuple(low=0, high=30):
 @total_ordering
 class dictParams(object):
     def __init__(self):
-        self.params = {'alpha': 0., 'beta': 0., 'powerDribble': 0.,'tempsI': 0, 'angle': 0., \
-                'n': 0, 'distInter': 0., 'distShoot' : 0., 'distDribble' : 0.}
+        self.params = {'alpha': 0., 'beta': 0., 'powerDribble': 0.,'tempsI': 0, 'angleDribble': 0., \
+                """'n': 0,""" 'distInter': 0., 'distShoot': 0., 'distDribble': 0., 'angleGardien': 0., \
+                       'coeffAD': 0.}
         self.pts = 0 # le nombre de points obtenus (V,N,D) = (3,1,0)
         self.fg = 0     # le nombre de buts marques
         self.ag = 0     # le nombre de buts encaisses
@@ -59,8 +73,9 @@ class dictParams(object):
             parametre
         """
         return {'alpha': (0.,1.), 'beta': (0.4,1.), 'powerDribble': (0.,6.),'tempsI': (0,50), \
-                'angle': (-math.pi/2.,math.pi/2.), 'n': (0,50), 'distInter': (0., 100), \
-                'distShoot' : (0., 70.), 'distDribble' : (0., 50.)}
+                'angleDribble': (-math.pi/2.,math.pi/2.), 'n': (0,50), 'distInter': (0., 40.), \
+                'distShoot': (0., 70.), 'distDribble': (0., 50.), 'angleGardien':  (0.,math.sqrt(2.)/2.), \
+'coeffAD': (0.7, 1.5)}
     
     def random(self, parameters):
         """
@@ -94,6 +109,9 @@ class dictParams(object):
     def printParams(self, parameters):
         for p in parameters:
             print(p, ":", self.params[p])
+        print("points : ", self.pts)
+        print("fg : ", self.fg)
+        print("ag : ", self.ag)
 
 
 class GKStrikerTeam(object):
@@ -107,8 +125,8 @@ class GKStrikerTeam(object):
         self.gk = GardienStrategy() # strategie goalkeeper (gk)
         self.st = AttaquantStrategy() #FonceurStrategy() # strategie striker (st)
         self.vectors = [] # vecteurs de parametres
-        self.gk_params = ['tempsI', 'n', 'distInter'] # parametres du gk
-        self.st_params = ['alpha', 'beta', 'angle', 'powerDribble', 'distShoot', 'distDribble'] # parametres du st
+        self.gk_params = ['tempsI', 'distInter'] # parametres du gk
+        self.st_params = ['alpha', 'beta', 'angleDribble', 'powerDribble', 'distShoot', 'distDribble', 'angleGardien', 'coeffAD'] # parametres du st
 
     def start(self):
         """
@@ -200,7 +218,7 @@ class GKStrikerTeam(object):
             soit une mutation, soit un croisement des meilleurs
             scores
         """
-        self.vectors.sort()
+        self.vectors.sort(reverse=True)
         size = len(self.vectors)
         nKeep = int(size * self.keep)
         for k in range(nKeep, size):
