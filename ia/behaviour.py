@@ -74,7 +74,7 @@ def avancerBalle(state, angleDribble, powerDribble, distDribble, coeffAD):
 def essayerBut(state, alpha, beta, angleDribble, powerDribble, distDribble, angleGardien, coeffAD):
     can_continue = free_continue(state, state.opponents(), distDribble)
     if can_continue == True or state.distance(state.opp_goal) < can_continue.position.distance(state.opp_goal):# or empty_goal(state, can_continue, angleGardien):
-        if is_close_goal(state, 40.):
+        if is_close_goal(state):
             return foncer(state, forceShoot(state, alpha, beta))
         else:
             return controler(state, 0.98)
