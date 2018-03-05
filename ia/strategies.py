@@ -89,7 +89,7 @@ class BalleAuPiedStrategy(Strategy):
 ## Strategie Gardien
 class GardienStrategy(Strategy):
     #def __init__(self, tempsI=6, n=6, distInter=15.):
-    def __init__(self, tempsI=30.65708396899728, n=0, distInter=27.43754193114671):
+    def __init__(self, tempsI=12.65708396899728, n=0, distInter=20.43754193114671):
     #def __init__(self, tempsI=15.189582048077039, n=0, distInter=27.308626539829262):
         Strategy.__init__(self,"Gardien")
         n = tempsI #TODO ajout ???
@@ -105,7 +105,7 @@ class GardienStrategy(Strategy):
             if self.dictGK['n'] <= 0 :
                 self.dictGK['n'] = self.dictGK['tempsI'] - 1
                 return get_empty_strategy()
-            return intercepter_balle(me,self.dictGK['n'])
+            return intercepter_balle(self, me,self.dictGK['n'])
         return aller_vers_cage(me)
 
 ## Strategie Gardien

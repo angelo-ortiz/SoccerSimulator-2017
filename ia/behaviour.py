@@ -1,6 +1,6 @@
 from soccersimulator import SoccerAction, Vector2D
 from soccersimulator.settings import GAME_WIDTH, GAME_HEIGHT, maxPlayerShoot, maxPlayerAcceleration, \
-        ballBrakeConstant
+        ballBrakeConstant, playerBrackConstant
 from .tools import Wrapper, StateFoot, normalise_diff, coeff_vitesse_reduite, is_upside, free_continue
 from .conditions import high_precision_shoot, profondeurDegagement, largeurDegagement, empty_goal, is_close_goal
 from math import acos, exp, atan, atan2, sin, cos
@@ -121,17 +121,25 @@ def aller_vers_balle(state):
 def aller_vers_cage(state):
     return aller_dest(state,state.my_goal)
 
-def intercepter_balle(state,n):
+def intercepter_balle(strat, state,n):
     # n = 10
     v = state.my_speed
     r = state.my_pos
     vb = state.ball_speed
     rb = state.ball_pos
-    fc = ballBrakeConstant
-    coeff = coeff_vitesse_reduite(n,fc)
-    ax = -fc*((v.x-vb.x)*coeff+r.x-rb.x)/(n-coeff)
-    ay = -fc*((v.y-vb.y)*coeff+r.y-rb.y)/(n-coeff)
-    return aller_acc(Vector2D(ax,ay))
+    fb = ballBrakeConstant
+    fj = playerBrackConstant
+    coeffb = coeff_vitesse_reduite(n,fb)
+    coeffj = coeff_vitesse_reduite(n,fj)
+    ax = -fj*(v.x*coeffj-vb.x*coeffb+r.x-rb.x)/(n-coeffj)
+    ay = -fj*(v.y*coeffj-vb.y*coeffb+r.y-rb.y)/(n-coeffj)
+    nouv = Vector2D(ax, ay)
+    #prec = Vector2D()
+    #if hasattr(strat, 'accPrec'):
+    #    prec = strat.accPrec
+    #nouv = nouv - prec
+    #strat.accPrec = nouv
+    return aller_acc(nouv)#aller_acc(Vector2D(ax,ay))
 
 
 def forceShoot(state, alpha, beta):
