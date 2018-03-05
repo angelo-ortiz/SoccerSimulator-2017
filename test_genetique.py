@@ -4,7 +4,7 @@ from ia.gene_optimisation import setCounters, dictParams, GKStrikerTeam#, GKCFor
 import random
 
 size = 5#50
-nbIter = 5#500
+nbIter = 6#500
 nVect = 5
 gk_st_team = GKStrikerTeam(size=size)
 gk_st_team.start()
@@ -24,7 +24,7 @@ for n in range(nbIter):
                 team[1], team[2] = team[2], team[1]
             simu = Simulation(team[1][0],team[2][0])
             simu.start()
-            print(j)
+            #print(j)
             setCounters(simu, team[1][1], team[2][1])
             #show_simu(simu)
     print(n)

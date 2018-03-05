@@ -1,7 +1,8 @@
+from __future__ import print_function
 from soccersimulator import SoccerAction, Vector2D
 from soccersimulator.settings import GAME_WIDTH, GAME_HEIGHT, maxPlayerShoot, maxPlayerAcceleration, \
         ballBrakeConstant, playerBrackConstant
-from .tools import Wrapper, StateFoot, normalise_diff, coeff_vitesse_reduite, is_upside, free_continue
+from .tools import Wrapper, StateFoot, normalise_diff, coeff_vitesse_reduite, is_upside, free_continue, nearest_ball
 from .conditions import high_precision_shoot, profondeurDegagement, largeurDegagement, empty_goal, is_close_goal
 from math import acos, exp, atan, atan2, sin, cos
 import random
@@ -49,35 +50,45 @@ def dribbler(state, opp, angleDribble, powerDribble, coeffAD):
     destDribble = Vector2D()
     oPos = opp.position
     angle = atan2(oPos.y-state.my_pos.y,oPos.x-state.my_pos.x)
-    theta = atan((abs(oPos.y-state.my_pos.y) / abs(oPos.x-state.my_pos.x)))/acos(0.)
+    try:
+        theta = atan((abs(oPos.y-state.my_pos.y) / abs(oPos.x-state.my_pos.x)))/acos(0.)
+    except ZeroDivisionError:
+        theta = 1.
     rand = exp(-coeffAD*theta)/2.
     quad = state.quadrant()
     if random.random() < rand:
         # mauvais angle (trop proche de la ligne des cages)
         if quad == "II" or quad == "IV":
+            #print('negatif',end=' ')
             angleDribble = -angleDribble
+        #else:
+            #print('positif',end=' ')
     else:
         # bon angle
         if quad == "I" or quad == "III":
+            #print('negatif',end=' ')
             angleDribble = -angleDribble
+        #else:
+            #print('positif',end=' ')
     angle += angleDribble
+    #print(angle)
     destDribble.x = cos(angle)
     destDribble.y = sin(angle)
     return shoot(state,state.ball_pos + destDribble,powerDribble)
 
-def avancerBalle(state, angleDribble, powerDribble, distDribble, coeffAD):
-    can_continue = free_continue(state, state.opponents(), distDribble)
+def avancerBalle(state, angleDribble, powerDribble, rayDribble, coeffAD, powerControl):
+    can_continue = free_continue(state, state.opponents(), rayDribble)
     if can_continue == True:
-        return controler(state, 0.98) #power(False)
+        return controler(state, powerControl)#0.98) #power(False)
     return dribbler(state, can_continue, angleDribble, powerDribble, coeffAD) #power(True)
 
-def essayerBut(state, alpha, beta, angleDribble, powerDribble, distDribble, angleGardien, coeffAD):
-    can_continue = free_continue(state, state.opponents(), distDribble)
-    if can_continue == True or state.distance(state.opp_goal) < can_continue.position.distance(state.opp_goal):# or empty_goal(state, can_continue, angleGardien):
+def essayerBut(strat, state, alpha, beta, angleDribble, powerDribble, rayDribble, angleGardien, coeffAD, powerControl):
+    can_continue = free_continue(state, state.opponents(), rayDribble)
+    if can_continue == True or empty_goal(strat, state, can_continue, angleGardien):
         if is_close_goal(state):
             return foncer(state, forceShoot(state, alpha, beta))
         else:
-            return controler(state, 0.98)
+            return controler(state, powerControl)#0.98)
     return dribbler(state,can_continue,angleDribble, powerDribble, coeffAD) #power(True)
 
 def degager_solo(state):
@@ -85,12 +96,12 @@ def degager_solo(state):
     if not state.is_team_left(): ecart_x = -ecart_x 
     x = state.my_pos.x + ecart_x
     ecart_y = largeurDegagement
-    if not is_upside(state,state.nearest_opp.position):  ecart_y = -ecart_y
+    if not is_upside(state.my_pos,state.nearest_opp.position):  ecart_y = -ecart_y
     y = state.my_pos.y + ecart_y
     return shoot(state,Vector2D(x,y), maxPlayerShoot)
 
 def degager(state):
-    tm = state.tt()[0]
+    tm = state.teammates()[0]
     ecart_x = profondeurDegagement# - 15.
     if not state.is_team_left(): ecart_x = -ecart_x 
     ecart_y = largeurDegagement
@@ -99,12 +110,40 @@ def degager(state):
     return shoot(state,dec + state.center_point, maxPlayerShoot)
 
 def decaler(state):
+    opp = nearest_ball(state, state.opponents())
+    ecart_y = largeurDegagement
+    if is_upside(opp,state.center_point):  ecart_y = -ecart_y
     ecart_x = profondeurDegagement
     if state.is_team_left(): ecart_x = -ecart_x 
-    ecart_y = largeurDegagement
-    if not is_upside(state,state.center_point):  ecart_y = -ecart_y
     dec = Vector2D(ecart_x,ecart_y)
     return aller_dest(state, dec + state.center_point)
+
+def monterTerrain(state):
+    tm = state.teammates()[0]
+    dest = Vector2D()
+    dest.x = tm.position.x
+    dest.y = tm.position.y - state.height/2.
+    if dest.y < 0:
+        dest.y += state.height
+    return aller_dest(state, dest)
+
+def defendre_SR(state, raySortie):
+    """oppListe = state.opponents()
+    distMin = 5.
+    opp = None
+    for o in oppListe:
+        if state.distance_ball(o.position) < distMin:
+            opp = o.position
+            print('yes')
+            break
+    """
+    opp = state.ball_pos
+    trajectoire = state.my_goal
+    if opp is not None:
+        diff = opp - state.my_goal
+        diff.norm = raySortie
+        trajectoire += diff
+    return aller_dest(state,trajectoire)
 
 def aller_acc(acc):
     return SoccerAction(acc)
@@ -131,8 +170,8 @@ def intercepter_balle(strat, state,n):
     fj = playerBrackConstant
     coeffb = coeff_vitesse_reduite(n,fb)
     coeffj = coeff_vitesse_reduite(n,fj)
-    ax = -fj*(v.x*coeffj-vb.x*coeffb+r.x-rb.x)/(n-coeffj)
-    ay = -fj*(v.y*coeffj-vb.y*coeffb+r.y-rb.y)/(n-coeffj)
+    ax = fj*(rb.x-r.x + vb.x*coeffb-v.x*coeffj)/(n-coeffj)
+    ay = fj*(rb.y-r.y + vb.y*coeffb-v.y*coeffj)/(n-coeffj)
     nouv = Vector2D(ax, ay)
     #prec = Vector2D()
     #if hasattr(strat, 'accPrec'):
@@ -142,9 +181,9 @@ def intercepter_balle(strat, state,n):
     return aller_acc(nouv)#aller_acc(Vector2D(ax,ay))
 
 
-def forceShoot(state, alpha, beta):
+def forceShoot(state, alphaShoot, betaShoot):
     vect = Vector2D(-1.,0.)
     u = state.opp_goal - state.my_pos
     dist = u.norm 
     theta = acos(abs(vect.dot(u))/u.norm)/acos(0.)
-    return maxPlayerShoot*(1.-exp(-(alpha*dist)))*exp(-beta*theta)
+    return maxPlayerShoot*(1.-exp(-(alphaShoot*dist)))*exp(-betaShoot*theta)

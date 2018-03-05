@@ -51,9 +51,9 @@ def getDistinctTuple(low=0, high=30):
 @total_ordering
 class dictParams(object):
     def __init__(self):
-        self.params = {'alpha': 0., 'beta': 0., 'powerDribble': 0.,'tempsI': 0, 'angleDribble': 0., \
-                """'n': 0,""" 'distInter': 0., 'distShoot': 0., 'distDribble': 0., 'angleGardien': 0., \
-                       'coeffAD': 0.}
+        self.params = {'alphaShoot': 0., 'betaShoot': 0., 'powerDribble': 0.,'tempsI': 0, 'angleDribble': 0., \
+                """'n': 0,""" 'rayInter': 0., 'distShoot': 0., 'distDribble': 0., 'angleGardien': 0., \
+                'coeffAD': 0., 'distSortie': 0., 'raySortie': 0., 'powerControl': 0.}
         self.pts = 0 # le nombre de points obtenus (V,N,D) = (3,1,0)
         self.fg = 0     # le nombre de buts marques
         self.ag = 0     # le nombre de buts encaisses
@@ -72,10 +72,10 @@ class dictParams(object):
             Renvoie un dictionnaire avec les bornes de chaque 
             parametre
         """
-        return {'alpha': (0.,1.), 'beta': (0.4,1.), 'powerDribble': (0.,6.),'tempsI': (0,50), \
-                'angleDribble': (-math.pi/2.,math.pi/2.), 'n': (0,50), 'distInter': (0., 40.), \
-                'distShoot': (0., 70.), 'distDribble': (0., 50.), 'angleGardien':  (0.,math.sqrt(2.)/2.), \
-'coeffAD': (0.7, 1.5)}
+        return {'alphaShoot': (0.,1.), 'betaShoot': (0.4,1.), 'powerDribble': (0.,6.),'tempsI': (0,50), \
+                'angleDribble': (0.,math.pi/2.), 'n': (0,50), 'rayInter': (0., 40.), \
+                'distShoot': (0., 70.), 'distDribble': (0., 50.), 'angleGardien':  (math.sqrt(2.)/2.,1.), \
+                'coeffAD': (0.7, 1.5), 'distSortie': (40., 70.), 'raySortie': (0., 25.), 'powerControl': (0., 2.)}
     
     def random(self, parameters):
         """
@@ -107,6 +107,10 @@ class dictParams(object):
         self.ag = 0
         
     def printParams(self, parameters):
+        """
+            Affiche a l'ecran tous les parametres du vecteur 
+            et les resultats de l'experience
+        """
         for p in parameters:
             print(p, ":", self.params[p])
         print("points : ", self.pts)
@@ -125,8 +129,9 @@ class GKStrikerTeam(object):
         self.gk = GardienStrategy() # strategie goalkeeper (gk)
         self.st = AttaquantStrategy() #FonceurStrategy() # strategie striker (st)
         self.vectors = [] # vecteurs de parametres
-        self.gk_params = ['tempsI', 'distInter'] # parametres du gk
-        self.st_params = ['alpha', 'beta', 'angleDribble', 'powerDribble', 'distShoot', 'distDribble', 'angleGardien', 'coeffAD'] # parametres du st
+        self.gk_params = ['tempsI', 'rayInter', 'distSortie', 'raySortie'] # parametres du gk
+        self.st_params = ['alphaShoot', 'betaShoot', 'angleDribble', 'powerDribble', 'distShoot', \
+                'distDribble', 'angleGardien', 'coeffAD', 'powerControl'] # parametres du st
 
     def start(self):
         """

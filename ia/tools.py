@@ -91,14 +91,17 @@ class StateFoot(Wrapper):
                 opp = p
         return opp
 
-    def tt(self):
+    def teammates(self):
         team = self.my_team
-        liste = []
+        liste = [self.player_state(team,i) for i in range(self.nb_players(team))]
+        liste.remove(self.player_state(*self.key))
+        return liste
+        """
         for i in range(self.nb_players(team)):
             if i != self.me:
                 liste.append(self.player_state(team,i))
+        """
         #return [self.player_state(team,i) for i in range(self.nb_players(team))]
-        return liste
 
     def is_team_left(self):
         return self.my_team == 1
@@ -137,8 +140,8 @@ def is_in_radius_action(state,ref,distLimite):
 def distance_horizontale(v1, v2):
     return abs(v1.x-v2.x)
     
-def is_upside(state,vect):
-    return state.my_pos.y > vect.y
+def is_upside(ref,other):
+    return ref.y > other.y
     
 def get_random_vector():
     return Vector2D.create_random(-1.,1.)
@@ -149,15 +152,30 @@ def get_random_strategy():
 def get_empty_strategy():
     return SoccerAction()
 
+def nearest(state, ref, liste):
+    p = None
+    distMin = 1024.
+    for o in liste:
+        dist = ref.distance(o.position)
+        if dist < distMin:
+            p = o
+            distMin = dist
+    return p.position
+
+def nearest_ball(state, liste):
+    return nearest(state, state.ball_pos, liste)
+
 def free_continue(state, liste, distRef):
-    j = liste[0]
-    dist_min = state.distance_ball(j.position)
-    for i in liste[1::]:
+    j = None
+    og = state.opp_goal
+    dog = state.distance(og)
+    dist_min = distRef
+    for i in liste:
         dist_i = state.distance_ball(i.position)
-        if dist_i < dist_min:
+        if dist_i < dist_min and dog > i.position.distance(og):
             j = i
             dist_min = dist_i
-    if dist_min <= distRef and state.distance(state.opp_goal) > j.position.distance(state.opp_goal):
+    if j is not None:
         return j
     return True
 

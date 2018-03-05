@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from .tools import Wrapper, StateFoot, is_in_radius_action, distance_horizontale 
+from .tools import Wrapper, StateFoot, is_in_radius_action, distance_horizontale, nearest_ball
 from soccersimulator.settings import GAME_WIDTH, GAME_GOAL_HEIGHT, GAME_HEIGHT, BALL_RADIUS, \
         PLAYER_RADIUS
 
@@ -18,6 +18,17 @@ def must_intercept(stateFoot):
         return False
     return stateFoot.is_nearest_ball() 
 
+def is_under_pressure(stateFoot, joueur, rayPressing):
+    opp = nearest(stateFoot, joueur, stateFoot.opponents())
+    return stateFoot.distance(opp) < rayPressing
+
+def free_teammate(stateFoot, rayPressing):
+    tm = stateFoot.teammates()
+    for p in tm:
+        if not is_under_pressure(stateFoot, p, rayPressing):
+            return p
+    return None
+
 def is_in_box(stateFoot, attaque=True):
     goal = stateFoot.my_goal
     if attaque: goal = stateFoot.opp_goal
@@ -29,10 +40,17 @@ def is_close_ball(stateFoot):
 def is_close_goal(stateFoot, distShoot=27.):
     return is_in_radius_action(stateFoot, stateFoot.opp_goal, distShoot)
 
+def must_advance(stateFoot, distMontee):
+    return stateFoot.distance_ball(stateFoot.my_goal) >= distMontee and \
+            stateFoot.ball_speed.dot(stateFoot.ball_pos-stateFoot.my_goal) > 0
+
+def must_defend_goal(stateFoot, distSortie):
+    return is_in_radius_action(stateFoot, stateFoot.my_pos, distSortie)
+
 def must_intercept_gk(stateFoot, distance=20.):
     return is_in_radius_action(stateFoot, stateFoot.my_goal, distance) 
 
-def can_shoot(stateFoot):
+def has_ball_control(stateFoot):
     return is_close_ball(stateFoot) and stateFoot.player_state(*stateFoot.key).can_shoot()
 
 def is_defense_zone(state):
@@ -54,13 +72,14 @@ def temps_interception(state):
         n_inst[idp] = interceptionCourte if courte[idp] else interceptionLongue 
     return n_inst[idp]
 
-def empty_goal(state, opp, angle):
+def empty_goal(strat, state, opp, angle):
     vGoal = (state.opp_goal - state.ball_pos).normalize()
     vOpp = (opp.position - state.ball_pos).normalize()
-    if vGoal.dot(vOpp) >= angle:
+    if vGoal.dot(vOpp) <= angle:
+        #print(vGoal.dot(vOpp))
         return True
     try:
-        state.dribbleGardien = not state.dribbleGardien
+        strat.dribbleGardien = not strat.dribbleGardien
     except AttributeError:
-        state.dribbleGardien = True
-    return not state.dribbleGardien
+        strat.dribbleGardien = True
+    return not strat.dribbleGardien
