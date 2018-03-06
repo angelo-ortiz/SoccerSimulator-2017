@@ -3,8 +3,8 @@ from soccersimulator import show_simu
 from ia.gene_optimisation import setCounters, dictParams, GKStrikerTeam#, GKCForwardTeam
 import random
 
-size = 5#50
-nbIter = 6#500
+size = 10#50
+nbIter = 15#500
 nVect = 5
 gk_st_team = GKStrikerTeam(size=size)
 gk_st_team.start()

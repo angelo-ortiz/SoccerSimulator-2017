@@ -100,20 +100,20 @@ def degager_solo(state):
     y = state.my_pos.y + ecart_y
     return shoot(state,Vector2D(x,y), maxPlayerShoot)
 
-def degager(state):
+def degager(state, profondeur, ampleur):
     tm = state.teammates()[0]
-    ecart_x = profondeurDegagement# - 15.
+    ecart_x = profondeur#profondeurDegagement - 15.
     if not state.is_team_left(): ecart_x = -ecart_x 
-    ecart_y = largeurDegagement
+    ecart_y = ampleur#largeurDegagement
     if tm.position.y < state.center_point.y:  ecart_y = -ecart_y
     dec = Vector2D(ecart_x, ecart_y)
     return shoot(state,dec + state.center_point, maxPlayerShoot)
 
-def decaler(state):
+def decaler(state, decalX, decalY):
     opp = nearest_ball(state, state.opponents())
-    ecart_y = largeurDegagement
+    ecart_y = decalY#largeurDegagement
     if is_upside(opp,state.center_point):  ecart_y = -ecart_y
-    ecart_x = profondeurDegagement
+    ecart_x = decalX#profondeurDegagement
     if state.is_team_left(): ecart_x = -ecart_x 
     dec = Vector2D(ecart_x,ecart_y)
     return aller_dest(state, dec + state.center_point)

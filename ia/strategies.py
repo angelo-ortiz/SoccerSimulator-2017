@@ -52,29 +52,29 @@ class FonceurChallenge1Strategy(Strategy):
 
 ## Strategie Attaquant
 class AttaquantStrategy(Strategy):
-    def __init__(self, alphaShoot=0.667058531634, betaShoot=0.940268913763, angleDribble=1.35306998836, powerDribble=1.1365820089, distShoot=35.8934238522, rayDribble=14.2447275533, angleGardien=0.841696829807, coeffAD=0.787794696398, powerControl=1.35035794849):
+    def __init__(self, alphaShoot=0.667058531634, betaShoot=0.940268913763, angleDribble=1.35306998836, powerDribble=1.1365820089, distShoot=35.8934238522, rayDribble=14.2447275533, angleGardien=0.841696829807, coeffAD=0.787794696398, powerControl=1.35035794849, decalX=0., decalY=0.):
         Strategy.__init__(self,"Attaquant")
-        self.dictST = {'alphaShoot': alphaShoot, 'betaShoot': betaShoot, 'angleDribble': angleDribble, 'powerDribble': powerDribble, 'distShoot': distShoot, 'rayDribble': rayDribble, 'angleGardien': angleGardien, 'coeffAD': coeffAD, 'powerControl': powerControl}
+        self.dico = {'alphaShoot': alphaShoot, 'betaShoot': betaShoot, 'angleDribble': angleDribble, 'powerDribble': powerDribble, 'distShoot': distShoot, 'rayDribble': rayDribble, 'angleGardien': angleGardien, 'coeffAD': coeffAD, 'powerControl': powerControl}
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if has_ball_control(me):
-            if is_close_goal(me, self.dictST['distShoot']):
-                return essayerBut(self, me, self.dictST['alphaShoot'], self.dictST['betaShoot'], self.dictST['angleDribble'], self.dictST['powerDribble'], self.dictST['rayDribble'], self.dictST['angleGardien'], self.dictST['coeffAD'], self.dictST['powerControl'])
-            return avancerBalle(me, self.dictST['angleDribble'], self.dictST['powerDribble'], self.dictST['rayDribble'], self.dictST['coeffAD'], self.dictST['powerControl'])
+            if is_close_goal(me, self.dico['distShoot']):
+                return essayerBut(self, me, self.dico['alphaShoot'], self.dico['betaShoot'], self.dico['angleDribble'], self.dico['powerDribble'], self.dico['rayDribble'], self.dico['angleGardien'], self.dico['coeffAD'], self.dico['powerControl'])
+            return avancerBalle(me, self.dico['angleDribble'], self.dico['powerDribble'], self.dico['rayDribble'], self.dico['coeffAD'], self.dico['powerControl'])
         if is_defense_zone(me):
-            return decaler(me)
+            return decaler(me, self.dico['decalX'], self.dico['decalY'])
         return aller_vers_balle(me)
 
 ## Strategie Attaquant
 class AttaquantPrecStrategy(Strategy):
     def __init__(self, alpha=0.2, beta=0.7, angleDribble=0., powerDribble=6., distShoot=27., rayDribble=10., angleGardien=0.):
         Strategy.__init__(self,"Attaquant")
-        self.dictST = {'alpha': alpha, 'beta': beta, 'angleDribble': angleDribble, 'powerDribble': powerDribble, 'distShoot': distShoot, 'rayDribble': rayDribble, 'angleGardien': angleGardien}
+        self.dico = {'alpha': alpha, 'beta': beta, 'angleDribble': angleDribble, 'powerDribble': powerDribble, 'distShoot': distShoot, 'rayDribble': rayDribble, 'angleGardien': angleGardien, 'decalX': decalX, 'decalY': decalY}
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if has_ball_control(me):
-            if is_close_goal(me, self.dictST['distShoot']):
-                foncer(me, power(self.dictST['alpha'], self.dictST['beta']))
+            if is_close_goal(me, self.dico['distShoot']):
+                foncer(me, power(self.dico['alpha'], self.dico['beta']))
             return controler(me, power(me))
         if is_defense_zone(me):
             return decaler(me)
@@ -95,27 +95,27 @@ class BalleAuPiedStrategy(Strategy):
 ## Strategie Gardien
 class GardienStrategy(Strategy):
     #def __init__(self, tempsI=6, n=6, rayInter=15.):
-    def __init__(self, tempsI=28.7834668136, n=0, rayInter=19.899498729, raySortie=21.4399528226, distSortie=66.6033785959, distMontee=60.):
+    def __init__(self, tempsI=28.7834668136, n=0, rayInter=19.899498729, raySortie=21.4399528226, distSortie=66.6033785959, distMontee=60., profDeg=0., amplDeg=0.):
     #def __init__(self, tempsI=15.189582048077039, n=0, rayInter=27.308626539829262):
         Strategy.__init__(self,"Gardien")
         n = tempsI #TODO ajout ???
-        self.dictGK = {'tempsI': tempsI, 'n': n, 'rayInter': rayInter, 'raySortie': raySortie, 'distSortie': distSortie, 'distMontee': distMontee}
+        self.dico = {'tempsI': tempsI, 'n': n, 'rayInter': rayInter, 'raySortie': raySortie, 'distSortie': distSortie, 'distMontee': distMontee, 'profDeg': profDeg, 'amplDeg': amplDeg}
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if has_ball_control(me):
-            self.dictGK['n'] = self.dictGK['tempsI'] - 1
-            return degager(me)
-        """if must_advance(me, self.dictGK['distMontee']):
+            self.dico['n'] = self.dico['tempsI'] - 1
+            return degager(me, self.dico['profDeg'], self.dico['amplDeg'])
+        """if must_advance(me, self.dico['distMontee']):
             return monterTerrain(me) 
         """
-        if must_intercept_gk(me, self.dictGK['rayInter']):
-            self.dictGK['n'] -= 1
-            if self.dictGK['n'] <= 0 :
-                self.dictGK['n'] = self.dictGK['tempsI'] - 1
+        if must_intercept_gk(me, self.dico['rayInter']):
+            self.dico['n'] -= 1
+            if self.dico['n'] <= 0 :
+                self.dico['n'] = self.dico['tempsI'] - 1
                 return get_empty_strategy()
-            return intercepter_balle(self, me,self.dictGK['n'])
-        if must_defend_goal(me, self.dictGK['distSortie']):
-            return defendre_SR(me, self.dictGK['raySortie'])
+            return intercepter_balle(self, me,self.dico['n'])
+        if must_defend_goal(me, self.dico['distSortie']):
+            return defendre_SR(me, self.dico['raySortie'])
         return aller_vers_cage(me)
 
 ## Strategie Gardien
