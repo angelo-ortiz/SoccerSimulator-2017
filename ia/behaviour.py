@@ -82,10 +82,10 @@ def avancerBalle(state, angleDribble, powerDribble, rayDribble, coeffAD, powerCo
         return controler(state, powerControl)#0.98) #power(False)
     return dribbler(state, can_continue, angleDribble, powerDribble, coeffAD) #power(True)
 
-def essayerBut(strat, state, alpha, beta, angleDribble, powerDribble, rayDribble, angleGardien, coeffAD, powerControl):
+def essayerBut(strat, state, alpha, beta, angleDribble, powerDribble, rayDribble, angleGardien, coeffAD, powerControl, distShoot):
     can_continue = free_continue(state, state.opponents(), rayDribble)
     if can_continue == True or empty_goal(strat, state, can_continue, angleGardien):
-        if is_close_goal(state):
+        if is_close_goal(state, distShoot):
             return foncer(state, forceShoot(state, alpha, beta))
         else:
             return controler(state, powerControl)#0.98)

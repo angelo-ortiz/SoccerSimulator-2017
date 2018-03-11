@@ -53,7 +53,7 @@ class dictParams(object):
     def __init__(self):
         self.params = {'alphaShoot': 0., 'betaShoot': 0., 'powerDribble': 0.,'tempsI': 0, 'angleDribble': 0., \
                 """'n': 0,""" 'rayInter': 0., 'distShoot': 0., 'distDribble': 0., 'angleGardien': 0., \
-                'coeffAD': 0., 'distSortie': 0., 'raySortie': 0., 'powerControl': 0., 'profDeg': 0., 'amplDeg': 0., 'decalX': 0., 'decalY': 0.}
+                'coeffAD': 0., 'distSortie': 0., 'raySortie': 0., 'powerControl': 0., 'profDeg': 0., 'amplDeg': 0., 'decalX': 0., 'decalY': 0., 'distAttaque': 0.}
         self.pts = 0 # le nombre de points obtenus (V,N,D) = (3,1,0)
         self.fg = 0     # le nombre de buts marques
         self.ag = 0     # le nombre de buts encaisses
@@ -72,10 +72,10 @@ class dictParams(object):
             Renvoie un dictionnaire avec les bornes de chaque 
             parametre
         """
-        return {'alphaShoot': (0.,1.), 'betaShoot': (0.4,1.), 'powerDribble': (0.,6.),'tempsI': (0,50), \
-                'angleDribble': (0.,math.pi/2.), 'n': (0,50), 'rayInter': (0., 40.), \
-                'distShoot': (0., 70.), 'distDribble': (0., 50.), 'angleGardien':  (math.sqrt(2.)/2.,1.), \
-                'coeffAD': (0.7, 1.5), 'distSortie': (40., 70.), 'raySortie': (0., 25.), 'powerControl': (0., 2.), 'profDeg': (10., 70.), 'amplDeg': (0., 40.), 'decalX': (0., 50.), 'decalY': (0., 40.)}
+        return {'alphaShoot': (0.,1.), 'betaShoot': (0.4,1.2), 'powerDribble': (0.,6.),'tempsI': (0,30), \
+                'angleDribble': (0.,math.pi/2.), 'n': (0,30), 'rayInter': (0.,40.), \
+                'distShoot': (10.,40.), 'distDribble': (0.,50.), 'angleGardien':  (math.sqrt(2.)/2.,1.), \
+                'coeffAD': (0.7,1.5), 'distSortie': (40.,70.), 'raySortie': (0.,25.), 'powerControl': (0.,2.), 'profDeg': (10.,70.), 'amplDeg': (0.,40.), 'decalX': (0.,50.), 'decalY': (0.,40.), 'distAttaque': (40.,70.)}
     
     def random(self, parameters):
         """
@@ -131,7 +131,7 @@ class GKStrikerTeam(object):
         self.vectors = [] # vecteurs de parametres
         self.gk_params = ['tempsI', 'rayInter', 'distSortie', 'raySortie', 'profDeg', 'amplDeg'] # parametres du gk
         self.st_params = ['alphaShoot', 'betaShoot', 'angleDribble', 'powerDribble', 'distShoot', \
-                'distDribble', 'angleGardien', 'coeffAD', 'powerControl', 'decalX', 'decalY'] # parametres du st
+                'distDribble', 'angleGardien', 'coeffAD', 'powerControl', 'decalX', 'decalY', 'distAttaque'] # parametres du st
 
     def start(self):
         """
