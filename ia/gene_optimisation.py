@@ -13,9 +13,10 @@ def setCounters(simu, team1, team2):
         ont participe au dernier match avec les regles
         connues du football (buts et points)
     """
-    team1.fg = simu.get_score_team(1)
-    team2.fg = simu.get_score_team(2)
-    team1.ag, team2.ag = team2.fg, team1.fg
+    team1.fg += simu.get_score_team(1)
+    team2.fg += simu.get_score_team(2)
+    team1.ag += team2.fg
+    team2.ag += team1.fg
     if team1.fg > team2.fg:
         team1.pts += 3
     elif team1.fg == team2.fg:
@@ -30,10 +31,10 @@ def setCountersSolo(simu, team1, rev):
         ont participe au dernier match avec les regles
         connues du football (buts et points)
     """
-    i, j = 1, 2
     if rev: i, j = 2, 1
-    team1.fg = simu.get_score_team(i)
-    team1.ag = simu.get_score_team(j)
+    else: i, j = 1, 2
+    team1.fg += simu.get_score_team(i)
+    team1.ag += simu.get_score_team(j)
     if team1.fg > team1.ag:
         team1.pts += 3
     elif team1.fg == team1.ag:
@@ -64,10 +65,10 @@ class dictParams(object):
     def __init__(self):
         self.params = {'alphaShoot': 0., 'betaShoot': 0., 'powerDribble': 0., \
                 'tempsI': 0, 'angleDribble': 0., 'rayInter': 0., 'distShoot': 0., \
-                'distDribble': 0., 'angleGardien': 0., 'coeffAD': 0., \
+                'rayDribble': 0., 'angleGardien': 0., 'coeffAD': 0., \
                 'distSortie': 0., 'raySortie': 0., 'controleMT': 0., \
                 'profDeg': 0., 'amplDeg': 0., 'decalX': 0., 'decalY': 0., \
-                'distAttaque': 0., 'controleAttaque': 0.}
+                'distAttaque': 0., 'controleAttaque': 0., 'distMontee': 0.}
         self.pts = 0 # le nombre de points obtenus (V,N,D) = (3,1,0)
         self.fg = 0     # le nombre de buts marques
         self.ag = 0     # le nombre de buts encaisses
@@ -87,12 +88,13 @@ class dictParams(object):
             parametre
         """
         return {'alphaShoot': (0.,1.), 'betaShoot': (0.4,1.2), 'powerDribble': (0.,6.), \
-                'tempsI': (0,30), 'angleDribble': (0.,PI/2.), 'n': (0,30), \
-                'rayInter': (0.,40.), 'distShoot': (10.,40.), 'distDribble': (0.,50.), \
+                'tempsI': (0,30), 'angleDribble': (0.,PI/2.), 'rayInter': (0.,40.), \
+                'distShoot': (10.,40.), 'distDribble': (0.,50.), \
                 'angleGardien':  (sqrt(2.)/2.,1.), 'coeffAD': (0.7,1.5), \
                 'distSortie': (40.,70.), 'raySortie': (0.,25.), 'controleMT': (0.,2.), \
                 'profDeg': (10.,70.), 'amplDeg': (0.,40.), 'decalX': (0.,50.), \
-                'decalY': (0.,40.), 'distAttaque': (40.,70.), 'controleAttaque': (0., 1.2)}
+                'decalY': (0.,40.), 'distAttaque': (40.,70.), 'controleAttaque': (0., 1.2) \
+                'distMontee': (40.,80.)}
 
     def random(self, parameters):
         """
@@ -136,7 +138,7 @@ class dictParams(object):
 
 
 class GKStrikerTeam(object):
-    def __init__(self, size=20, keep=0.4, coProb=0.7, mProb=0.08):
+    def __init__(self, size=20, keep=0.5, coProb=0.7, mProb=0.01):
         self.name = "GKStrikerTeam"
         self.team = None
         self.size = size # nombre de vecteurs
@@ -147,9 +149,9 @@ class GKStrikerTeam(object):
         self.st = AttaquantStrategy() #FonceurStrategy() # strategie striker (st)
         self.vectors = [] # vecteurs de parametres
         self.gk_params = ['tempsI', 'rayInter', 'distSortie', 'raySortie', \
-                'profDeg', 'amplDeg'] # parametres du gk
+                'profDeg', 'amplDeg', 'distMontee'] # parametres du gk
         self.st_params = ['alphaShoot', 'betaShoot', 'angleDribble', \
-                'powerDribble', 'distShoot', 'distDribble', 'angleGardien', \
+                'powerDribble', 'distShoot', 'rayDribble', 'angleGardien', \
                 'coeffAD', 'controleMT', 'decalX', 'decalY', 'distAttaque', \
                 'controleAttaque'] # parametres du st
 
