@@ -5,6 +5,16 @@ from .conditions import must_intercept_gk, has_ball_control, temps_interception,
 from .behaviour import shoot, beh_fonceurNormal, beh_fonceurChallenge1, beh_fonceur, controler, decaler,\
         foncer, degager, degager_solo, aller_vers_balle, aller_vers_cage, intercepter_balle, \
         fonceurCh1ApprochePower, forceShoot, power, essayerBut, avancerBalle, defendre_SR, monterTerrain
+import pickle
+
+def loadPath(fn):
+    """
+        Renvoie le chemin d'acces absolu du fichier 
+        passe en parametre pour la deserialisation
+        d'un dictionnaire de parametres
+    """
+    from os.path import dirname, realpath, join
+    return join(dirname(dirname(realpath(__file__))),"parameters",fn)
 
 ## Strategie aleatoire
 class RandomStrategy(Strategy):
@@ -52,9 +62,30 @@ class FonceurChallenge1Strategy(Strategy):
 
 ## Strategie Attaquant
 class AttaquantStrategy(Strategy):
-    def __init__(self, alphaShoot=0.667058531634, betaShoot=0.940268913763, angleDribble=1.35306998836, powerDribble=1.1365820089, distShoot=35.8934238522, rayDribble=14.2447275533, angleGardien=0.841696829807, coeffAD=0.787794696398, controleMT=1.35035794849, decalX=0., decalY=0., distAttaque=70., controleAttaque=0.98):
+    def __init__(self, alphaShoot=None, betaShoot=None, angleDribble=None, powerDribble=None, distShoot=None, rayDribble=None, angleGardien=None, coeffAD=None, controleMT=None, decalX=None, decalY=None, distAttaque=None, controleAttaque=None, fn_st=None):
         Strategy.__init__(self,"Attaquant")
-        self.dico = {'alphaShoot': alphaShoot, 'betaShoot': betaShoot, 'angleDribble': angleDribble, 'powerDribble': powerDribble, 'distShoot': distShoot, 'rayDribble': rayDribble, 'angleGardien': angleGardien, 'coeffAD': coeffAD, 'controleMT': controleMT, 'decalX': decalX, 'decalY': decalY, 'distAttaque': distAttaque, 'controleAttaque': controleAttaque}
+        if alphaShoot is not None: # dictionnaire passe en parametre, i.e. algo genetique
+            self.dico = {'alphaShoot': alphaShoot, 'betaShoot': betaShoot, 'angleDribble': angleDribble, 'powerDribble': powerDribble, 'distShoot': distShoot, 'rayDribble': rayDribble, 'angleGardien': angleGardien, 'coeffAD': coeffAD, 'controleMT': controleMT, 'decalX': decalX, 'decalY': decalY, 'distAttaque': distAttaque, 'controleAttaque': controleAttaque}
+        elif fn_st is not None: # dictionnaire a charger, i.e. deserialisation
+            with open(loadPath(fn_st),"rb") as f:
+                self.dico = pickle.load(f)
+        else: # dictionnaire par defaut
+            self.dico = self.default_dict()
+    def default_dict(self):
+        alphaShoot=0.667058531634
+        betaShoot=0.940268913763
+        angleDribble=1.35306998836
+        powerDribble=1.1365820089
+        distShoot=35.8934238522
+        rayDribble=14.2447275533
+        angleGardien=0.841696829807
+        coeffAD=0.787794696398
+        controleMT=1.35035794849
+        decalX=0.
+        decalY=0.
+        distAttaque=70.
+        controleAttaque=0.98
+        return {'alphaShoot': alphaShoot, 'betaShoot': betaShoot, 'angleDribble': angleDribble, 'powerDribble': powerDribble, 'distShoot': distShoot, 'rayDribble': rayDribble, 'angleGardien': angleGardien, 'coeffAD': coeffAD, 'controleMT': controleMT, 'decalX': decalX, 'decalY': decalY, 'distAttaque': distAttaque, 'controleAttaque': controleAttaque}
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if has_ball_control(me):
@@ -101,11 +132,27 @@ class BalleAuPiedStrategy(Strategy):
 ## Strategie Gardien
 class GardienStrategy(Strategy):
     #def __init__(self, tempsI=6, n=6, rayInter=15.):
-    def __init__(self, tempsI=28.7834668136, n=0, rayInter=19.899498729, raySortie=21.4399528226, distSortie=66.6033785959, distMontee=60., profDeg=0., amplDeg=0.):
+    def __init__(self, tempsI=None, n=None, rayInter=None, raySortie=None, distSortie=None, distMontee=None, profDeg=None, amplDeg=None, fn_gk=None):
     #def __init__(self, tempsI=15.189582048077039, n=0, rayInter=27.308626539829262):
         Strategy.__init__(self,"Gardien")
-        n = tempsI #TODO ajout ???
-        self.dico = {'tempsI': tempsI, 'n': n, 'rayInter': rayInter, 'raySortie': raySortie, 'distSortie': distSortie, 'distMontee': distMontee, 'profDeg': profDeg, 'amplDeg': amplDeg}
+        if tempsI is not None: # dictionnaire passe en parametre, i.e. algo genetique
+            n = tempsI
+            self.dico = {'tempsI': tempsI, 'n': n, 'rayInter': rayInter, 'raySortie': raySortie, 'distSortie': distSortie, 'distMontee': distMontee, 'profDeg': profDeg, 'amplDeg': amplDeg}
+        elif fn_gk is not None: # dictionnaire a charger, i.e. deserialisation
+            with open(loadPath(fn_gk),"rb") as f:
+                self.dico = pickle.load(f)
+        else: # dictionnaire par defaut
+            self.dico = self.default_dict()
+    def default_dict(self):
+        tempsI = 28.7834668136 
+        n = 0 
+        rayInter = 19.899498729
+        raySortie = 21.4399528226
+        distSortie = 66.6033785959
+        distMontee = 60.
+        profDeg = 0.
+        amplDeg = 0.
+        return {'tempsI': tempsI, 'n': n, 'rayInter': rayInter, 'raySortie': raySortie, 'distSortie': distSortie, 'distMontee': distMontee, 'profDeg': profDeg, 'amplDeg': amplDeg}
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if has_ball_control(me):

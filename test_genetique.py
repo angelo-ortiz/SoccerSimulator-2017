@@ -33,5 +33,6 @@ for n in range(nbIter):
 
 gk_st_team.printVectors(nVect)
 gk_cf_team.printVectors(nVect)
+gk_st_team.save()
 simu = Simulation(gk_st_team.getBestTeam(),gk_cf_team.getBestTeam())
 show_simu(simu)
