@@ -2,6 +2,7 @@
 from soccersimulator  import SoccerAction, Vector2D
 from soccersimulator.settings import GAME_HEIGHT, GAME_WIDTH, GAME_GOAL_HEIGHT
 
+## Classe enveloppe de notre super-etat du jeu
 class Wrapper(object):
     def __init__(self,state):
         self._obj = state
@@ -9,65 +10,146 @@ class Wrapper(object):
         return getattr(self._obj,attr)
 
 
-## StateFoot ...
+## StateFoot
+#### C'est notre super-etat du jeu
+#### Il nous facilite l'acces a certains aspects
+#### de la configuration actuelle du terrain
 class StateFoot(Wrapper):
     def __init__(self,state,id_team,id_player):
         super(StateFoot,self).__init__(state)
         self.key = (id_team,id_player)
-    
+
     @property
     def my_team(self):
+        """
+        Son equipe
+        """
         return self.key[0]
-    
+
     @property
     def opp_team(self):
+        """
+        L'equipe adverse
+        """
         return 3 - self.my_team
-    
+
     @property
     def me(self):
+        """
+        Son identifiant
+        """
         return self.key[1]
-    
+
     @property
     def my_pos(self):
+        """
+        Sa position courante
+        """
         return self.player_state(*self.key).position
-    
+
     @property
     def my_speed(self):
+        """
+        Sa vitesse courante
+        """
         return self.player_state(*self.key).vitesse
-    
+
     @property
     def ball_pos(self):
+        """
+        La position courante de la balle
+        """
         return self.ball.position
-    
+
     @property
     def ball_speed(self):
+        """
+        La vitesse courante de la balle
+        """
         return self.ball.vitesse
-    
+
     @property
     def my_goal(self):
+        """
+        La position du centre de sa cage
+        """
         return Vector2D((self.my_team - 1) * self.width,self.goal_height)
-    
+
     @property
     def opp_goal(self):
+        """
+        La position du centre de la cage adverse
+        """
         return Vector2D((self.opp_team - 1) * self.width,self.goal_height)
-   
+
     @property
     def height(self):
+        """
+        La hauteur du terrain
+        """
         return GAME_HEIGHT
 
     @property
     def width(self):
+        """
+        La largeur du terrain
+        """
         return GAME_WIDTH
-    
+
     @property
     def goal_height(self):
+        """
+        La hauteur du point central
+        """
         return self.height/2.
 
     @property
     def center_point(self):
+        """
+        La position du point central
+        """
         return Vector2D(self.width/2., self.goal_height)
 
+    def teammates(self):
+        """
+        Ses coequipiers
+        """
+        team = self.my_team
+        liste = [self.player_state(team,i) for i in range(self.nb_players(team))]
+        liste.remove(self.player_state(*self.key))
+        return liste
+
+    def opponents(self):
+        """
+        Ses adversaires
+        """
+        team = self.opp_team
+        return [self.player_state(team,i) for i in range(self.nb_players(team))]
+
+    @property
+    def nearest_opp(self):
+        """
+        L'adversaire le plus proche de la balle
+        """
+        liste = self.opponents()
+        opp = liste[0]
+        dist = self.distance_ball(opp.position)
+        for p in liste[1:]:
+            if self.distance_ball(p.position) < dist:
+                opp = p
+        return opp
+
+    def opponent_1v1(self):
+        """
+        Son adversaire lorsque c'est un match 1v1
+        """
+        return self.player_state(self.opp_team,0)
+
     def quadrant(self):
+        """
+        Renvoie le quadrant trigonometrique dans lequel
+        se trouve le joueur
+        """
         mp = self.my_pos
         cp = self.center_point
         if mp.x < cp.x:
@@ -81,68 +163,68 @@ class StateFoot(Wrapper):
             else:
                 return "IV"
 
-    @property
-    def nearest_opp(self):
-        liste = self.opponents()
-        opp = liste[0]
-        dist = self.distance_ball(opp.position)
-        for p in liste[1:]:
-            if self.distance_ball(p.position) < dist:
-                opp = p
-        return opp
-
-    def teammates(self):
-        team = self.my_team
-        liste = [self.player_state(team,i) for i in range(self.nb_players(team))]
-        liste.remove(self.player_state(*self.key))
-        return liste
-        """
-        for i in range(self.nb_players(team)):
-            if i != self.me:
-                liste.append(self.player_state(team,i))
-        """
-        #return [self.player_state(team,i) for i in range(self.nb_players(team))]
-
     def is_team_left(self):
+        """
+        Renvoie vrai ssi son equipe joue a gauche
+        """
         return self.my_team == 1
-    
+
     def distance_ball(self,ref):
+        """
+        Renvoie la distance entre la balle et un point
+        de reference
+        """
         return ref.distance(self.ball_pos)
-    
+
     def distance(self,ref):
+        """
+        Renvoie la distance entre le joueur et un point
+        de reference
+        """
         return ref.distance(self.my_pos)
-    
+
     def is_nearest_ball(self):
+        """
+        Renvoie vrai ssi il est le joueur le plus proche
+        de la balle
+        """
         liste_opp = self.opponents()
         dist_ball_joueur = self.distance(self.ball_pos)
         for opp in liste_opp:
             if dist_ball_joueur >= self.distance_ball(opp.position):
                 return False
         return True
-    
-    def opponent_1v1(self):
-        return self.player_state(self.opp_team,0)
-    
-    def opponents(self):
-        team = self.opp_team
-        return [self.player_state(team,i) for i in range(self.nb_players(team))]
-    
+
+
 
 def normalise_diff(src, dst, norme):
+    """
+    Renvoie le vecteur allant de src vers dst avec
+    comme norme maximal norme
+    """
     return (dst-src).norm_max(norme)
 
 def coeff_vitesse_reduite(n,fc):
+    """
+    Renvoie le coefficient de la vitesse
+    compte tenu des effets de frottement
+    """
     return (1.-fc)*(1.-(1.-fc)**n)/fc
 
 def is_in_radius_action(state,ref,distLimite):
+    """
+    Renvoie vrai ssi le point de reference se trouve
+    dans le cercle de rayon disLimite centre en la
+    position du joueur
+    """
     return ref.distance(state.ball_pos) <= distLimite
 
 def distance_horizontale(v1, v2):
     return abs(v1.x-v2.x)
-    
+
 def is_upside(ref,other):
     return ref.y > other.y
-    
+
 def get_random_vector():
     return Vector2D.create_random(-1.,1.)
 

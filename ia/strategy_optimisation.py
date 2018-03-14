@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from soccersimulator import Strategy, Vector2D, GAME_WIDTH, GAME_HEIGHT
 from .tools import StateFoot,  get_empty_strategy
 from .conditions import must_intercept_gk, can_shoot, is_close_ball

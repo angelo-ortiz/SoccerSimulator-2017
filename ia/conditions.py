@@ -53,8 +53,9 @@ def must_intercept_gk(stateFoot, distance=20.):
 def has_ball_control(stateFoot):
     return is_close_ball(stateFoot) and stateFoot.player_state(*stateFoot.key).can_shoot()
 
-def is_defense_zone(state):
-    return distance_horizontale(state.my_pos, state.my_goal) < (state.width/2.-profondeurDegagement)
+def is_defense_zone(state, distDefZone=20.):#TODO distDefensZone variable
+    #return distance_horizontale(state.my_pos, state.my_goal) < (state.width/2.-profondeurDegagement)
+    return distance_horizontale(state.my_pos, state.my_goal) < distDefZone
 
 def high_precision_shoot(state, dist):
     return state.my_pos.distance(state.opp_goal) < dist
