@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from soccersimulator import Strategy
 from .tools import StateFoot, get_random_strategy, get_empty_strategy, is_in_radius_action
-from .conditions import must_intercept, must_intercept_gk, has_ball_control, temps_interception, is_in_box, is_defense_zone, \
+from .conditions import must_intercept, has_ball_control, temps_interception, is_defense_zone, \
         is_close_goal, is_close_ball, must_defend_goal, must_advance
 from .behaviour import shoot, beh_fonceurNormal, beh_fonceurChallenge1, beh_fonceur, controler, decaler,\
         foncer, degager, degager_solo, aller_vers_balle, aller_vers_cage, intercepter_balle, \
@@ -10,9 +10,9 @@ import pickle
 
 def loadPath(fn):
     """
-        Renvoie le chemin d'acces absolu du fichier
-        passe en parametre pour la deserialisation
-        d'un dictionnaire de parametres
+    Renvoie le chemin d'acces absolu du fichier
+    passe en parametre pour la deserialisation
+    d'un dictionnaire de parametres
     """
     from os.path import dirname, realpath, join
     return join(dirname(dirname(realpath(__file__))),"parameters",fn)
@@ -29,10 +29,12 @@ class RandomStrategy(Strategy):
 
 
 ## Strategie Fonceur
-#### Le fonceur realise uniquement deux actions :
-#### 1/ il frappe la balle dès qu'il la controle
-#### 2/ il se deplace en ligne droite vers la balle
-####    pour la recuperer
+"""
+Le fonceur realise uniquement deux actions :
+1/ il frappe la balle dès qu'il la controle
+2/ il se deplace en ligne droite vers la balle
+pour la recuperer
+"""
 class FonceurStrategy(Strategy):
     def __init__(self):
         Strategy.__init__(self,"Fonceur")
@@ -48,9 +50,11 @@ class FonceurStrategy(Strategy):
 
 
 ## Strategie FonceurChallenge1
-#### Il s'agit d'un fonceur programme specialement pour
-#### le premier challenge, a savoir marquer le plus de
-#### buts avec la meme configuration initial du jeu
+"""
+Il s'agit d'un fonceur programme specialement pour
+le premier challenge, a savoir marquer le plus de
+buts avec la meme configuration initial du jeu
+"""
 class FonceurChallenge1Strategy(Strategy):
     def __init__(self):
         Strategy.__init__(self,"FonceurChallenge1")
@@ -61,11 +65,13 @@ class FonceurChallenge1Strategy(Strategy):
         return aller_vers_balle(me)
 
 ## Strategie Attaquant
-#### L'attaquant controle la balle, dribble des joueurs adverses,
-#### fait des passes si necessaire, et frappe droit au but
-#### lorsqu'il retrouve une belle opportunite.
-#### Par ailleurs, il se decale vers les cotes s'il se trouve
-#### en position de defense
+"""
+L'attaquant controle la balle, dribble des joueurs adverses,
+fait des passes si necessaire, et frappe droit au but
+lorsqu'il retrouve une belle opportunite.
+Par ailleurs, il se decale vers les cotes s'il se trouve
+en position de defense
+"""
 class AttaquantStrategy(Strategy):
     def __init__(self, alphaShoot=None, betaShoot=None, angleDribble=None, powerDribble=None, \
             distShoot=None, rayDribble=None, angleGardien=None, coeffAD=None, controleMT=None, \
@@ -122,8 +128,10 @@ class AttaquantStrategy(Strategy):
         return aller_vers_balle(me)
 
 ## Strategie Attaquant
-#### C'est un attaquant sans dribble
-#### NB: non fonctionnel car les methodes furent modifiees
+"""
+C'est un attaquant sans dribble
+NB: non fonctionnel car les methodes furent modifiees
+"""
 class AttaquantPrecStrategy(Strategy):
     def __init__(self, alpha=0.2, beta=0.7, angleDribble=0., powerDribble=6., distShoot=27., \
             rayDribble=10., angleGardien=0.):
@@ -141,27 +149,31 @@ class AttaquantPrecStrategy(Strategy):
         return aller_vers_balle(me)
 
 ## Strategie Dribbler
-#### C'est un joueur qui essaie toujours d'avancer balle
-#### au pied quand il la possede, sauf s'il est dans
-#### la surface de reparation, ou il tire la balle vers
-#### la cage adverse
+"""
+C'est un joueur qui essaie toujours d'avancer balle
+au pied quand il la possede, sauf s'il est dans
+la surface de reparation, ou il tire la balle vers
+la cage adverse
+"""
 class BalleAuPiedStrategy(Strategy):
     def __init__(self):
         Strategy.__init__(self,"BalleAuPied")
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if has_ball_control(me):
-            if is_in_box(me):
+            if is_close_goal(me, 10.):
                 return foncer(me, fonceurCh1ApprochePower)
             return controler(me, power(me))
         return aller_vers_balle(me)
 
 ## Strategie Gardien
-#### Le gardien sort de sa cage lorsque la balle s'approche,
-#### mais si elle est trop proche, le gardien essaie de l'intercepter
-#### et fait une passe a l'un de ses coequipiers. Des que la balle a
-#### franchi une certaine distance, le gardien monte dans le terrain
-#### pour offrir une option de passe a ses coequipiers
+"""
+Le gardien sort de sa cage lorsque la balle s'approche,
+mais si elle est trop proche, le gardien essaie de l'intercepter
+et fait une passe a l'un de ses coequipiers. Des que la balle a
+franchi une certaine distance, le gardien monte dans le terrain
+pour offrir une option de passe a ses coequipiers
+"""
 class GardienStrategy(Strategy):
     def __init__(self, tempsI=None, n=None, rayInter=None, raySortie=None, distSortie=None, \
             distMontee=None, profDeg=None, amplDeg=None, powerDeg=None, fn_gk=None):
@@ -192,10 +204,10 @@ class GardienStrategy(Strategy):
         if has_ball_control(me):
             self.dico['n'] = self.dico['tempsI'] - 1
             return degager(me, self.dico['profDeg'], self.dico['amplDeg'], self.dico['powerDeg'])
-        """
+        '''
         if must_advance(me, self.dico['distMontee']):
             return monterTerrain(me)
-        """
+        '''
         if must_intercept(me, self.dico['rayInter']):
             self.dico['n'] -= 1
             if self.dico['n'] <= 0 :
@@ -207,9 +219,11 @@ class GardienStrategy(Strategy):
         return aller_vers_cage(me)
 
 ## Strategie Gardien
-#### C'est un gardien sans la premiere defense de la cage
-#### ni la montee dans le terrain
-#### NB: non fonctionnel car les methodes furent modifiees
+"""
+C'est un gardien sans la premiere defense de la cage
+ni la montee dans le terrain
+NB: non fonctionnel car les methodes furent modifiees
+"""
 class GardienPrecStrategy(Strategy):
     def __init__(self):
         Strategy.__init__(self,"Gardien")
@@ -218,15 +232,17 @@ class GardienPrecStrategy(Strategy):
         if has_ball_control(me):
             #return degager_solo(me)
             return degager(me)
-        if must_intercept_gk(me):
+        if must_intercept(me):
             return intercepter_balle(me,10.)
         return aller_vers_cage(me)
 
 ## Strategie GardienBase
-#### C'est un gardien qui reste toujours dans sa cage,
-#### sauf si la balle est a une distance raisonnable,
-#### et dans ce cas-la il fonce vers la balle pour la
-#### degager
+"""
+ C'est un gardien qui reste toujours dans sa cage,
+sauf si la balle est a une distance raisonnable,
+et dans ce cas-la il fonce vers la balle pour la
+degager
+"""
 class GardienBaseStrategy(Strategy):
     def __init__(self):
         Strategy.__init__(self,"GardienBase")

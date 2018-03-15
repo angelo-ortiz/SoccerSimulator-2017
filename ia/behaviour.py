@@ -4,7 +4,7 @@ from soccersimulator import SoccerAction, Vector2D
 from soccersimulator.settings import GAME_WIDTH, GAME_HEIGHT, maxPlayerShoot, maxPlayerAcceleration, \
         ballBrakeConstant, playerBrackConstant
 from .tools import Wrapper, StateFoot, normalise_diff, coeff_vitesse_reduite, is_upside, free_continue, nearest_ball
-from .conditions import high_precision_shoot, profondeurDegagement, largeurDegagement, empty_goal, is_close_goal
+from .conditions import profondeurDegagement, largeurDegagement, empty_goal, is_close_goal
 from math import acos, exp, atan, atan2, sin, cos
 import random
 
@@ -20,12 +20,12 @@ def shoot(state,dest,puissance=maxPlayerShoot):
     return SoccerAction(Vector2D(),normalise_diff(state.ball_pos, dest, puissance))
 
 def beh_fonceurNormal(state):
-    if high_precision_shoot(state,distMaxFonceurNormShoot):
+    if is_close_goal(state,distMaxFonceurNormShoot):
         return fonceurHPPower
     return fonceur100Power
 
 def beh_fonceurChallenge1(state):
-    if high_precision_shoot(state,distMaxFonceurCh1Shoot):
+    if is_close_goal(state,distMaxFonceurCh1Shoot):
         return fonceurCh1HPPower
     return fonceurCh1ApprochePower
 

@@ -213,13 +213,13 @@ def coeff_vitesse_reduite(n,fc):
     """
     return (1.-fc)*(1.-(1.-fc)**n)/fc
 
-def is_in_radius_action(state,ref,distLimite):
+def is_in_radius_action(stateFoot,ref,distLimite):
     """
     Renvoie vrai ssi le point de reference se trouve
     dans le cercle de rayon distLimite centre en la
-    position du joueur
+    position de la balle
     """
-    return ref.distance(state.ball_pos) <= distLimite
+    return ref.distance(stateFoot.ball_pos) <= distLimite
 
 def distance_horizontale(v1, v2):
     """
@@ -255,11 +255,10 @@ def get_empty_strategy():
     """
     return SoccerAction()
 
-def nearest(state, ref, liste):
+def nearest(ref, liste):
     """
     Renvoie la position du joueur le plus proche de la
-    reference faisant partie d'une liste contenant
-    l'etat de certains joueurs
+    reference parmi une liste passee en parametre
     """
     p = None
     distMin = 1024.
@@ -270,13 +269,13 @@ def nearest(state, ref, liste):
             distMin = dist
     return p.position
 
-def nearest_ball(state, liste):
+def nearest_ball(stateFoot, liste):
     """
     Renvoie la position du joueur le plus proche de la balle
     """
-    return nearest(state, state.ball_pos, liste)
+    return nearest(stateFoot.ball_pos, liste)
 
-def free_continue(state, liste, distRef):
+def free_continue(stateFoot, liste, distRef):
     """
     Renvoie vrai si le joueur n'a pas d'opposition dans un
     rayon de distRef en direction de la cage opposee, i.e. il
@@ -284,11 +283,11 @@ def free_continue(state, liste, distRef):
     plus proche qui est susceptible de l'intercepter
     """
     j = None
-    og = state.opp_goal
-    dog = state.distance(og)
+    og = stateFoot.opp_goal
+    dog = stateFoot.distance(og)
     dist_min = distRef
     for i in liste:
-        dist_i = state.distance_ball(i.position)
+        dist_i = stateFoot.distance_ball(i.position)
         if dist_i < dist_min and dog > i.position.distance(og):
             j = i
             dist_min = dist_i

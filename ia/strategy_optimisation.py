@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from soccersimulator import Strategy, Vector2D, GAME_WIDTH, GAME_HEIGHT
-from .tools import StateFoot,  get_empty_strategy
-from .conditions import must_intercept_gk, has_ball_control, is_close_ball
+from soccersimulator import Strategy, Vector2D
+from .tools import StateFoot, get_empty_strategy
+from .conditions import must_intercept, has_ball_control, is_close_ball
 from .behaviour import dribbler, foncer, degager_solo, aller_vers_balle, aller_dest, aller_vers_cage, intercepter_balle, forceShoot, power, essayerBut, controler
 
 class ShootTestStrategy(Strategy):
@@ -25,7 +25,7 @@ class GardienTestStrategy(Strategy):
         if has_ball_control(me):
             self.n = self.n_deb -1
             return degager_solo(me)
-        if must_intercept_gk(me, self.distance):
+        if must_intercept(me, self.distance):
             self.n -= 1
             #print(self.n)
             if self.n <= 0 :
@@ -65,9 +65,9 @@ class TestAccStrategy(Strategy):
         Strategy.__init__(self,"TestAcc")
         self.dist = dist
     def compute_strategy(self,state,id_team,id_player):
-        vect = Vector2D(GAME_WIDTH*0.1+self.dist,GAME_HEIGHT/2.)
         me = StateFoot(state,id_team,id_player)
-        if me.my_pos.x >= vect.x: 
+        vect = Vector2D(me.width*0.1+self.dist,me.goal_height)
+        if me.my_pos.x >= vect.x:
             print("0")
             return get_empty_strategy()
         print("1")
