@@ -44,7 +44,7 @@ def power(dribble):
         return DRIBBLE
     return CONTROL
 
-def controler(state, power=controlPower):
+def controler(state, power=controlPower):#TODO changer le controle pour avancer dans les cotes
     return shoot(state,state.opp_goal,power)
 
 def dribbler(state, opp, angleDribble, powerDribble, coeffAD):

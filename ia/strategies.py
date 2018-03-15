@@ -94,10 +94,10 @@ class AttaquantStrategy(Strategy):
         angleDribble=1.35306998836
         powerDribble=1.1365820089
         distShoot=35.8934238522
-        rayDribble=20.#14.2447275533
+        rayDribble=14.2447275533#20.
         angleGardien=0.841696829807
         coeffAD=0.787794696398
-        controleMT=1.1#1.35035794849
+        controleMT=1.35035794849#1.1
         decalX=0.
         decalY=0.
         distAttaque=70.
@@ -185,11 +185,14 @@ class GardienStrategy(Strategy):
         elif fn_gk is not None: # dictionnaire a charger, i.e. deserialisation
             with open(loadPath(fn_gk),"rb") as f:
                 self.dico = pickle.load(f)
+            #self.dico['powerDeg'] = 3.813968360114573
+            #self.dico['raySortie'] = 21.4399528226
+            #self.dico['amplDeg'] = 21.4399528226
         else: # dictionnaire par defaut
             self.dico = self.default_dict()
         self.dico['n'] = self.dico['tempsI']
     def default_dict(self):
-        tempsI = 7#28.7834668136
+        tempsI = 28.7834668136#7
         rayInter = 19.899498729
         raySortie = 21.4399528226
         distSortie = 66.6033785959
