@@ -13,7 +13,8 @@ class Wrapper(object):
 ## StateFoot
 #### C'est notre super-etat du jeu
 #### Il nous facilite l'acces a certains aspects
-#### de la configuration actuelle du terrain
+#### de la configuration courante du terrain
+#### depuis la perspective d'un joueur
 class StateFoot(Wrapper):
     def __init__(self,state,id_team,id_player):
         super(StateFoot,self).__init__(state)
@@ -200,41 +201,66 @@ class StateFoot(Wrapper):
 def normalise_diff(src, dst, norme):
     """
     Renvoie le vecteur allant de src vers dst avec
-    comme norme maximal norme
+    comme norme maximale norme
     """
     return (dst-src).norm_max(norme)
 
 def coeff_vitesse_reduite(n,fc):
     """
-    Renvoie le coefficient de la vitesse
-    compte tenu des effets de frottement
+    Renvoie le coefficient de la vitesse dans le calcul
+    de l'acceleration pour l'interception compte tenu
+    des effets de frottement
     """
     return (1.-fc)*(1.-(1.-fc)**n)/fc
 
 def is_in_radius_action(state,ref,distLimite):
     """
     Renvoie vrai ssi le point de reference se trouve
-    dans le cercle de rayon disLimite centre en la
+    dans le cercle de rayon distLimite centre en la
     position du joueur
     """
     return ref.distance(state.ball_pos) <= distLimite
 
 def distance_horizontale(v1, v2):
+    """
+    Renvoie la distance entre les abscisses de deux
+    points
+    """
     return abs(v1.x-v2.x)
 
 def is_upside(ref,other):
+    """
+    Renvoie vrai ssi la reference est au-dessus de
+    l'autre point
+    """
     return ref.y > other.y
 
 def get_random_vector():
+    """
+    Renvoie un vecteur a coordonnees aleatoires comprises
+    entre -1 et 1 (exclu)
+    """
     return Vector2D.create_random(-1.,1.)
 
 def get_random_strategy():
+    """
+    Renvoie une SoccerAction completement aleatoire, i.e.
+    les vecteurs de frappe et acceleration le sont
+    """
     return SoccerAction(get_random_vector(), get_random_vector())
 
 def get_empty_strategy():
+    """
+    Renvoie une SoccerAction qui ne fait rien du tout
+    """
     return SoccerAction()
 
 def nearest(state, ref, liste):
+    """
+    Renvoie la position du joueur le plus proche de la
+    reference faisant partie d'une liste contenant
+    l'etat de certains joueurs
+    """
     p = None
     distMin = 1024.
     for o in liste:
@@ -245,9 +271,18 @@ def nearest(state, ref, liste):
     return p.position
 
 def nearest_ball(state, liste):
+    """
+    Renvoie la position du joueur le plus proche de la balle
+    """
     return nearest(state, state.ball_pos, liste)
 
 def free_continue(state, liste, distRef):
+    """
+    Renvoie vrai si le joueur n'a pas d'opposition dans un
+    rayon de distRef en direction de la cage opposee, i.e. il
+    a une voie libre pour continuer, sinon l'adversaire le
+    plus proche qui est susceptible de l'intercepter
+    """
     j = None
     og = state.opp_goal
     dog = state.distance(og)

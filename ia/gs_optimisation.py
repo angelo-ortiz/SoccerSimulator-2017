@@ -4,9 +4,9 @@ from soccersimulator import SoccerTeam, Simulation, Strategy, show_simu, Vector2
 from soccersimulator.settings import GAME_WIDTH, GAME_HEIGHT
 from ia.strategies import FonceurStrategy, FonceurChallenge1Strategy
 from ia.tools import StateFoot
-from ia.conditions import can_shoot
+from ia.conditions import has_ball_control
 from math import cos, sin, pi
-from Foot import Fonceur as FSF
+from module5 import Fonceur as FSF
 
 class ParamSearchShoot(object):
     def __init__(self, strategy, params, simu=None, trials=20, max_steps=1000000,
@@ -215,7 +215,7 @@ class ParamSearchGoal(object):
 
 class ParamSearchControle(object):
     def __init__(self, strategy, params, simu=None, trials=7, max_steps=1000000,
-                 max_round_step=40):
+                 max_round_step=16):
         self.strategy = strategy
         self.params = params.copy()
         self.simu = simu
@@ -267,7 +267,7 @@ class ParamSearchControle(object):
         if state.step > self.last + self.max_round_step:
             #print(me.my_pos - me.center_point)
             self.simu.end_round()
-        if me.my_pos.x >= GAME_WIDTH/2. + 36.:#15.
+        if me.my_pos.x >= GAME_WIDTH/2. + 15.:#15.
             #print(state.step - self.last)
             self.simu.end_round()
 
@@ -275,7 +275,8 @@ class ParamSearchControle(object):
     def end_round(self, team1, team2, state):
         # A round ends when there is a goal
         me = StateFoot(state, 1, 0)
-        if me.my_pos.x >= GAME_WIDTH/2. + 36.:#15.
+        print(me.my_pos.x - GAME_WIDTH/2.)
+        if me.my_pos.x >= GAME_WIDTH/2. + 7. and has_ball_control(me):#15.
             self.crit += 1  # Increment criterion
 
         self.cpt += 1  # Increment number of trials

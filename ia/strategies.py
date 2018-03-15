@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from soccersimulator import Strategy
 from .tools import StateFoot, get_random_strategy, get_empty_strategy, is_in_radius_action
-from .conditions import must_intercept_gk, has_ball_control, temps_interception, is_in_box, is_defense_zone, \
+from .conditions import must_intercept, must_intercept_gk, has_ball_control, temps_interception, is_in_box, is_defense_zone, \
         is_close_goal, is_close_ball, must_defend_goal, must_advance
 from .behaviour import shoot, beh_fonceurNormal, beh_fonceurChallenge1, beh_fonceur, controler, decaler,\
         foncer, degager, degager_solo, aller_vers_balle, aller_vers_cage, intercepter_balle, \
@@ -88,10 +88,10 @@ class AttaquantStrategy(Strategy):
         angleDribble=1.35306998836
         powerDribble=1.1365820089
         distShoot=35.8934238522
-        rayDribble=14.2447275533
+        rayDribble=20.#14.2447275533
         angleGardien=0.841696829807
         coeffAD=0.787794696398
-        controleMT=1.35035794849
+        controleMT=1.1#1.35035794849
         decalX=0.
         decalY=0.
         distAttaque=70.
@@ -164,12 +164,12 @@ class BalleAuPiedStrategy(Strategy):
 #### pour offrir une option de passe a ses coequipiers
 class GardienStrategy(Strategy):
     def __init__(self, tempsI=None, n=None, rayInter=None, raySortie=None, distSortie=None, \
-            distMontee=None, profDeg=None, amplDeg=None, fn_gk=None):
+            distMontee=None, profDeg=None, amplDeg=None, powerDeg=None, fn_gk=None):
         Strategy.__init__(self,"Gardien")
         if tempsI is not None: # dictionnaire passe en parametre, i.e. algo genetique
             self.dico = {'tempsI': tempsI, 'rayInter': rayInter, 'raySortie': raySortie, \
                          'distSortie': distSortie, 'distMontee': distMontee, 'profDeg': profDeg, \
-                         'amplDeg': amplDeg}
+                         'amplDeg': amplDeg, 'powerDeg': powerDeg}
         elif fn_gk is not None: # dictionnaire a charger, i.e. deserialisation
             with open(loadPath(fn_gk),"rb") as f:
                 self.dico = pickle.load(f)
@@ -177,25 +177,26 @@ class GardienStrategy(Strategy):
             self.dico = self.default_dict()
         self.dico['n'] = self.dico['tempsI']
     def default_dict(self):
-        tempsI = 28.7834668136
+        tempsI = 7#28.7834668136
         rayInter = 19.899498729
         raySortie = 21.4399528226
         distSortie = 66.6033785959
         distMontee = 60.
         profDeg = 0.
         amplDeg = 0.
+        powerDeg = 3.
         return {'tempsI': tempsI, 'rayInter': rayInter, 'raySortie': raySortie, 'distSortie': distSortie, \
-                'distMontee': distMontee, 'profDeg': profDeg, 'amplDeg': amplDeg}
+                'distMontee': distMontee, 'profDeg': profDeg, 'amplDeg': amplDeg, 'powerDeg': powerDeg}
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if has_ball_control(me):
             self.dico['n'] = self.dico['tempsI'] - 1
-            return degager(me, self.dico['profDeg'], self.dico['amplDeg'])
+            return degager(me, self.dico['profDeg'], self.dico['amplDeg'], self.dico['powerDeg'])
         """
         if must_advance(me, self.dico['distMontee']):
             return monterTerrain(me)
         """
-        if must_intercept_gk(me, self.dico['rayInter']):
+        if must_intercept(me, self.dico['rayInter']):
             self.dico['n'] -= 1
             if self.dico['n'] <= 0 :
                 self.dico['n'] = self.dico['tempsI'] - 1

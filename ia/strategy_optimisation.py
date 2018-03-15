@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from soccersimulator import Strategy, Vector2D, GAME_WIDTH, GAME_HEIGHT
 from .tools import StateFoot,  get_empty_strategy
-from .conditions import must_intercept_gk, can_shoot, is_close_ball
-from .behaviour import dribbler, foncer, degager_solo, aller_vers_balle, aller_dest, aller_vers_cage, intercepter_balle, forceShoot, power, essayerBut
+from .conditions import must_intercept_gk, has_ball_control, is_close_ball
+from .behaviour import dribbler, foncer, degager_solo, aller_vers_balle, aller_dest, aller_vers_cage, intercepter_balle, forceShoot, power, essayerBut, controler
 
 class ShootTestStrategy(Strategy):
     def __init__(self, dist=None, alpha=None, beta=None):
@@ -22,7 +22,7 @@ class GardienTestStrategy(Strategy):
         self.distance = distance
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
-        if can_shoot(me):
+        if has_ball_control(me):
             self.n = self.n_deb -1
             return degager_solo(me)
         if must_intercept_gk(me, self.distance):
@@ -39,7 +39,7 @@ class ControlerTestStrategy(Strategy):
         self.power = power
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
-        if can_shoot(me):
+        if has_ball_control(me):
             return controler(me, self.power)
         if is_close_ball(me):
             return get_empty_strategy()
@@ -54,7 +54,7 @@ class DribblerTestStrategy(Strategy):
         self.power = power
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
-        if can_shoot(me):
+        if has_ball_control(me):
             return essayerBut(me, self.alpha, self.beta, self.theta, self.power)
         if is_close_ball(me):
             return get_empty_strategy()

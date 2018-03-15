@@ -73,7 +73,7 @@ class dictParams(object):
                 'distSortie': 0., 'raySortie': 0., 'controleMT': 0., \
                 'profDeg': 0., 'amplDeg': 0., 'decalX': 0., 'decalY': 0., \
                 'distAttaque': 0., 'controleAttaque': 0., 'distMontee': 0., \
-                'distDefZone': 0.}
+                'distDefZone': 0., 'powerDeg': 0.}
         self.pts = 0 # le nombre de points obtenus (V,N,D) = (3,1,0)
         self.fg = 0     # le nombre de buts marques
         self.ag = 0     # le nombre de buts encaisses
@@ -92,14 +92,14 @@ class dictParams(object):
         Renvoie un dictionnaire avec les bornes de chaque
         parametre
         """
-        return {'alphaShoot': (0.,1.), 'betaShoot': (0.4,1.2), 'powerDribble': (0.,6.), \
-                'tempsI': (0,30), 'angleDribble': (0.,PI/2.), 'rayInter': (0.,40.), \
-                'distShoot': (10.,40.), 'rayDribble': (0.,50.), \
+        return {'alphaShoot': (0.,0.6), 'betaShoot': (0.5,1.2), 'powerDribble': (0.,6.), \
+                'tempsI': (3,13), 'angleDribble': (0.,PI/2.), 'rayInter': (5.,20.), \
+                'distShoot': (10.,40.), 'rayDribble': (5.,25.), \
                 'angleGardien':  (sqrt(2.)/2.,1.), 'coeffAD': (0.7,1.5), \
-                'distSortie': (40.,70.), 'raySortie': (0.,25.), 'controleMT': (0.8,2.), \
+                'distSortie': (40.,70.), 'raySortie': (0.,25.), 'controleMT': (1.04,1.1), \
                 'profDeg': (10.,70.), 'amplDeg': (0.,40.), 'decalX': (0.,50.), \
                 'decalY': (0.,40.), 'distAttaque': (40.,70.), 'controleAttaque': (0., 1.2), \
-                'distMontee': (40.,80.), 'distDefZone': (10.,40.)}
+                'distMontee': (40.,80.), 'distDefZone': (10.,40.), 'powerDeg': (1.,5.)}
 
     def random(self, parameters):
         """
@@ -331,7 +331,7 @@ class GKStrikerTeam(GeneTeam):
     @classmethod
     def gk_params(cls):
         return ['tempsI', 'rayInter', 'distSortie', 'raySortie', \
-                'profDeg', 'amplDeg', 'distMontee']
+                'profDeg', 'amplDeg', 'distMontee', 'powerDeg']
 
     @classmethod
     def st_params(cls):

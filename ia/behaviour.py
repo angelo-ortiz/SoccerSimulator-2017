@@ -101,14 +101,14 @@ def degager_solo(state):
     y = state.my_pos.y + ecart_y
     return shoot(state,Vector2D(x,y), maxPlayerShoot)
 
-def degager(state, profondeur, ampleur):
+def degager(state, profondeur, ampleur, powerDegage=maxPlayerShoot):
     tm = state.teammates()[0]
     ecart_x = profondeur#profondeurDegagement - 15.
     if not state.is_team_left(): ecart_x = -ecart_x 
     ecart_y = ampleur#largeurDegagement
     if tm.position.y < state.center_point.y:  ecart_y = -ecart_y
     dec = Vector2D(ecart_x, ecart_y)
-    return shoot(state,dec + state.center_point, maxPlayerShoot)
+    return shoot(state,dec + state.center_point, powerDegage)
 
 def decaler(state, decalX, decalY):
     opp = nearest_ball(state, state.opponents())
@@ -185,6 +185,6 @@ def intercepter_balle(strat, state,n):
 def forceShoot(state, alphaShoot, betaShoot):
     vect = Vector2D(-1.,0.)
     u = state.opp_goal - state.my_pos
-    dist = u.norm 
+    dist = u.norm
     theta = acos(abs(vect.dot(u))/u.norm)/acos(0.)
     return maxPlayerShoot*(1.-exp(-(alphaShoot*dist)))*exp(-betaShoot*theta)
