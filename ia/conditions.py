@@ -12,36 +12,6 @@ distInterceptionCourte = GAME_GOAL_HEIGHT
 interceptionCourte = 7. #15.
 interceptionLongue = 23. #40.
 
-def must_intercept(stateFoot, rayInter=distMaxInterception):
-    """
-    Renvoie vraie ssi le joueur est a une distance
-    inferieure ou egale a distInter de la balle et
-    en est le joueur le plus proche
-    """
-    if not is_in_radius_action(stateFoot, stateFoot.my_pos, rayInter):
-        return False
-    return stateFoot.is_nearest_ball()
-    #return True
-
-def is_under_pressure(stateFoot, joueur, rayPressing):
-    """
-    Renvoie vrai ssi il y a un adversaire a une
-    distance inferieure ou egale a rayPressing
-    """
-    opp = nearest(joueur, stateFoot.opponents())
-    return stateFoot.distance(opp) < rayPressing
-
-def free_teammate(stateFoot, rayPressing):
-    """
-    Renvoie vrai ssi il y a un coequipier libre
-    de marquage
-    """
-    tm = stateFoot.teammates()
-    for p in tm:
-        if not is_under_pressure(stateFoot, p, rayPressing):
-            return p
-    return None
-
 def is_close_ball(stateFoot):
     """
     Renvoie vrai ssi le joueur est proche de la
@@ -58,6 +28,24 @@ def is_close_goal(stateFoot, distGoal=27.):
     """
     return is_in_radius_action(stateFoot, stateFoot.opp_goal, distGoal)
 
+def has_ball_control(stateFoot):
+    """
+    Renvoie vrai ssi le joueur a la balle au pied
+    et le moteur du jeu lui permet de frapper
+    """
+    return is_close_ball(stateFoot) and stateFoot.player_state(*stateFoot.key).can_shoot()
+
+def must_intercept(stateFoot, rayInter=distMaxInterception):
+    """
+    Renvoie vraie ssi le joueur est a une distance
+    inferieure ou egale a distInter de la balle et
+    en est le joueur le plus proche
+    """
+    if not is_in_radius_action(stateFoot, stateFoot.my_pos, rayInter):
+        return False
+    return stateFoot.is_nearest_ball()
+    #return True
+
 def must_advance(stateFoot, distMontee):
     """
     Renvoie vrai ssi le balle est loin de la
@@ -66,7 +54,7 @@ def must_advance(stateFoot, distMontee):
     return stateFoot.distance_ball(stateFoot.my_goal) >= distMontee and \
             stateFoot.ball_speed.dot(stateFoot.ball_pos-stateFoot.my_goal) > 0
 
-def must_defend_goal(stateFoot, distSortie):
+def opponentApproachesMyGoal(stateFoot, distSortie):
     """
     Renvoie vrai ssi la balle est a une distance
     moyennement loin, i.e. le gardien doit sortir
@@ -74,12 +62,24 @@ def must_defend_goal(stateFoot, distSortie):
     """
     return is_in_radius_action(stateFoot, stateFoot.my_pos, distSortie)
 
-def has_ball_control(stateFoot):
+def is_under_pressure(stateFoot, joueur, rayPressing):
     """
-    Renvoie vrai ssi le joueur a la balle au pied
-    et le moteur du jeu lui permet de frapper
+    Renvoie vrai ssi il y a un adversaire a une
+    distance inferieure ou egale a rayPressing
     """
-    return is_close_ball(stateFoot) and stateFoot.player_state(*stateFoot.key).can_shoot()
+    opp = nearest(joueur, stateFoot.opponents)
+    return stateFoot.distance(opp) < rayPressing
+
+def free_teammate(stateFoot, rayPressing):
+    """
+    Renvoie vrai ssi il y a un coequipier libre
+    de marquage
+    """
+    tm = stateFoot.teammates
+    for p in tm:
+        if not is_under_pressure(stateFoot, p, rayPressing):
+            return p
+    return None
 
 def is_defense_zone(stateFoot, distDefZone=20.):
     """
@@ -90,23 +90,6 @@ def is_defense_zone(stateFoot, distDefZone=20.):
     """
     #return distance_horizontale(stateFoot.my_pos, stateFoot.my_goal) < (stateFoot.width/2.-profondeurDegagement)
     return distance_horizontale(stateFoot.my_pos, stateFoot.my_goal) < distDefZone
-
-def temps_interception(stateFoot):
-    """
-    TODO -> il faut l'appeler au lieu de faire les changements
-    dans la strategie
-    """
-    idp = 4*(stateFoot.my_team-1) + stateFoot.me
-    if not courte[idp] and is_in_radius_action(stateFoot, stateFoot.my_pos, distInterceptionCourte):
-        courte[idp] = True
-        n_inst[idp] = interceptionCourte
-    if courte[idp] and not is_in_radius_action(stateFoot, stateFoot.my_pos, distInterceptionCourte):
-        courte[idp] = False
-        n_inst[idp] = interceptionLongue
-    n_inst[idp] -= 1
-    if n_inst[idp] == 0:
-        n_inst[idp] = interceptionCourte if courte[idp] else interceptionLongue
-    return n_inst[idp]
 
 def empty_goal(strat, stateFoot, opp, angle):
     """

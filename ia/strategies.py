@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from soccersimulator import Strategy
-from .tools import StateFoot, get_random_strategy, get_empty_strategy, is_in_radius_action
-from .conditions import must_intercept, has_ball_control, temps_interception, is_defense_zone, \
-        is_close_goal, is_close_ball, must_defend_goal, must_advance
-from .behaviour import shoot, beh_fonceurNormal, beh_fonceurChallenge1, beh_fonceur, controler, decaler,\
-        foncer, degager, degager_solo, aller_vers_balle, aller_vers_cage, intercepter_balle, \
-        fonceurCh1ApprochePower, forceShoot, power, essayerBut, avancerBalle, defendre_SR, monterTerrain
+from .tools import StateFoot, get_random_strategy, is_in_radius_action
+from .conditions import must_intercept, has_ball_control, is_defense_zone, \
+        is_close_goal, is_close_ball, opponentApproachesMyGoal, must_advance
+from .behaviour import shoot, beh_fonceurNormal, beh_fonceurChallenge1, beh_fonceur, control, shiftAside,\
+        clear, clear_solo, goToBall, goToMyGoal, try_interception, intercept_ball,\
+        fonceurCh1ApprochePower, shootPower, power, goForwardsPA, goForwardsMF, cutDownAngle, pushUp
 import pickle
 
 def loadPath(fn):
@@ -43,9 +43,9 @@ class FonceurStrategy(Strategy):
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if has_ball_control(me):
-            return foncer(me, beh_fonceur(me, "normal"))
-            #return foncer(me, forceShoot(me, self.alpha, self.beta))
-        return aller_vers_balle(me)
+            return shoot(me, beh_fonceur(me, "normal"))
+            #return shoot(me, shootPower(me, self.alpha, self.beta))
+        return goToBall(me)
 
 
 
@@ -61,8 +61,10 @@ class FonceurChallenge1Strategy(Strategy):
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if has_ball_control(me):
-            return foncer(me, beh_fonceur(me, "ch1"))
-        return aller_vers_balle(me)
+            return shoot(me, beh_fonceur(me, "ch1"))
+        return goToBall(me)
+
+
 
 ## Strategie Attaquant
 """
@@ -108,11 +110,11 @@ class AttaquantStrategy(Strategy):
                 'angleGardien': angleGardien, 'coeffAD': coeffAD, 'controleMT': controleMT, \
                 'decalX': decalX, 'decalY': decalY, 'distAttaque': distAttaque, \
                 'controleAttaque': controleAttaque, 'distDefZone': distDefZone}
-    def args_dribble_passe_shoot(self):
+    def args_dribble_pass_shoot(self):
         return (self.dico['alphaShoot'], self.dico['betaShoot'], self.dico['angleDribble'], \
                 self.dico['powerDribble'], self.dico['rayDribble'], self.dico['angleGardien'], \
                 self.dico['coeffAD'], self.dico['controleAttaque'], self.dico['distShoot'])
-    def args_controle_dribble_passe(self):
+    def args_control_dribble_pass(self):
         return (self.dico['angleDribble'], self.dico['powerDribble'], self.dico['rayDribble'], \
                 self.dico['coeffAD'], self.dico['controleMT'])
     def args_defense_demarquage(self):
@@ -121,13 +123,15 @@ class AttaquantStrategy(Strategy):
         me = StateFoot(state,id_team,id_player)
         if has_ball_control(me):
             if is_close_goal(me, self.dico['distAttaque']):
-                return essayerBut(self, me, *self.args_dribble_passe_shoot())
-            return avancerBalle(me, *self.args_controle_dribble_passe())
+                return goForwardsPA(self, me, *self.args_dribble_pass_shoot())
+            return goForwardsMF(me, *self.args_control_dribble_pass())
         if is_defense_zone(me, self.dico['distDefZone']):
-            return decaler(me, *self.args_defense_demarquage())
-        return aller_vers_balle(me)
+            return shiftAside(me, *self.args_defense_demarquage())
+        return goToBall(me)
 
-## Strategie Attaquant
+
+
+## Strategie Attaquant (precedent)
 """
 C'est un attaquant sans dribble
 NB: non fonctionnel car les methodes furent modifiees
@@ -142,11 +146,13 @@ class AttaquantPrecStrategy(Strategy):
         me = StateFoot(state,id_team,id_player)
         if has_ball_control(me):
             if is_close_goal(me, self.dico['distShoot']):
-                foncer(me, power(self.dico['alpha'], self.dico['beta']))
-            return controler(me, power(me))
+                shoot(me, power(self.dico['alpha'], self.dico['beta']))
+            return control(me, power(me))
         if is_defense_zone(me):
-            return decaler(me)
-        return aller_vers_balle(me)
+            return shiftAside(me)
+        return goToBall(me)
+
+
 
 ## Strategie Dribbler
 """
@@ -162,9 +168,11 @@ class BalleAuPiedStrategy(Strategy):
         me = StateFoot(state,id_team,id_player)
         if has_ball_control(me):
             if is_close_goal(me, 10.):
-                return foncer(me, fonceurCh1ApprochePower)
-            return controler(me, power(me))
-        return aller_vers_balle(me)
+                return shoot(me, fonceurCh1ApprochePower)
+            return control(me, power(me))
+        return goToBall(me)
+
+
 
 ## Strategie Gardien
 """
@@ -175,7 +183,7 @@ franchi une certaine distance, le gardien monte dans le terrain
 pour offrir une option de passe a ses coequipiers
 """
 class GardienStrategy(Strategy):
-    def __init__(self, tempsI=None, n=None, rayInter=None, raySortie=None, distSortie=None, \
+    def __init__(self, tempsI=None, rayInter=None, raySortie=None, distSortie=None, \
             distMontee=None, profDeg=None, amplDeg=None, powerDeg=None, fn_gk=None):
         Strategy.__init__(self,"Gardien")
         if tempsI is not None: # dictionnaire passe en parametre, i.e. algo genetique
@@ -190,6 +198,7 @@ class GardienStrategy(Strategy):
             #self.dico['amplDeg'] = 21.4399528226
         else: # dictionnaire par defaut
             self.dico = self.default_dict()
+        self.dico['tempsI'] = int(self.dico['tempsI'])
         self.dico['n'] = self.dico['tempsI']
     def default_dict(self):
         tempsI = 28.7834668136#7
@@ -206,22 +215,20 @@ class GardienStrategy(Strategy):
         me = StateFoot(state,id_team,id_player)
         if has_ball_control(me):
             self.dico['n'] = self.dico['tempsI'] - 1
-            return degager(me, self.dico['profDeg'], self.dico['amplDeg'], self.dico['powerDeg'])
+            return clear(me, self.dico['profDeg'], self.dico['amplDeg'], self.dico['powerDeg'])
         '''
         if must_advance(me, self.dico['distMontee']):
-            return monterTerrain(me)
+            return pushUp(me)
         '''
         if must_intercept(me, self.dico['rayInter']):
-            self.dico['n'] -= 1
-            if self.dico['n'] <= 0 :
-                self.dico['n'] = self.dico['tempsI'] - 1
-                return get_empty_strategy()
-            return intercepter_balle(self, me,self.dico['n'])
-        if must_defend_goal(me, self.dico['distSortie']):
-            return defendre_SR(me, self.dico['raySortie'])
-        return aller_vers_cage(me)
+            return try_interception(me, self.dico)
+        if opponentApproachesMyGoal(me, self.dico['distSortie']):
+            return cutDownAngle(me, self.dico['raySortie'])
+        return goToMyGoal(me)
 
-## Strategie Gardien
+
+
+## Strategie Gardien (precedent)
 """
 C'est un gardien sans la premiere defense de la cage
 ni la montee dans le terrain
@@ -233,11 +240,13 @@ class GardienPrecStrategy(Strategy):
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if has_ball_control(me):
-            #return degager_solo(me)
-            return degager(me)
+            #return clear_solo(me)
+            return clear(me)
         if must_intercept(me):
-            return intercepter_balle(me,10.)
-        return aller_vers_cage(me)
+            return intercept_ball(me,10.)
+        return goToMyGoal(me)
+
+
 
 ## Strategie GardienBase
 """
@@ -252,7 +261,7 @@ class GardienBaseStrategy(Strategy):
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if has_ball_control(me):
-            return degager_solo(me)
+            return clear_solo(me)
         if is_in_radius_action(me, me.my_pos, 35.):
-            return aller_vers_balle(me)
-        return aller_vers_cage(me)
+            return goToBall(me)
+        return goToMyGoal(me)

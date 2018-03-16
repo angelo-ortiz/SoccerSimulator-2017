@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from soccersimulator  import SoccerAction, Vector2D
-from soccersimulator.settings import GAME_HEIGHT, GAME_WIDTH, GAME_GOAL_HEIGHT
+from soccersimulator.settings import GAME_HEIGHT, GAME_WIDTH, GAME_GOAL_HEIGHT, maxPlayerShoot
+from math import acos, exp
 
 ## Classe enveloppe de notre super-etat du jeu
 class Wrapper(object):
@@ -105,12 +106,32 @@ class StateFoot(Wrapper):
         return self.height/2.
 
     @property
-    def center_point(self):
+    def center_spot(self):
         """
         La position du point central
         """
         return Vector2D(self.width/2., self.goal_height)
 
+    @property
+    def quadrant(self):
+        """
+        Renvoie le quadrant trigonometrique dans lequel
+        se trouve le joueur
+        """
+        mp = self.my_pos
+        cp = self.center_spot
+        if mp.x < cp.x:
+            if mp.y > cp.y:
+                return "II"
+            else:
+                return "III"
+        else:
+            if mp.y > cp.y:
+                return "I"
+            else:
+                return "IV"
+
+    @property
     def teammates(self):
         """
         Ses coequipiers
@@ -120,6 +141,7 @@ class StateFoot(Wrapper):
         liste.remove(self.player_state(*self.key))
         return liste
 
+    @property
     def opponents(self):
         """
         Ses adversaires
@@ -132,7 +154,7 @@ class StateFoot(Wrapper):
         """
         L'adversaire le plus proche de la balle
         """
-        liste = self.opponents()
+        liste = self.opponents
         opp = liste[0]
         dist = self.distance_ball(opp.position)
         for p in liste[1:]:
@@ -145,24 +167,6 @@ class StateFoot(Wrapper):
         Son adversaire lorsque c'est un match 1v1
         """
         return self.player_state(self.opp_team,0)
-
-    def quadrant(self):
-        """
-        Renvoie le quadrant trigonometrique dans lequel
-        se trouve le joueur
-        """
-        mp = self.my_pos
-        cp = self.center_point
-        if mp.x < cp.x:
-            if mp.y > cp.y:
-                return "II"
-            else:
-                return "III"
-        else:
-            if mp.y > cp.y:
-                return "I"
-            else:
-                return "IV"
 
     def is_team_left(self):
         """
@@ -189,7 +193,7 @@ class StateFoot(Wrapper):
         Renvoie vrai ssi il est le joueur le plus proche
         de la balle
         """
-        liste_opp = self.opponents()
+        liste_opp = self.opponents
         dist_ball_joueur = self.distance(self.ball_pos)
         for opp in liste_opp:
             if dist_ball_joueur >= self.distance_ball(opp.position):
@@ -205,11 +209,11 @@ def normalise_diff(src, dst, norme):
     """
     return (dst-src).norm_max(norme)
 
-def coeff_vitesse_reduite(n,fc):
+def coeff_friction(n,fc):
     """
-    Renvoie le coefficient de la vitesse dans le calcul
-    de l'acceleration pour l'interception compte tenu
-    des effets de frottement
+    Renvoie le coefficient d'une grandeur physique
+    dont le taux de changement sur le temps varie
+    de forme proportionnelle a fc
     """
     return (1.-fc)*(1.-(1.-fc)**n)/fc
 
@@ -294,4 +298,17 @@ def free_continue(stateFoot, liste, distRef):
     if j is not None:
         return j
     return True
+
+def shootPower(stateFoot, alphaShoot, betaShoot):
+    """
+    Renvoie la force avec laquelle on
+    va frapper la balle selon la position
+    de la balle (la distance et l'angle
+    par rapport a l'horizontale)
+    """
+    vect = Vector2D(-1.,0.)
+    u = stateFoot.opp_goal - stateFoot.my_pos
+    dist = u.norm
+    theta = acos(abs(vect.dot(u))/u.norm)/acos(0.)
+    return maxPlayerShoot*(1.-exp(-(alphaShoot*dist)))*exp(-betaShoot*theta)
 
