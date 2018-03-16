@@ -109,7 +109,7 @@ class dictParams(object):
                 'angleGardien':  (sqrt(2.)/2.,1.), 'coeffAD': (0.7,1.5), \
                 'distSortie': (40.,70.), 'raySortie': (10.,30.), 'controleMT': (1.04,1.1), \
                 'profDeg': (10.,50.), 'amplDeg': (20.,45.), 'decalX': (10.,50.), \
-                'decalY': (20.,45.), 'distAttaque': (40.,70.), 'controleAttaque': (0., 1.2), \
+                'decalY': (20.,45.), 'distAttaque': (40.,70.), 'controleAttaque': (0.5, 1.2), \
                 'distMontee': (40.,80.), 'distDefZone': (10.,40.), 'powerDeg': (2.5,5.)}
 
     def random(self, parameters):
@@ -134,9 +134,10 @@ class dictParams(object):
     def restart(self):
         """
         Remet a zero tous les compteurs du vecteur, a savoir
-        le nombre de points, le nombre de buts marques et le
-        nombre de buts encaisses
+        les resultats des matches, le nombre de points, le
+        nombre de buts marques et le nombre de buts encaisses
         """
+        self.res = [0]*3
         self.pts = 0
         self.fg = 0
         self.ag = 0
