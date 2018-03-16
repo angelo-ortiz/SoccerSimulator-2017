@@ -17,11 +17,17 @@ def setCounters(simu, team1, team2):
     gt2 = simu.get_score_team(2)
     if gt1 > gt2:
         team1.pts += 3
+        team1.res[0] += 1
+        team2.res[2] += 1
     elif gt1 == gt2:
         team1.pts += 1
         team2.pts += 1
+        team1.res[1] += 1
+        team2.res[1] += 1
     else:
         team2.pts += 3
+        team1.res[2] += 1
+        team2.res[0] += 1
     team1.fg += gt1
     team2.fg += gt2
     team1.ag += gt2
@@ -39,8 +45,12 @@ def setCountersSolo(simu, team1, rev):
     ag = simu.get_score_team(j)
     if fg > ag:
         team1.pts += 3
+        team1.res[0] += 1
     elif fg == ag:
         team1.pts += 1
+        team1.res[1] += 1
+    else:
+        team1.res[2] += 1
     team1.fg += fg
     team1.ag += ag
 
@@ -74,6 +84,7 @@ class dictParams(object):
                 'profDeg': 0., 'amplDeg': 0., 'decalX': 0., 'decalY': 0., \
                 'distAttaque': 0., 'controleAttaque': 0., 'distMontee': 0., \
                 'distDefZone': 0., 'powerDeg': 0.}
+        self.res = [0,0,0] # le compteur de resultats (V,N,D)
         self.pts = 0 # le nombre de points obtenus (V,N,D) = (3,1,0)
         self.fg = 0     # le nombre de buts marques
         self.ag = 0     # le nombre de buts encaisses
@@ -138,6 +149,7 @@ class dictParams(object):
         for p in parameters:
             print(p, ":", self.params[p])
         print("------------------------")
+        print("resultats :", self.res)
         print("points : ", self.pts)
         print("fg : ", self.fg)
         print("ag : ", self.ag)
