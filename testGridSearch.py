@@ -1,5 +1,5 @@
-from ia.gs_optimisation import ParamSearchShoot, ParamSearchGoal, ParamSearchDribble, ParamSearchControle
-from ia.strategy_optimisation import ControlerTestStrategy, ShootTestStrategy, DribblerTestStrategy, GardienTestStrategy
+from ia.gs_optimisation import ParamSearchShoot, ParamSearchGoal, ParamSearchDribble, ParamSearchControle, ParamSearchPasse
+from ia.strategy_optimisation import ControlerTestStrategy, ShootTestStrategy, DribblerTestStrategy, GardienTestStrategy, PasseTestStrategy
 import operator
 
 #==============================================
@@ -22,10 +22,10 @@ d_list = [r for r in range(10, 30)]
 #==============================================
 
 #power = [i/1000. for i in range(1030,1110)]
-power = [i/100. for i in range(103,111)]
+#power = [i/100. for i in range(103,111)]
 
-expe = ParamSearchControle(strategy=ControlerTestStrategy(),
-                   params={'power': power})
+#expe = ParamSearchControle(strategy=ControlerTestStrategy(),
+#                   params={'power': power})
 
 #==============================================
 
@@ -34,6 +34,13 @@ power = [r/10 for r in range(10, 251)]
 
 #expe = ParamSearchDribble(strategy=DribblerTestStrategy(),
 #                   params={'theta': theta, 'power': power})
+
+#==============================================
+
+powerP = [r/10. for r in range(20, 31)]
+
+expe = ParamSearchPasse(strategy=PasseTestStrategy(),
+                   params={'power': powerP})
 
 #==============================================
 

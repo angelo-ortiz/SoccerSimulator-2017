@@ -54,7 +54,7 @@ def must_advance(stateFoot, distMontee):
     return stateFoot.distance_ball(stateFoot.my_goal) >= distMontee and \
             stateFoot.ball_speed.dot(stateFoot.ball_pos-stateFoot.my_goal) > 0
 
-def opponentApproachesMyGoal(stateFoot, distSortie):
+def opponent_approaches_my_goal(stateFoot, distSortie):
     """
     Renvoie vrai ssi la balle est a une distance
     moyennement loin, i.e. le gardien doit sortir
@@ -67,21 +67,10 @@ def is_under_pressure(stateFoot, joueur, rayPressing):
     Renvoie vrai ssi il y a un adversaire a une
     distance inferieure ou egale a rayPressing
     """
-    opp = nearest(joueur, stateFoot.opponents)
+    opp = nearest(joueur.position, stateFoot.opponents)
     return stateFoot.distance(opp) < rayPressing
 
-def free_teammate(stateFoot, rayPressing):
-    """
-    Renvoie vrai ssi il y a un coequipier libre
-    de marquage
-    """
-    tm = stateFoot.teammates
-    for p in tm:
-        if not is_under_pressure(stateFoot, p, rayPressing):
-            return p
-    return None
-
-def is_defense_zone(stateFoot, distDefZone=20.):
+def is_defensive_zone(stateFoot, distDefZone=20.):
     """
     Renvoie vrai ssi la distance horizontale
     entre le joueur et sa cage est inferieure
@@ -108,3 +97,13 @@ def empty_goal(strat, stateFoot, opp, angle):
     except AttributeError:
         strat.dribbleGardien = True
     return not strat.dribbleGardien
+
+def free_teammate(stateFoot, rayPressing):
+    """
+    Renvoie le premier coequipier libre de
+    marquage
+    """
+    for tm in stateFoot.teammates:
+        if not is_under_pressure(stateFoot, tm, rayPressing):
+            return tm.position
+    return None

@@ -202,6 +202,26 @@ class StateFoot(Wrapper):
 
 
 
+def get_random_vector():
+    """
+    Renvoie un vecteur a coordonnees aleatoires comprises
+    entre -1 et 1 (exclu)
+    """
+    return Vector2D.create_random(-1.,1.)
+
+def get_random_strategy():
+    """
+    Renvoie une SoccerAction completement aleatoire, i.e.
+    les vecteurs de frappe et acceleration le sont
+    """
+    return SoccerAction(get_random_vector(), get_random_vector())
+
+def get_empty_strategy():
+    """
+    Renvoie une SoccerAction qui ne fait rien du tout
+    """
+    return SoccerAction()
+
 def normalise_diff(src, dst, norme):
     """
     Renvoie le vecteur allant de src vers dst avec
@@ -239,25 +259,27 @@ def is_upside(ref,other):
     """
     return ref.y > other.y
 
-def get_random_vector():
+def shootPower(stateFoot, alphaShoot, betaShoot):
     """
-    Renvoie un vecteur a coordonnees aleatoires comprises
-    entre -1 et 1 (exclu)
+    Renvoie la force avec laquelle on
+    va frapper la balle selon la position
+    de la balle (la distance et l'angle
+    par rapport a l'horizontale)
     """
-    return Vector2D.create_random(-1.,1.)
+    vect = Vector2D(-1.,0.)
+    u = stateFoot.opp_goal - stateFoot.my_pos
+    dist = u.norm
+    theta = acos(abs(vect.dot(u))/u.norm)/acos(0.)
+    return maxPlayerShoot*(1.-exp(-(alphaShoot*dist)))*exp(-betaShoot*theta)
 
-def get_random_strategy():
+def passPower(stateFoot, dest, maxPower, thetaPass):
     """
-    Renvoie une SoccerAction completement aleatoire, i.e.
-    les vecteurs de frappe et acceleration le sont
+    Renvoie la force avec laquelle on
+    va faire une passer selon la distance
+    de entre la balle et le recepteur
     """
-    return SoccerAction(get_random_vector(), get_random_vector())
-
-def get_empty_strategy():
-    """
-    Renvoie une SoccerAction qui ne fait rien du tout
-    """
-    return SoccerAction()
+    dist = dest.distance(stateFoot.ball_pos)
+    return maxPower*(1.-exp(-(thetaPass*dist)))
 
 def nearest(ref, liste):
     """
@@ -279,36 +301,19 @@ def nearest_ball(stateFoot, liste):
     """
     return nearest(stateFoot.ball_pos, liste)
 
-def free_continue(stateFoot, liste, distRef):
+def nearest_defender(stateFoot, liste, distRef):
     """
-    Renvoie vrai si le joueur n'a pas d'opposition dans un
-    rayon de distRef en direction de la cage opposee, i.e. il
-    a une voie libre pour continuer, sinon l'adversaire le
-    plus proche qui est susceptible de l'intercepter
+    Renvoie le defenseur adverse le plus proche dans un
+    rayon de distRef en direction de la cage opposee,
+    i.e. le joueur qui lui bloque la voie vers la cage
     """
-    j = None
+    oppDef = None
     og = stateFoot.opp_goal
     dog = stateFoot.distance(og)
     dist_min = distRef
-    for i in liste:
-        dist_i = stateFoot.distance_ball(i.position)
-        if dist_i < dist_min and dog > i.position.distance(og):
-            j = i
-            dist_min = dist_i
-    if j is not None:
-        return j
-    return True
-
-def shootPower(stateFoot, alphaShoot, betaShoot):
-    """
-    Renvoie la force avec laquelle on
-    va frapper la balle selon la position
-    de la balle (la distance et l'angle
-    par rapport a l'horizontale)
-    """
-    vect = Vector2D(-1.,0.)
-    u = stateFoot.opp_goal - stateFoot.my_pos
-    dist = u.norm
-    theta = acos(abs(vect.dot(u))/u.norm)/acos(0.)
-    return maxPlayerShoot*(1.-exp(-(alphaShoot*dist)))*exp(-betaShoot*theta)
-
+    for j in liste:
+        dist_j = stateFoot.distance_ball(j.position)
+        if dist_j < dist_min and dog > j.position.distance(og):
+            oppDef = j
+            dist_dmin = dist_j
+    return oppDef

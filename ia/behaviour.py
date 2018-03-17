@@ -3,8 +3,8 @@ from __future__ import print_function
 from soccersimulator import SoccerAction, Vector2D
 from soccersimulator.settings import GAME_WIDTH, GAME_HEIGHT, maxPlayerShoot, maxPlayerAcceleration, \
         ballBrakeConstant, playerBrackConstant
-from .tools import Wrapper, StateFoot, normalise_diff, coeff_friction, is_upside, free_continue, nearest_ball, get_empty_strategy, shootPower
-from .conditions import profondeurDegagement, largeurDegagement, empty_goal, is_close_goal
+from .tools import Wrapper, StateFoot, normalise_diff, coeff_friction, is_upside, nearest_defender, nearest_ball, get_empty_strategy, shootPower, passPower
+from .conditions import profondeurDegagement, largeurDegagement, empty_goal, is_close_goal, free_teammate
 from math import acos, exp, atan, atan2, sin, cos
 import random
 
@@ -104,7 +104,31 @@ def dribble(state, opp, angleDribble, powerDribble, coeffAD):
     angle += angleDribble
     destDribble.x = cos(angle)
     destDribble.y = sin(angle)
-    return kickAt(state,state.ball_pos + destDribble,powerDribble)
+    return kickAt(state, state.ball_pos + destDribble, powerDribble)
+
+def passBall(state, rayPassePressing, maxPowerPasse, thetaPass):
+    """
+    Fait une passe vers un coequipier sans
+    marquage
+    TODO: il faut enlever la recherche du coequipier et plutot
+    le passer en parametre => plus de strategie vide
+    """
+    tm = free_teammate(state, rayPassePressing)
+    if tm is None:
+        return get_empty_strategy()
+    dest = tm
+    return kickAt(state, dest, passPower(state, dest, maxPowerPasse, thetaPass))
+
+def receiveBall(state, angleRecept):
+    """
+    Recoit une passe
+    TODO: enlever la strategie vide
+    """
+    vectBall = (state.my_pos - state.ball_pos).normalize()
+    vectSpeed = state.ball_speed.copy().normalize()
+    if state.distance(state.ball_pos) <= 10 and vectSpeed.dot(vectBall) <= angleRecept:
+        return goToBall(state)
+    return get_empty_strategy()
 
 def goForwardsMF(state, angleDribble, powerDribble, rayDribble, coeffAD, powerControl):
     """
@@ -112,10 +136,10 @@ def goForwardsMF(state, angleDribble, powerDribble, rayDribble, coeffAD, powerCo
     avec la balle et dribble lorsqu'il y a
     un adversaire en face
     """
-    can_continue = free_continue(state, state.opponents, rayDribble)
-    if can_continue == True:
+    oppDef = nearest_defender(state, state.opponents, rayDribble)
+    if oppDef is None:
         return control(state, powerControl)
-    return dribble(state, can_continue, angleDribble, powerDribble, coeffAD)
+    return dribble(state, oppDef, angleDribble, powerDribble, coeffAD)
 
 def goForwardsPA(strat, state, alpha, beta, angleDribble, powerDribble, rayDribble, angleGardien, coeffAD, powerControl, distShoot):
     """
@@ -124,15 +148,15 @@ def goForwardsPA(strat, state, alpha, beta, angleDribble, powerDribble, rayDribb
     reparation pour frapper et dribble
     l'adversaire en face de lui
     """
-    can_continue = free_continue(state, state.opponents, rayDribble)
-    if can_continue == True or empty_goal(strat, state, can_continue, angleGardien):
+    oppDef = nearest_defender(state, state.opponents, rayDribble)
+    if oppDef is None or empty_goal(strat, state, oppDef, angleGardien):
         if is_close_goal(state, distShoot):
             return shoot(state, shootPower(state, alpha, beta))
         else:
             return control(state, powerControl)
-    return dribble(state,can_continue,angleDribble, powerDribble, coeffAD)
+    return dribble(state,oppDef,angleDribble, powerDribble, coeffAD)
 
-def clear_solo(state):
+def clearSolo(state):
     """
     Degage la balle avec une profondeur
     profondeurDegagement et une largeur
@@ -177,6 +201,8 @@ def pushUp(state):
     Monte dans le terrain pour proposer
     des possibilites de passe aux
     coequipiers
+    TODO: la positionnement dans le terrain
+    est a revoir
     """
     tm = state.teammates[0]
     dest = Vector2D()
@@ -198,7 +224,7 @@ def cutDownAngle(state, raySortie):
     trajectoire += diff
     return goTo(state,trajectoire)
 
-def try_interception(state, dico):
+def tryInterception(state, dico):
     """
     Essaye d'intercepter la balle
     s'il lui reste de temps,
@@ -209,9 +235,9 @@ def try_interception(state, dico):
     if dico['n'] <= 0 :
         dico['n'] = dico['tempsI'] - 1
         return get_empty_strategy()
-    return intercept_ball(state, dico['n'])
+    return interceptBall(state, dico['n'])
 
-def intercept_ball(state,n):
+def interceptBall(state,n):
     """
     Se deplace en vue d'intercepter
     la balle pour une estimation

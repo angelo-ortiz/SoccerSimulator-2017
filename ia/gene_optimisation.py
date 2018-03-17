@@ -17,21 +17,20 @@ def setCounters(simu, team1, team2):
     gt2 = simu.get_score_team(2)
     if gt1 > gt2:
         team1.pts += 3
-        team1.res[0] += 1
-        team2.res[2] += 1
+        res1 = 0
     elif gt1 == gt2:
         team1.pts += 1
         team2.pts += 1
-        team1.res[1] += 1
-        team2.res[1] += 1
+        res1 = 1
     else:
         team2.pts += 3
-        team1.res[2] += 1
-        team2.res[0] += 1
+        res1 = 2
     team1.fg += gt1
     team2.fg += gt2
     team1.ag += gt2
     team2.ag += gt1
+    team1.res[res1] += 1
+    team2.res[2-res1] += 1
 
 def setCountersSolo(simu, team1, rev):
     """
@@ -45,14 +44,15 @@ def setCountersSolo(simu, team1, rev):
     ag = simu.get_score_team(j)
     if fg > ag:
         team1.pts += 3
-        team1.res[0] += 1
+        res = 0
     elif fg == ag:
         team1.pts += 1
-        team1.res[1] += 1
+        res = 1
     else:
-        team1.res[2] += 1
+        res = 2
     team1.fg += fg
     team1.ag += ag
+    team1.res[res] += 1
 
 def getDistinctTuple(low=0, high=30):
     """
@@ -104,13 +104,13 @@ class dictParams(object):
         parametre
         """
         return {'alphaShoot': (0.,0.6), 'betaShoot': (0.5,1.2), 'powerDribble': (0.,6.), \
-                'tempsI': (3,13), 'angleDribble': (0.,PI/2.), 'rayInter': (5.,20.), \
+                'tempsI': (1,13), 'angleDribble': (0.,PI/2.), 'rayInter': (5.,20.), \
                 'distShoot': (10.,40.), 'rayDribble': (5.,25.), \
-                'angleGardien':  (sqrt(2.)/2.,1.), 'coeffAD': (0.7,1.5), \
+                'angleGardien':  (0.5,1.), 'coeffAD': (0.7,1.5), \
                 'distSortie': (40.,70.), 'raySortie': (10.,30.), 'controleMT': (1.04,1.1), \
                 'profDeg': (10.,50.), 'amplDeg': (20.,45.), 'decalX': (10.,50.), \
                 'decalY': (20.,45.), 'distAttaque': (40.,70.), 'controleAttaque': (0.5, 1.2), \
-                'distMontee': (40.,80.), 'distDefZone': (10.,40.), 'powerDeg': (2.5,5.)}
+                'distMontee': (40.,80.), 'distDefZone': (10.,40.), 'powerDeg': (2.,5.)}
 
     def random(self, parameters):
         """
@@ -150,7 +150,7 @@ class dictParams(object):
         for p in parameters:
             print(p, ":", self.params[p])
         print("------------------------")
-        print("resultats :", self.res)
+        print("bilan :", self.res)
         print("points : ", self.pts)
         print("fg : ", self.fg)
         print("ag : ", self.ag)

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from soccersimulator import Strategy, Vector2D
-from .tools import StateFoot, get_empty_strategy
-from .conditions import must_intercept, has_ball_control, is_close_ball
-from .behaviour import dribbler, foncer, degager_solo, aller_vers_balle, aller_dest, aller_vers_cage, intercepter_balle, forceShoot, power, essayerBut, controler
+from .tools import StateFoot, get_empty_strategy, shootPower
+from .conditions import must_intercept, has_ball_control, is_close_ball, is_close_goal
+from .behaviour import dribble, shoot, clearSolo, goToBall, goTo, goToMyGoal, interceptBall, power, goForwardsPA, control, passBall, receiveBall
 
 class ShootTestStrategy(Strategy):
     def __init__(self, dist=None, alpha=None, beta=None):
@@ -12,7 +12,9 @@ class ShootTestStrategy(Strategy):
         self.beta = beta
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
-        return foncer(me, forceShoot(me, self.alpha, self.beta))
+        return shoot(me, shootPower(me, self.alpha, self.beta))
+
+
 
 class GardienTestStrategy(Strategy):
     def __init__(self, n=None, distance=None):
@@ -24,14 +26,16 @@ class GardienTestStrategy(Strategy):
         me = StateFoot(state,id_team,id_player)
         if has_ball_control(me):
             self.n = self.n_deb -1
-            return degager_solo(me)
+            return clearSolo(me)
         if must_intercept(me, self.distance):
             self.n -= 1
             #print(self.n)
             if self.n <= 0 :
                 return get_empty_strategy()
-            return intercepter_balle(me,self.n)
-        return aller_vers_cage(me)
+            return interceptBall(me,self.n)
+        return goToMyGoal(me)
+
+
 
 class ControlerTestStrategy(Strategy):
     def __init__(self, power=None):
@@ -40,10 +44,12 @@ class ControlerTestStrategy(Strategy):
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if has_ball_control(me):
-            return controler(me, self.power)
+            return control(me, self.power)
         if is_close_ball(me):
             return get_empty_strategy()
-        return aller_vers_balle(me)
+        return goToBall(me)
+
+
 
 class DribblerTestStrategy(Strategy):
     def __init__(self, theta=None, power=None):
@@ -55,10 +61,35 @@ class DribblerTestStrategy(Strategy):
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if has_ball_control(me):
-            return essayerBut(me, self.alpha, self.beta, self.theta, self.power)
+            return goForwardsPA(me, self.alpha, self.beta, self.theta, self.power)
         if is_close_ball(me):
             return get_empty_strategy()
-        return aller_vers_balle(me)
+        return goToBall(me)
+
+
+
+## Strategie PasseTest
+"""
+C'est un joueur qui essaie toujours d'avancer balle
+au pied quand il la possede, sauf s'il est dans
+la surface de reparation, ou il tire la balle vers
+la cage adverse
+"""
+class PasseTestStrategy(Strategy):
+    def __init__(self, power=3.):
+        Strategy.__init__(self,"PasseTest")
+        self.power = power
+    def compute_strategy(self,state,id_team,id_player):
+        me = StateFoot(state,id_team,id_player)
+        if has_ball_control(me):
+            if is_close_goal(me, 10.):
+                return shoot(me, fonceurCh1ApprochePower)
+            return passBall(me, 10., self.power, 0.8)
+            #return control(me, power(me))
+        return receiveBall(me, 0.5)
+        #return goToBall(me)
+
+
 
 class TestAccStrategy(Strategy):
     def __init__(self, dist):
@@ -71,4 +102,4 @@ class TestAccStrategy(Strategy):
             print("0")
             return get_empty_strategy()
         print("1")
-        return aller_dest(me, vect)
+        return goTo(me, vect)
