@@ -375,7 +375,8 @@ class GKStrikerTeam(GeneTeam):
 
     def save(self, fn_gk="gk_dico.pkl", fn_st="st_dico.pkl"):
         """
-        Sauvegarde le dictionnaire de parametres du gardien et de
-        l'attaquant dans des fichiers le repertoire 'parameters'
+        Sauvegarde le dictionnaire de parametres du gardien
+        et de l'attaquant dans des fichiers dans le repertoire
+        'parameters'
         """
         return super(GKStrikerTeam, self).save([fn_gk, fn_st, None, None])
