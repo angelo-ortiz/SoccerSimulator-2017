@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from soccersimulator  import SoccerAction, Vector2D
 from soccersimulator.settings import GAME_HEIGHT, GAME_WIDTH, GAME_GOAL_HEIGHT, maxPlayerShoot
-from math import acos, exp
+from math import acos, exp, asin
 
 ## Classe enveloppe de notre super-etat du jeu
 class Wrapper(object):
@@ -229,6 +229,14 @@ def normalise_diff(src, dst, norme):
     """
     return (dst-src).norm_max(norme)
 
+def get_oriented_angle(ref, other):
+    """
+    Renvoie l'angle oriente du vecteur ref vers
+    le vecteur other, pourvu que les vecteurs
+    soient unitaires
+    """
+    return asin(ref.x*other.y-ref.y*other.x)
+
 def coeff_friction(n,fc):
     """
     Renvoie le coefficient d'une grandeur physique
@@ -309,11 +317,11 @@ def nearest_defender(stateFoot, liste, distRef):
     """
     oppDef = None
     og = stateFoot.opp_goal
-    dog = stateFoot.distance(og)
+    dog = stateFoot.distance_ball(og)
     dist_min = distRef
     for j in liste:
         dist_j = stateFoot.distance_ball(j.position)
-        if dist_j < dist_min and dog > j.position.distance(og):
+        if dist_j < dist_min and j.position.distance(og) < dog:
             oppDef = j
             dist_dmin = dist_j
     return oppDef

@@ -2,13 +2,13 @@ from .strategies import RandomStrategy, FonceurStrategy, FonceurChallenge1Strate
 from .strategies import AttaquantStrategy
 from soccersimulator import SoccerTeam
 
-def get_team(nb_players):
+def get_team(nb_players, gk=None, st=None):
     myteam = SoccerTeam(name="ChPerFusion")
     if nb_players == 1:
         myteam.add("  9_Fonceur", FonceurStrategy())
     if nb_players == 2:
-        myteam.add("  7_Attaquant", AttaquantStrategy())
-        myteam.add("  1_Goal", GardienStrategy())
+        myteam.add("  7_Attaquant", AttaquantStrategy(fn_st=st))
+        myteam.add("  1_Goal", GardienStrategy(fn_gk=gk))
     if nb_players == 4:
         myteam.add("Joueur 1",GardienStrategy())
         myteam.add("Joueur 2",RandomStrategy())

@@ -3,9 +3,10 @@ from __future__ import print_function
 from soccersimulator import SoccerAction, Vector2D
 from soccersimulator.settings import GAME_WIDTH, GAME_HEIGHT, maxPlayerShoot, maxPlayerAcceleration, \
         ballBrakeConstant, playerBrackConstant
-from .tools import Wrapper, StateFoot, normalise_diff, coeff_friction, is_upside, nearest_defender, nearest_ball, get_empty_strategy, shootPower, passPower
+from .tools import Wrapper, StateFoot, normalise_diff, coeff_friction, is_upside, nearest_defender, \
+    nearest_ball, get_empty_strategy, shootPower, passPower, get_oriented_angle
 from .conditions import profondeurDegagement, largeurDegagement, empty_goal, is_close_goal, free_teammate
-from math import acos, exp, atan, atan2, sin, cos
+from math import acos, exp, atan2, sin, cos
 import random
 
 distMaxFonceurCh1Shoot = GAME_WIDTH/3.
@@ -87,19 +88,17 @@ def dribble(state, opp, angleDribble, powerDribble, coeffAD):
     soit vers l'axe, soit vers l'un des deux cotes
     """
     destDribble = Vector2D()
-    oPos = opp.position
-    angle = atan2(oPos.y-state.my_pos.y,oPos.x-state.my_pos.x)
-    try:
-        theta = atan((abs(oPos.y-state.my_pos.y) / abs(oPos.x-state.my_pos.x)))/acos(0.)
-    except ZeroDivisionError:
-        theta = 1.
-    rand = exp(-coeffAD*theta)/2.
+    me_opp = (opp.position - state.my_pos).normalize()
+    me_goal = (state.opp_goal - state.my_pos).normalize()
+    angle = atan2(me_opp.y,me_opp.x)
+    theta = get_oriented_angle(me_goal, me_opp)/acos(0.)
+    rand = exp(-coeffAD*abs(theta))/2.
     quad = state.quadrant
-    if random.random() < rand: # mauvais angle (vers un cote)
-        if quad == "II" or quad == "IV":
+    if random.random() < rand: # mauvais angle (vers l'adversaire)
+        if theta < 0.:
             angleDribble = -angleDribble
-    else: # bon angle (vers l'axe)
-        if quad == "I" or quad == "III":
+    else: # bon angle (vers la cage adverse)
+        if theta > 0.:
             angleDribble = -angleDribble
     angle += angleDribble
     destDribble.x = cos(angle)

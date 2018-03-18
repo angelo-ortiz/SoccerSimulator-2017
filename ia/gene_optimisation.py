@@ -103,13 +103,13 @@ class dictParams(object):
         Renvoie un dictionnaire avec les bornes de chaque
         parametre
         """
-        return {'alphaShoot': (0.,0.6), 'betaShoot': (0.5,1.2), 'powerDribble': (0.,6.), \
-                'tempsI': (1,13), 'angleDribble': (0.,PI/2.), 'rayInter': (5.,20.), \
-                'distShoot': (10.,40.), 'rayDribble': (5.,25.), \
+        return {'alphaShoot': (0.,0.6), 'betaShoot': (0.5,1.2), 'powerDribble': (1.,4.), \
+                'tempsI': (2,13), 'angleDribble': (0.,PI/2.), 'rayInter': (5.,20.), \
+                'distShoot': (10.,40.), 'rayDribble': (10.,25.), \
                 'angleGardien':  (0.5,1.), 'coeffAD': (0.7,1.5), \
                 'distSortie': (40.,70.), 'raySortie': (10.,30.), 'controleMT': (1.04,1.1), \
                 'profDeg': (10.,50.), 'amplDeg': (20.,45.), 'decalX': (10.,50.), \
-                'decalY': (20.,45.), 'distAttaque': (40.,70.), 'controleAttaque': (0.5, 1.2), \
+                'decalY': (20.,45.), 'distAttaque': (40.,70.), 'controleAttaque': (0.7, 1.2), \
                 'distMontee': (40.,80.), 'distDefZone': (10.,40.), 'powerDeg': (2.,5.)}
 
     def random(self, parameters):
