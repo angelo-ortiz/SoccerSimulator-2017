@@ -55,6 +55,7 @@ class AttaquantStrategy(Strategy):
         elif fn_st is not None: # dictionnaire a charger, i.e. deserialisation
             with open(loadPath(fn_st),"rb") as f:
                 self.dico = pickle.load(f)
+            self.dico['distShoot'] = 36.
         else: # dictionnaire par defaut
             self.dico = self.default_dict()
     def default_dict(self):
@@ -117,6 +118,7 @@ class GardienStrategy(Strategy):
         elif fn_gk is not None: # dictionnaire a charger, i.e. deserialisation
             with open(loadPath(fn_gk),"rb") as f:
                 self.dico = pickle.load(f)
+            self.dico['tempsI'] = 8.
         else: # dictionnaire par defaut
             self.dico = self.default_dict()
         self.dico['tempsI'] = int(self.dico['tempsI'])
