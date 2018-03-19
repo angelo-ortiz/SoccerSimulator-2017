@@ -1,7 +1,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
-jouer.py
 module*/
-confronter_best.py
-match_2equipes.py
+jouer.py
+confronterBest.py
+match2equipes.py
+testPoints.py

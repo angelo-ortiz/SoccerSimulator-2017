@@ -20,13 +20,12 @@ for n in range(nbIter):
             gk_cf = gk_cf_team.getTeam(j)
             gk_cf_p = gk_cf_team.getVector(j)
             team = {1: (gk_st, gk_st_p), 2:(gk_cf, gk_cf_p)}
-            if random.random() < 0.5: # Pour la moitie des matches, on change la position des equipes
+            if random.random() < 0.5:
                 team[1], team[2] = team[2], team[1]
             simu = Simulation(team[1][0],team[2][0])
             simu.start()
             #print(j)
             setCounters(simu, team[1][1], team[2][1])
-            #show_simu(simu)
     print(n)
     gk_st_team.update()
     gk_cf_team.update()

@@ -17,15 +17,20 @@ def setCounters(simu, team1, team2):
     gt2 = simu.get_score_team(2)
     if gt1 > gt2:
         team1.pts += 3
+        res1 = 0
     elif gt1 == gt2:
         team1.pts += 1
         team2.pts += 1
+        res1 = 1
     else:
         team2.pts += 3
+        res1 = 2
     team1.fg += gt1
     team2.fg += gt2
     team1.ag += gt2
     team2.ag += gt1
+    team1.res[res1] += 1
+    team2.res[2-res1] += 1
 
 def setCountersSolo(simu, team1, rev):
     """
@@ -39,10 +44,15 @@ def setCountersSolo(simu, team1, rev):
     ag = simu.get_score_team(j)
     if fg > ag:
         team1.pts += 3
+        res = 0
     elif fg == ag:
         team1.pts += 1
+        res = 1
+    else:
+        res = 2
     team1.fg += fg
     team1.ag += ag
+    team1.res[res] += 1
 
 def getDistinctTuple(low=0, high=30):
     """
@@ -73,7 +83,8 @@ class dictParams(object):
                 'distSortie': 0., 'raySortie': 0., 'controleMT': 0., \
                 'profDeg': 0., 'amplDeg': 0., 'decalX': 0., 'decalY': 0., \
                 'distAttaque': 0., 'controleAttaque': 0., 'distMontee': 0., \
-                'distDefZone': 0.}
+                'distDefZone': 0., 'powerDeg': 0.}
+        self.res = [0,0,0] # le compteur de resultats (V,N,D)
         self.pts = 0 # le nombre de points obtenus (V,N,D) = (3,1,0)
         self.fg = 0     # le nombre de buts marques
         self.ag = 0     # le nombre de buts encaisses
@@ -92,14 +103,14 @@ class dictParams(object):
         Renvoie un dictionnaire avec les bornes de chaque
         parametre
         """
-        return {'alphaShoot': (0.,1.), 'betaShoot': (0.4,1.2), 'powerDribble': (0.,6.), \
-                'tempsI': (0,30), 'angleDribble': (0.,PI/2.), 'rayInter': (0.,40.), \
-                'distShoot': (10.,40.), 'rayDribble': (0.,50.), \
-                'angleGardien':  (sqrt(2.)/2.,1.), 'coeffAD': (0.7,1.5), \
-                'distSortie': (40.,70.), 'raySortie': (0.,25.), 'controleMT': (0.8,2.), \
-                'profDeg': (10.,70.), 'amplDeg': (0.,40.), 'decalX': (0.,50.), \
-                'decalY': (0.,40.), 'distAttaque': (40.,70.), 'controleAttaque': (0., 1.2), \
-                'distMontee': (40.,80.), 'distDefZone': (10.,40.)}
+        return {'alphaShoot': (0.,0.6), 'betaShoot': (0.5,1.2), 'powerDribble': (1.,4.), \
+                'tempsI': (2,13), 'angleDribble': (0.,PI/2.), 'rayInter': (5.,20.), \
+                'distShoot': (10.,40.), 'rayDribble': (10.,25.), \
+                'angleGardien':  (0.5,1.), 'coeffAD': (0.7,1.5), \
+                'distSortie': (40.,70.), 'raySortie': (10.,30.), 'controleMT': (1.04,1.1), \
+                'profDeg': (10.,50.), 'amplDeg': (20.,45.), 'decalX': (10.,50.), \
+                'decalY': (20.,45.), 'distAttaque': (40.,70.), 'controleAttaque': (0.7, 1.2), \
+                'distMontee': (40.,80.), 'distDefZone': (10.,40.), 'powerDeg': (2.,5.)}
 
     def random(self, parameters):
         """
@@ -123,9 +134,10 @@ class dictParams(object):
     def restart(self):
         """
         Remet a zero tous les compteurs du vecteur, a savoir
-        le nombre de points, le nombre de buts marques et le
-        nombre de buts encaisses
+        les resultats des matches, le nombre de points, le
+        nombre de buts marques et le nombre de buts encaisses
         """
+        self.res = [0]*3
         self.pts = 0
         self.fg = 0
         self.ag = 0
@@ -138,6 +150,7 @@ class dictParams(object):
         for p in parameters:
             print(p, ":", self.params[p])
         print("------------------------")
+        print("bilan :", self.res)
         print("points : ", self.pts)
         print("fg : ", self.fg)
         print("ag : ", self.ag)
@@ -331,7 +344,7 @@ class GKStrikerTeam(GeneTeam):
     @classmethod
     def gk_params(cls):
         return ['tempsI', 'rayInter', 'distSortie', 'raySortie', \
-                'profDeg', 'amplDeg', 'distMontee']
+                'profDeg', 'amplDeg', 'distMontee', 'powerDeg']
 
     @classmethod
     def st_params(cls):
@@ -362,7 +375,8 @@ class GKStrikerTeam(GeneTeam):
 
     def save(self, fn_gk="gk_dico.pkl", fn_st="st_dico.pkl"):
         """
-        Sauvegarde le dictionnaire de parametres du gardien et de
-        l'attaquant dans des fichiers le repertoire 'parameters'
+        Sauvegarde le dictionnaire de parametres du gardien
+        et de l'attaquant dans des fichiers dans le repertoire
+        'parameters'
         """
         return super(GKStrikerTeam, self).save([fn_gk, fn_st, None, None])

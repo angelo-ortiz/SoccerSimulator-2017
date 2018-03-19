@@ -3,9 +3,10 @@ from __future__ import print_function
 from soccersimulator import SoccerAction, Vector2D
 from soccersimulator.settings import GAME_WIDTH, GAME_HEIGHT, maxPlayerShoot, maxPlayerAcceleration, \
         ballBrakeConstant, playerBrackConstant
-from .tools import Wrapper, StateFoot, normalise_diff, coeff_vitesse_reduite, is_upside, free_continue, nearest_ball
-from .conditions import high_precision_shoot, profondeurDegagement, largeurDegagement, empty_goal, is_close_goal
-from math import acos, exp, atan, atan2, sin, cos
+from .tools import Wrapper, StateFoot, normalise_diff, coeff_friction, is_upside, nearest_defender, \
+    nearest_ball, get_empty_strategy, shootPower, passPower, get_oriented_angle
+from .conditions import profondeurDegagement, largeurDegagement, empty_goal, is_close_goal, free_teammate
+from math import acos, exp, atan2, sin, cos
 import random
 
 distMaxFonceurCh1Shoot = GAME_WIDTH/3.
@@ -16,16 +17,13 @@ fonceur100Power = 6.
 fonceurHPPower = 4.3
 controlPower = 1.2
 
-def shoot(state,dest,puissance=maxPlayerShoot):
-    return SoccerAction(Vector2D(),normalise_diff(state.ball_pos, dest, puissance))
-
 def beh_fonceurNormal(state):
-    if high_precision_shoot(state,distMaxFonceurNormShoot):
+    if is_close_goal(state,distMaxFonceurNormShoot):
         return fonceurHPPower
     return fonceur100Power
 
 def beh_fonceurChallenge1(state):
-    if high_precision_shoot(state,distMaxFonceurCh1Shoot):
+    if is_close_goal(state,distMaxFonceurCh1Shoot):
         return fonceurCh1HPPower
     return fonceurCh1ApprochePower
 
@@ -34,9 +32,6 @@ def beh_fonceur(state, shooter="normal"):
         return beh_fonceurChallenge1(state)
     return beh_fonceurNormal(state)
 
-def foncer(state, power):
-    return shoot(state,state.opp_goal,power)
-
 def power(dribble):
     CONTROL = 0.98
     DRIBBLE = 0.47#TODO
@@ -44,124 +39,209 @@ def power(dribble):
         return DRIBBLE
     return CONTROL
 
-def controler(state, power=controlPower):
-    return shoot(state,state.opp_goal,power)
+def goWith(acceleration):
+    """
+    Se deplace avec cette acceleration
+    """
+    return SoccerAction(acceleration)
 
-def dribbler(state, opp, angleDribble, powerDribble, coeffAD):
+def goTo(state, dest):
+    """
+    Se deplacer vers cette destination
+    """
+    return goWith(normalise_diff(state.my_pos, dest, maxPlayerAcceleration))
+
+def goToBall(state):
+    """
+    Se deplace vers la balle
+    """
+    return goTo(state, state.ball_pos)
+
+def goToMyGoal(state):
+    """
+    Se deplace vers sa cage
+    """
+    return goTo(state, state.my_goal)
+
+def kickAt(state,dest,powerShoot=maxPlayerShoot):
+    """
+    Frappe la balle en direction de dest avec
+    une puissance de powerShoot
+    """
+    return SoccerAction(Vector2D(),normalise_diff(state.ball_pos, dest, powerShoot))
+
+def shoot(state, power):
+    """
+    Fait un tir droit au but
+    """
+    return kickAt(state,state.opp_goal,power)
+
+def control(state, powerControl=controlPower):#TODO changer le controle pour avancer dans les cotes
+    """
+    Avance avec la balle au pied
+    """
+    return kickAt(state,state.opp_goal,powerControl)
+
+def dribble(state, opp, angleDribble, powerDribble, coeffAD):
+    """
+    Fait un dribble avec une direction aleatoire
+    soit vers l'axe, soit vers l'un des deux cotes
+    """
     destDribble = Vector2D()
-    oPos = opp.position
-    angle = atan2(oPos.y-state.my_pos.y,oPos.x-state.my_pos.x)
-    try:
-        theta = atan((abs(oPos.y-state.my_pos.y) / abs(oPos.x-state.my_pos.x)))/acos(0.)
-    except ZeroDivisionError:
-        theta = 1.
-    rand = exp(-coeffAD*theta)/2.
-    quad = state.quadrant()
-    if random.random() < rand:
-        # mauvais angle (trop proche de la ligne des cages)
-        if quad == "II" or quad == "IV":
-            #print('negatif',end=' ')
+    me_opp = (opp.position - state.my_pos).normalize()
+    me_goal = (state.opp_goal - state.my_pos).normalize()
+    angle = atan2(me_opp.y,me_opp.x)
+    theta = get_oriented_angle(me_goal, me_opp)/acos(0.)
+    rand = exp(-coeffAD*abs(theta))/2.
+    quad = state.quadrant
+    if random.random() < rand: # mauvais angle (vers l'adversaire)
+        if theta < 0.:
             angleDribble = -angleDribble
-        #else:
-            #print('positif',end=' ')
-    else:
-        # bon angle
-        if quad == "I" or quad == "III":
-            #print('negatif',end=' ')
+    else: # bon angle (vers la cage adverse)
+        if theta > 0.:
             angleDribble = -angleDribble
-        #else:
-            #print('positif',end=' ')
     angle += angleDribble
-    #print(angle)
     destDribble.x = cos(angle)
     destDribble.y = sin(angle)
-    return shoot(state,state.ball_pos + destDribble,powerDribble)
+    return kickAt(state, state.ball_pos + destDribble, powerDribble)
 
-def avancerBalle(state, angleDribble, powerDribble, rayDribble, coeffAD, powerControl):
-    can_continue = free_continue(state, state.opponents(), rayDribble)
-    if can_continue == True:
-        return controler(state, powerControl)#0.98) #power(False)
-    return dribbler(state, can_continue, angleDribble, powerDribble, coeffAD) #power(True)
+def passBall(state, rayPassePressing, maxPowerPasse, thetaPass):
+    """
+    Fait une passe vers un coequipier sans
+    marquage
+    TODO: il faut enlever la recherche du coequipier et plutot
+    le passer en parametre => plus de strategie vide
+    """
+    tm = free_teammate(state, rayPassePressing)
+    if tm is None:
+        return get_empty_strategy()
+    dest = tm
+    return kickAt(state, dest, passPower(state, dest, maxPowerPasse, thetaPass))
 
-def essayerBut(strat, state, alpha, beta, angleDribble, powerDribble, rayDribble, angleGardien, coeffAD, powerControl, distShoot):
-    can_continue = free_continue(state, state.opponents(), rayDribble)
-    if can_continue == True or empty_goal(strat, state, can_continue, angleGardien):
+def receiveBall(state, angleRecept):
+    """
+    Recoit une passe
+    TODO: enlever la strategie vide
+    """
+    vectBall = (state.my_pos - state.ball_pos).normalize()
+    vectSpeed = state.ball_speed.copy().normalize()
+    if state.distance(state.ball_pos) <= 10 and vectSpeed.dot(vectBall) <= angleRecept:
+        return goToBall(state)
+    return get_empty_strategy()
+
+def goForwardsMF(state, angleDribble, powerDribble, rayDribble, coeffAD, powerControl):
+    """
+    Essaye d'avance sur le milieu de terrain
+    avec la balle et dribble lorsqu'il y a
+    un adversaire en face
+    """
+    oppDef = nearest_defender(state, state.opponents, rayDribble)
+    if oppDef is None:
+        return control(state, powerControl)
+    return dribble(state, oppDef, angleDribble, powerDribble, coeffAD)
+
+def goForwardsPA(strat, state, alpha, beta, angleDribble, powerDribble, rayDribble, angleGardien, coeffAD, powerControl, distShoot):
+    """
+    Dans la zone d'attaque, essaye de se
+    rapprocher davantage de la surface de
+    reparation pour frapper et dribble
+    l'adversaire en face de lui
+    """
+    oppDef = nearest_defender(state, state.opponents, rayDribble)
+    if oppDef is None or empty_goal(strat, state, oppDef, angleGardien):
         if is_close_goal(state, distShoot):
-            return foncer(state, forceShoot(state, alpha, beta))
+            return shoot(state, shootPower(state, alpha, beta))
         else:
-            return controler(state, powerControl)#0.98)
-    return dribbler(state,can_continue,angleDribble, powerDribble, coeffAD) #power(True)
+            return control(state, powerControl)
+    return dribble(state,oppDef,angleDribble, powerDribble, coeffAD)
 
-def degager_solo(state):
+def clearSolo(state):
+    """
+    Degage la balle avec une profondeur
+    profondeurDegagement et une largeur
+    largeurDegagement
+    """
     ecart_x = profondeurDegagement
-    if not state.is_team_left(): ecart_x = -ecart_x 
+    if not state.is_team_left(): ecart_x = -ecart_x
     x = state.my_pos.x + ecart_x
     ecart_y = largeurDegagement
     if not is_upside(state.my_pos,state.nearest_opp.position):  ecart_y = -ecart_y
     y = state.my_pos.y + ecart_y
-    return shoot(state,Vector2D(x,y), maxPlayerShoot)
+    return kickAt(state,Vector2D(x,y), maxPlayerShoot)
 
-def degager(state, profondeur, ampleur):
-    tm = state.teammates()[0]
-    ecart_x = profondeur#profondeurDegagement - 15.
-    if not state.is_team_left(): ecart_x = -ecart_x 
-    ecart_y = ampleur#largeurDegagement
-    if tm.position.y < state.center_point.y:  ecart_y = -ecart_y
+def clear(state, profondeur, largeur, powerDegage=maxPlayerShoot):
+    """
+    Degage la balle vers son premier
+    coequipier
+    """
+    tm = state.teammates[0]
+    ecart_x = profondeur
+    if not state.is_team_left(): ecart_x = -ecart_x
+    ecart_y = largeur
+    if tm.position.y < state.center_spot.y:  ecart_y = -ecart_y
     dec = Vector2D(ecart_x, ecart_y)
-    return shoot(state,dec + state.center_point, maxPlayerShoot)
+    return kickAt(state,dec + state.center_spot, powerDegage)
 
-def decaler(state, decalX, decalY):
-    opp = nearest_ball(state, state.opponents())
-    ecart_y = decalY#largeurDegagement
-    if is_upside(opp,state.center_point):  ecart_y = -ecart_y
-    ecart_x = decalX#profondeurDegagement
-    if state.is_team_left(): ecart_x = -ecart_x 
+def shiftAside(state, decalX, decalY):
+    """
+    Se decale lateralement pour avoir
+    une meilleure reception de la balle
+    """
+    opp = nearest_ball(state, state.opponents)
+    ecart_y = decalY
+    if is_upside(opp,state.center_spot):  ecart_y = -ecart_y
+    ecart_x = decalX
+    if state.is_team_left(): ecart_x = -ecart_x
     dec = Vector2D(ecart_x,ecart_y)
-    return aller_dest(state, dec + state.center_point)
+    return goTo(state, dec + state.center_spot)
 
-def monterTerrain(state):
-    tm = state.teammates()[0]
+def pushUp(state):
+    """
+    Monte dans le terrain pour proposer
+    des possibilites de passe aux
+    coequipiers
+    TODO: la positionnement dans le terrain
+    est a revoir
+    """
+    tm = state.teammates[0]
     dest = Vector2D()
     dest.x = tm.position.x
     dest.y = tm.position.y - state.height/2.
     if dest.y < 0:
         dest.y += state.height
-    return aller_dest(state, dest)
+    return goTo(state, dest)
 
-def defendre_SR(state, raySortie):
-    """oppListe = state.opponents()
-    distMin = 5.
-    opp = None
-    for o in oppListe:
-        if state.distance_ball(o.position) < distMin:
-            opp = o.position
-            print('yes')
-            break
+def cutDownAngle(state, raySortie):
     """
-    opp = state.ball_pos
+    Sort de la cage pour reduire
+    l'angle de frappe a l'attaquant
+    adverse
+    """
     trajectoire = state.my_goal
-    if opp is not None:
-        diff = opp - state.my_goal
-        diff.norm = raySortie
-        trajectoire += diff
-    return aller_dest(state,trajectoire)
+    diff = state.ball_pos - trajectoire
+    diff.norm = raySortie
+    trajectoire += diff
+    return goTo(state,trajectoire)
 
-def aller_acc(acc):
-    return SoccerAction(acc)
+def tryInterception(state, dico):
+    """
+    Essaye d'intercepter la balle
+    s'il lui reste de temps,
+    reinitialise son compteur et
+    rest immobile sinon
+    """
+    dico['n'] -= 1
+    if dico['n'] <= 0 :
+        dico['n'] = dico['tempsI'] - 1
+        return get_empty_strategy()
+    return interceptBall(state, dico['n'])
 
-def aller_acc_2(acc):
-    return aller_acc(normalise_diff(Vector2D(),acc,maxPlayerAcceleration))
-
-def aller_dest(state,dest):
-    return aller_acc(normalise_diff(state.my_pos, dest, maxPlayerAcceleration))
-
-def aller_vers_balle(state):
-    return aller_dest(state,state.ball_pos)
-
-def aller_vers_cage(state):
-    return aller_dest(state,state.my_goal)
-
-def intercepter_balle(strat, state,n):
+def interceptBall(state,n):
+    """
+    Se deplace en vue d'intercepter
+    la balle pour une estimation
+    de n instants de temps
+    """
     # n = 10
     v = state.my_speed
     r = state.my_pos
@@ -169,22 +249,8 @@ def intercepter_balle(strat, state,n):
     rb = state.ball_pos
     fb = ballBrakeConstant
     fj = playerBrackConstant
-    coeffb = coeff_vitesse_reduite(n,fb)
-    coeffj = coeff_vitesse_reduite(n,fj)
+    coeffb = coeff_friction(n,fb)
+    coeffj = coeff_friction(n,fj)
     ax = fj*(rb.x-r.x + vb.x*coeffb-v.x*coeffj)/(n-coeffj)
     ay = fj*(rb.y-r.y + vb.y*coeffb-v.y*coeffj)/(n-coeffj)
-    nouv = Vector2D(ax, ay)
-    #prec = Vector2D()
-    #if hasattr(strat, 'accPrec'):
-    #    prec = strat.accPrec
-    #nouv = nouv - prec
-    #strat.accPrec = nouv
-    return aller_acc(nouv)#aller_acc(Vector2D(ax,ay))
-
-
-def forceShoot(state, alphaShoot, betaShoot):
-    vect = Vector2D(-1.,0.)
-    u = state.opp_goal - state.my_pos
-    dist = u.norm 
-    theta = acos(abs(vect.dot(u))/u.norm)/acos(0.)
-    return maxPlayerShoot*(1.-exp(-(alphaShoot*dist)))*exp(-betaShoot*theta)
+    return goWith(Vector2D(ax,ay))
