@@ -69,8 +69,8 @@ if __name__=="__main__":
                     ReceivePassStrategy().name:ReceivePassStrategy(),
                     CutDownAngleStrategy().name:CutDownAngleStrategy(),
                     MarkStrategy().name:MarkStrategy(),
-                    DribbleShootStrategy(fn_st="st_dico_FS7_2.pkl").name:DribbleShootStrategy(fn_st="st_dico_TME8.pkl"),
-                    ControlDribbleStrategy(fn_st="st_dico_FS7_2.pkl").name:ControlDribbleStrategy(fn_st="st_dico_TME8.pkl")
+                    DribbleShootStrategy(fn_st="st_dico_FS7_2.pkl").name:DribbleShootStrategy(fn_st="st_dico_FS7_2.pkl"),
+                    ControlDribbleStrategy(fn_st="st_dico_FS7_2.pkl").name:ControlDribbleStrategy(fn_st="st_dico_FS7_2.pkl")
     }
 
     states_tuple = load_jsonz("test_kb_strat.jz")

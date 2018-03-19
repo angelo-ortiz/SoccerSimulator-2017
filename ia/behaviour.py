@@ -134,7 +134,7 @@ def goForwardsMF(state, angleDribble, powerDribble, rayDribble, coeffAD, powerCo
         return control(state, powerControl)
     tm = free_teammate(state, 30.)
     if tm is None:
-        return dribble(state, oppDef, angleDribble, powerDribble, coeffAD)
+        return dribble(state,oppDef,angleDribble, powerDribble, coeffAD)
     return passBall(state, tm, 4.5, 0.8)
 
 def goForwardsPA(strat, state, alpha, beta, angleDribble, powerDribble, rayDribble, angleGardien, coeffAD, powerControl, distShoot):
@@ -152,7 +152,7 @@ def goForwardsPA(strat, state, alpha, beta, angleDribble, powerDribble, rayDribb
             return control(state, powerControl)
     tm = free_teammate(state, 30.)
     if tm is None:
-        return dribble(state, oppDef, angleDribble, powerDribble, coeffAD)
+        return dribble(state,oppDef,angleDribble, powerDribble, coeffAD)
     return passBall(state, tm, 4.5, 0.8)
 
 def clearSolo(state):
