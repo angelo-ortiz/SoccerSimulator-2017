@@ -13,10 +13,11 @@ distInterceptionCourte = GAME_GOAL_HEIGHT
 interceptionCourte = 7. #15.
 interceptionLongue = 23. #40.
 
-def must_intercept(stateFoot):
-    if not is_in_radius_action(stateFoot, stateFoot.position, distMaxInterception):
+def must_intercept(stateFoot, rayInter=distMaxInterception):
+    if not is_in_radius_action(stateFoot, stateFoot.my_pos, rayInter):
         return False
-    return stateFoot.is_nearest_ball() 
+    #return stateFoot.is_nearest_ball() #TODO ceci a remettre 
+    return True
 
 def is_under_pressure(stateFoot, joueur, rayPressing):
     opp = nearest(stateFoot, joueur, stateFoot.opponents())

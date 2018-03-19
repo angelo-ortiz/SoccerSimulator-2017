@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from soccersimulator import Strategy
 from .tools import StateFoot, get_random_strategy, get_empty_strategy, is_in_radius_action
-from .conditions import must_intercept_gk, has_ball_control, temps_interception, is_in_box, is_defense_zone, \
+from .conditions import must_intercept, must_intercept_gk, has_ball_control, temps_interception, is_in_box, is_defense_zone, \
         is_close_goal, is_close_ball, must_defend_goal, must_advance
 from .behaviour import shoot, beh_fonceurNormal, beh_fonceurChallenge1, beh_fonceur, controler, decaler,\
         foncer, degager, degager_solo, aller_vers_balle, aller_vers_cage, intercepter_balle, \
@@ -191,11 +191,11 @@ class GardienStrategy(Strategy):
         if has_ball_control(me):
             self.dico['n'] = self.dico['tempsI'] - 1
             return degager(me, self.dico['profDeg'], self.dico['amplDeg'])
-        """
+        """ 
         if must_advance(me, self.dico['distMontee']):
             return monterTerrain(me)
         """
-        if must_intercept_gk(me, self.dico['rayInter']):
+        if must_intercept(me, self.dico['rayInter']):
             self.dico['n'] -= 1
             if self.dico['n'] <= 0 :
                 self.dico['n'] = self.dico['tempsI'] - 1
