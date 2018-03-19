@@ -105,17 +105,13 @@ def dribble(state, opp, angleDribble, powerDribble, coeffAD):
     destDribble.y = sin(angle)
     return kickAt(state, state.ball_pos + destDribble, powerDribble)
 
-def passBall(state, rayPassePressing, maxPowerPasse, thetaPass):
+def passBall(state, dest, maxPowerPasse, thetaPass):
     """
     Fait une passe vers un coequipier sans
     marquage
     TODO: il faut enlever la recherche du coequipier et plutot
     le passer en parametre => plus de strategie vide
     """
-    tm = free_teammate(state, rayPassePressing)
-    if tm is None:
-        return get_empty_strategy()
-    dest = tm
     return kickAt(state, dest, passPower(state, dest, maxPowerPasse, thetaPass))
 
 def receiveBall(state, angleRecept):
@@ -123,12 +119,8 @@ def receiveBall(state, angleRecept):
     Recoit une passe
     TODO: enlever la strategie vide
     """
-    vectBall = (state.my_pos - state.ball_pos).normalize()
-    vectSpeed = state.ball_speed.copy().normalize()
-    if state.distance(state.ball_pos) <= 10 and vectSpeed.dot(vectBall) <= angleRecept:
-        return goToBall(state)
-    return get_empty_strategy()
-
+    return goToBall(state)
+    
 def goForwardsMF(state, angleDribble, powerDribble, rayDribble, coeffAD, powerControl):
     """
     Essaye d'avance sur le milieu de terrain
@@ -138,7 +130,10 @@ def goForwardsMF(state, angleDribble, powerDribble, rayDribble, coeffAD, powerCo
     oppDef = nearest_defender(state, state.opponents, rayDribble)
     if oppDef is None:
         return control(state, powerControl)
-    return dribble(state, oppDef, angleDribble, powerDribble, coeffAD)
+    tm = free_teammate(state, 30.)
+    if tm is None:
+        return dribble(state, oppDef, angleDribble, powerDribble, coeffAD)
+    return passBall(me, tm, 4.5, 0.8)
 
 def goForwardsPA(strat, state, alpha, beta, angleDribble, powerDribble, rayDribble, angleGardien, coeffAD, powerControl, distShoot):
     """
@@ -153,7 +148,10 @@ def goForwardsPA(strat, state, alpha, beta, angleDribble, powerDribble, rayDribb
             return shoot(state, shootPower(state, alpha, beta))
         else:
             return control(state, powerControl)
-    return dribble(state,oppDef,angleDribble, powerDribble, coeffAD)
+    tm = free_teammate(state, 30.)
+    if tm is None:
+        return dribble(state, oppDef, angleDribble, powerDribble, coeffAD)
+    return passBall(me, tm, 4.5, 0.8)
 
 def clearSolo(state):
     """
