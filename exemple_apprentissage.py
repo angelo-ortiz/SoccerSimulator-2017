@@ -3,6 +3,7 @@ from soccersimulator import apprend_arbre, build_apprentissage, genere_dot
 from ia.strategies_dectree import *
 from ia.tools import StateFoot
 import ia
+import module
 import sklearn
 import numpy as np
 import pickle
@@ -15,7 +16,7 @@ assert sklearn.__version__ >= "0.18.1","Updater sklearn !! (pip install -U sklea
 
 def my_get_features(state,idt,idp):
     """ extraction du vecteur de features d'un etat, ici distance a la balle, distance au but, distance balle but """
-    state = StateFoot(state,idt,idp)
+    state = StateFoot(state,idt,idp)#TODO a faire
     f1 = state.distance(state.ball_pos)
     f2 = state.distance(state.my_goal)
     f3 = state.distance_ball(state.my_goal)
@@ -27,18 +28,20 @@ my_get_features.names = ["dball","dbut","dballbut"]
 def entrainer(fname):
     #Creation d'une partie
     kb_strat = KeyboardStrategy()
-    kb_strat.add("q",GoToMyGoalStrategy())
-    kb_strat.add("z",PushUpStrategy())
-    kb_strat.add("p",PassStrategy())
-    kb_strat.add("m",ReceivePassStrategy())
-    kb_strat.add("d",CutDownAngleStrategy())
-    kb_strat.add("s",MarkStrategy())
+    kb_strat.add("r",GoToMyGoalStrategy())#revenir
+    kb_strat.add("m",PushUpStrategy())#monter
+    kb_strat.add("s",PassStrategy())#faire passe
+    kb_strat.add("k",ReceivePassStrategy())#recevoir passe
+    kb_strat.add("q",CutDownAngleStrategy())#reduir angle
+    kb_strat.add("l",MarkStrategy())#degager
+    kb_strat.add("d",DribbleShootStrategy(fn_st="st_dico_FS7_2.pkl"))#frapper
+    kb_strat.add("e",ControlDribbleStrategy(fn_st="st_dico_FS7_2.pkl"))#frapper
     
     team1 = SoccerTeam(name="Contol Team")
-    team2 = ia.get_team(2)
+    team2 = module.get_team(2)
     team1.add("ControlPlayer",kb_strat) 
-    team1.add("     ST",AttaquantStrategy(fn_st="st_dico_TME8.pkl")) 
-    simu = Simulation(team1,team2)
+    team1.add("     ST",AttaquantStrategy(fn_st="st_dico_FS7_2.pkl")) 
+    simu = Simulation(team1,team2,max_steps=4000)
     #Jouer, afficher et controler la partie
     show_simu(simu)
     print("Nombre d'exemples : "+str(len(kb_strat.states)))
@@ -65,7 +68,10 @@ if __name__=="__main__":
                     PassStrategy().name:PassStrategy(),
                     ReceivePassStrategy().name:ReceivePassStrategy(),
                     CutDownAngleStrategy().name:CutDownAngleStrategy(),
-                    MarkStrategy().name:MarkStrategy()}
+                    MarkStrategy().name:MarkStrategy(),
+                    DribbleShootStrategy(fn_st="st_dico_FS7_2.pkl").name:DribbleShootStrategy(fn_st="st_dico_TME8.pkl"),
+                    ControlDribbleStrategy(fn_st="st_dico_FS7_2.pkl").name:ControlDribbleStrategy(fn_st="st_dico_TME8.pkl")
+    }
 
     states_tuple = load_jsonz("test_kb_strat.jz")
     apprendre(states_tuple,my_get_features,"tree_test.pkl")
@@ -76,9 +82,9 @@ if __name__=="__main__":
     #Utilisation de l'arbre : arbre de decision, dico strategy, fonction de transformation etat->variables
     treeStrat1 = DTreeStrategy(dt,dic_strategy,my_get_features)
     treeteam = SoccerTeam("Arbre Team")
-    team2 = ia.get_team(2)
+    team2 = module.get_team(2)
     treeteam.add("    GK",treeStrat1)
-    treeteam.add("    ST",AttaquantStrategy())
+    treeteam.add("    ST",AttaquantStrategy(fn_st="st_dico_FS7_2.pkl"))
     simu = Simulation(treeteam,team2)
     show_simu(simu)
 

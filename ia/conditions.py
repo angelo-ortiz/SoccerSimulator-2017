@@ -68,7 +68,7 @@ def is_under_pressure(stateFoot, joueur, rayPressing):
     distance inferieure ou egale a rayPressing
     """
     opp = nearest(joueur.position, stateFoot.opponents)
-    return stateFoot.distance(opp) < rayPressing
+    return joueur.position.distance(opp) < rayPressing
 
 def is_defensive_zone(stateFoot, distDefZone=20.):
     """

@@ -112,6 +112,8 @@ def passBall(state, dest, maxPowerPasse, thetaPass):
     TODO: il faut enlever la recherche du coequipier et plutot
     le passer en parametre => plus de strategie vide
     """
+    #TODO il faut voir la vitesse du recepteur pour "anticiper" sa position
+    #lors de la reception
     return kickAt(state, dest, passPower(state, dest, maxPowerPasse, thetaPass))
 
 def receiveBall(state, angleRecept):
@@ -133,7 +135,7 @@ def goForwardsMF(state, angleDribble, powerDribble, rayDribble, coeffAD, powerCo
     tm = free_teammate(state, 30.)
     if tm is None:
         return dribble(state, oppDef, angleDribble, powerDribble, coeffAD)
-    return passBall(me, tm, 4.5, 0.8)
+    return passBall(state, tm, 4.5, 0.8)
 
 def goForwardsPA(strat, state, alpha, beta, angleDribble, powerDribble, rayDribble, angleGardien, coeffAD, powerControl, distShoot):
     """
@@ -151,7 +153,7 @@ def goForwardsPA(strat, state, alpha, beta, angleDribble, powerDribble, rayDribb
     tm = free_teammate(state, 30.)
     if tm is None:
         return dribble(state, oppDef, angleDribble, powerDribble, coeffAD)
-    return passBall(me, tm, 4.5, 0.8)
+    return passBall(state, tm, 4.5, 0.8)
 
 def clearSolo(state):
     """
@@ -204,9 +206,15 @@ def pushUp(state):
     tm = state.teammates[0]
     dest = Vector2D()
     dest.x = tm.position.x
+    """
     dest.y = tm.position.y - state.height/2.
     if dest.y < 0:
         dest.y += state.height
+    """
+    if tm.position.y > state.center_spot.y:
+        dest.y = state.height/3
+    else:
+        dest.y = state.height*2/3
     return goTo(state, dest)
 
 def cutDownAngle(state, raySortie):
