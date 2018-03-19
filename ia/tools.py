@@ -43,6 +43,13 @@ class StateFoot(Wrapper):
         return self.key[1]
 
     @property
+    def my_state(self):
+        """
+        Son etat
+        """
+        return self.player_state(*self.key)
+
+    @property
     def my_pos(self):
         """
         Sa position courante
@@ -162,6 +169,20 @@ class StateFoot(Wrapper):
                 opp = p
         return opp
 
+    def nearest_opponent(self, rayPressing):
+        """
+        L'adversaire le plus proche du joueur
+        """
+        liste = self.opponents
+        distMin = rayPressing
+        opp = None
+        for p in liste:
+            dist = self.distance(p.position)
+            if self.distance(p.position) < distMin:
+                distMin = dist
+                opp = p
+        return opp
+
     def opponent_1v1(self):
         """
         Son adversaire lorsque c'est un match 1v1
@@ -199,6 +220,13 @@ class StateFoot(Wrapper):
             if dist_ball_joueur >= self.distance_ball(opp.position):
                 return False
         return True
+
+    def is_valid_position(self, pos):
+        """
+        
+        """
+        return pos.x >= 0. and pos.x < self.width \
+            and pos.y >= 0. and pos.y < self.height 
 
 
 

@@ -2,11 +2,13 @@
 from soccersimulator import Strategy
 from .tools import StateFoot, get_random_strategy, is_in_radius_action
 from .conditions import must_intercept, has_ball_control, is_defensive_zone, \
-        is_close_goal, is_close_ball, opponent_approaches_my_goal, must_advance
+        is_close_goal, is_close_ball, opponent_approaches_my_goal, must_advance, \
+        free_teammate
 from .behaviour import beh_fonceurNormal, beh_fonceurChallenge1, beh_fonceur, \
     shoot, control, shiftAside, clear, clearSolo, goToBall, goToMyGoal, \
     tryInterception, interceptBall, fonceurCh1ApprochePower, shootPower, \
-    power, goForwardsPA, goForwardsMF, cutDownAngle, pushUp, passBall, receiveBall
+    power, goForwardsPA, goForwardsMF, cutDownAngle, pushUp, passBall, receiveBall, \
+    goForwardsPA_mod, goForwardsMF_mod, passiveSituation
 import pickle
 
 def loadPath(fn):
@@ -96,6 +98,138 @@ class AttaquantStrategy(Strategy):
         if is_defensive_zone(me, self.dico['distDefZone']):
             return shiftAside(me, *self.args_defense_loseMark())
         return goToBall(me)
+
+
+
+class AttaquantModifStrategy(Strategy):
+    def __init__(self, alphaShoot=None, betaShoot=None, angleDribble=None, \
+            powerDribble=None, distShoot=None, rayDribble=None, \
+            angleGardien=None, coeffAD=None, controleMT=None, decalX=None, \
+            decalY=None, distAttaque=None, controleAttaque=None, \
+            distDefZone=None, fn_st=None):
+        Strategy.__init__(self,"AttaquantModif")
+        if alphaShoot is not None: # dictionnaire passe en parametre, i.e. algo genetique
+            self.dico = {'alphaShoot': alphaShoot, 'betaShoot': betaShoot, \
+                         'angleDribble': angleDribble, 'powerDribble': powerDribble, \
+                         'distShoot': distShoot, 'rayDribble': rayDribble, \
+                         'angleGardien': angleGardien, 'coeffAD': coeffAD, \
+                         'controleMT': controleMT, 'decalX': decalX, 'decalY': decalY, \
+                         'distAttaque': distAttaque, 'controleAttaque': controleAttaque, \
+                         'distDefZone': distDefZone}
+        elif fn_st is not None: # dictionnaire a charger, i.e. deserialisation
+            with open(loadPath(fn_st),"rb") as f:
+                self.dico = pickle.load(f)
+            self.dico['distShoot'] = 36.
+        else: # dictionnaire par defaut
+            self.dico = self.default_dict()
+        self.dico['maxPowerPasse']=3.5
+        self.dico['thetaPass']=0.8
+        self.dico['distDemar']=50.
+        self.dico['rayPressing']=30.
+        self.dico['rayRecept']=30.
+        self.dico['angleRecept']=0.7
+        self.dico['n']=7
+        self.dico['tempsI']=7
+    def default_dict(self):
+        alphaShoot=0.667058531634
+        betaShoot=0.940268913763
+        angleDribble=1.35306998836
+        powerDribble=1.1365820089
+        distShoot=35.8934238522
+        rayDribble=14.2447275533
+        angleGardien=0.841696829807
+        coeffAD=0.787794696398
+        controleMT=1.35035794849
+        decalX=0.
+        decalY=0.
+        distAttaque=70.
+        controleAttaque=0.98
+        distDefZone=20.
+        return {'alphaShoot': alphaShoot, 'betaShoot': betaShoot, 'angleDribble': angleDribble, \
+                'powerDribble': powerDribble, 'distShoot': distShoot, 'rayDribble': rayDribble, \
+                'angleGardien': angleGardien, 'coeffAD': coeffAD, 'controleMT': controleMT, \
+                'decalX': decalX, 'decalY': decalY, 'distAttaque': distAttaque, \
+                'controleAttaque': controleAttaque, 'distDefZone': distDefZone}
+    def args_dribble_pass_shoot(self):
+        return (self.dico['alphaShoot'], self.dico['betaShoot'], self.dico['angleDribble'], \
+                self.dico['powerDribble'], self.dico['rayDribble'], self.dico['angleGardien'], \
+                self.dico['coeffAD'], self.dico['controleAttaque'], self.dico['distShoot'], \
+                self.dico['maxPowerPasse'], self.dico['thetaPass'], self.dico['distDemar'])
+    def args_control_dribble_pass(self):
+        return (self.dico['angleDribble'], self.dico['powerDribble'], self.dico['rayDribble'], \
+                self.dico['coeffAD'], self.dico['controleMT'], \
+                self.dico['maxPowerPasse'], self.dico['thetaPass'], self.dico['distDemar'])
+    def args_receivePass_loseMark(self):
+        return (self.dico, self.dico['rayRecept'], self.dico['angleRecept'], self.dico['rayPressing'],\
+                self.dico['distDemar'])
+    def compute_strategy(self,state,id_team,id_player):
+        me = StateFoot(state,id_team,id_player)
+        if has_ball_control(me):
+            self.dico['n']=7
+            if is_close_goal(me, self.dico['distAttaque']):
+                return goForwardsPA_mod(me, *self.args_dribble_pass_shoot())
+            return goForwardsMF_mod(me, *self.args_control_dribble_pass())
+        return passiveSituation(me, *self.args_receivePass_loseMark())
+
+
+
+class GardienModifStrategy(Strategy):
+    def __init__(self, tempsI=None, rayInter=None, raySortie=None, distSortie=None, \
+            distMontee=None, profDeg=None, amplDeg=None, powerDeg=None, fn_gk=None):
+        Strategy.__init__(self,"GardienModif")
+        if tempsI is not None: # dictionnaire passe en parametre, i.e. algo genetique
+            self.dico = {'tempsI': tempsI, 'rayInter': rayInter, 'raySortie': raySortie, \
+                         'distSortie': distSortie, 'distMontee': distMontee, \
+                         'profDeg': profDeg, 'amplDeg': amplDeg, 'powerDeg': powerDeg}
+        elif fn_gk is not None: # dictionnaire a charger, i.e. deserialisation
+            with open(loadPath(fn_gk),"rb") as f:
+                self.dico = pickle.load(f)
+            self.dico['tempsI'] = 8.
+        else: # dictionnaire par defaut
+            self.dico = self.default_dict()
+        self.dico['tempsI'] = int(self.dico['tempsI'])
+        self.dico['n'] = self.dico['tempsI']
+        self.dico['angleDribble'] =1.35306998836
+        self.dico['powerDribble']=1.1365820089
+        self.dico['rayDribble']=14.2447275533
+        self.dico['coeffAD']=0.787794696398
+        self.dico['controleMT']=1.35035794849
+        self.dico['maxPowerPasse']=3.5
+        self.dico['thetaPass']=0.8
+    def default_dict(self):
+        tempsI = 28.7834668136
+        rayInter = 19.899498729
+        raySortie = 21.4399528226
+        distSortie = 66.6033785959
+        distMontee = 60.
+        profDeg = 0.
+        amplDeg = 0.
+        powerDeg = 3.
+        return {'tempsI': tempsI, 'rayInter': rayInter, 'raySortie': raySortie, \
+                'distSortie': distSortie, 'distMontee': distMontee, 'profDeg': profDeg, \
+                'amplDeg': amplDeg, 'powerDeg': powerDeg}
+    def args_control_dribble_pass(self):
+        return (self.dico['angleDribble'], self.dico['powerDribble'], self.dico['rayDribble'], \
+                self.dico['coeffAD'], self.dico['controleMT'])
+    def compute_strategy(self,state,id_team,id_player):
+        me = StateFoot(state,id_team,id_player)
+        if has_ball_control(me):
+            self.dico['n'] = self.dico['tempsI'] - 1
+            tm = free_teammate(me, self.dico['rayDribble'])
+            if tm is not None:
+                return passBall(me, tm, self.dico['maxPowerPasse'], self.dico['thetaPass'])
+            return goForwardsMF(me, *self.args_control_dribble_pass())
+        #
+        if must_advance(me, self.dico['distMontee']):
+            return pushUp(me)
+        #
+        if must_intercept(me, self.dico['rayInter']):
+            return tryInterception(me, self.dico)
+        
+        if opponent_approaches_my_goal(me, self.dico['distSortie']):
+            return cutDownAngle(me, self.dico['raySortie'])
+        
+        return goToMyGoal(me)
 
 
 
