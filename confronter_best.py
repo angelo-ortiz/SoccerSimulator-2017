@@ -8,13 +8,13 @@ import module6
 import random
 
 size = 10#50
-nbIter = 5#500
-nbMatch = 2
-nVect = 5
+nbIter = 8#500
+nbMatch = 3
+nVect = 3
 gk_st_team = GKStrikerTeam(size=size)
 gk_st_team.start()
-#right = [module.get_team(2), module2.get_team(2), ia.get_team(2)]
-right = [module6.get_team(2)]
+right = [module.get_team(2), module6.get_team(2), ia.get_team(2)]
+#right = [module6.get_team(2)]
 for n in range(nbIter):
     gk_st_team.restart()
     for i in range(size):
@@ -35,6 +35,6 @@ for n in range(nbIter):
     gk_st_team.update()
 
 gk_st_team.printVectors(nVect)
-gk_st_team.save("gk_dico_test.pkl", "st_dico_test.pkl")
-simu = Simulation(gk_st_team.getBestTeam(),right[0])
+gk_st_team.save("gk_dico_TME8.pkl", "st_dico_TME8.pkl")
+simu = Simulation(gk_st_team.getBestTeam(),right[1])
 show_simu(simu)

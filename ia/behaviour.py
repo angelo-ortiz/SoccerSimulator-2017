@@ -119,8 +119,48 @@ def receiveBall(state, angleRecept):
     Recoit une passe
     TODO: enlever la strategie vide
     """
-    return goToBall(state)
-    
+    vectBall = (state.my_pos - state.ball_pos).normalize()
+    vectSpeed = state.ball_speed.copy().normalize()
+    if state.distance(state.ball_pos) <= 10 and vectSpeed.dot(vectBall) >= angleRecept:
+        return goToBall(state)
+    return get_empty_strategy() #modifier
+
+def passiveSituation(state, dico, rayRecept, angleRecept, rayPressing, distDemar):
+    """
+    TODO
+    """
+    vectBall = (state.my_pos - state.ball_pos).normalize()
+    vectSpeed = state.ball_speed.copy().normalize()
+    if state.distance(state.ball_pos) <= rayRecept and vectSpeed.dot(vectBall) <= angleRecept:
+        return tryInterception(state, dico)
+    return loseMark(state, rayPressing, distDemar)
+
+
+def loseMark(state, rayPressing, distDemar):
+    """
+    Doc
+    """
+    opp = state.nearest_opponent(rayPressing)
+    if opp is None:
+        return goTo(state,state.opp_goal)
+    return shiftAsideMark(state, opp, distDemar)
+
+
+
+def shiftAsideMark(state, opp, distDemar):
+    """
+    Se decale en s'eloignant
+    de l'adversaire
+    """
+    dest = None
+    while True:
+        dest = Vector2D.create_random(low=-1, high=1)
+        dest.norm = distDemar
+        dest += opp.position
+        if state.is_valid_position(dest):
+            break
+    return goTo(state, dest)
+
 def goForwardsMF(state, angleDribble, powerDribble, rayDribble, coeffAD, powerControl):
     """
     Essaye d'avance sur le milieu de terrain
@@ -153,6 +193,41 @@ def goForwardsPA(strat, state, alpha, beta, angleDribble, powerDribble, rayDribb
         return dribble(state, oppDef, angleDribble, powerDribble, coeffAD)
     return passBall(me, tm, 4.5, 0.8)
 
+def goForwardsPA_mod(state, alpha, beta, angleDribble, powerDribble, rayDribble, angleGardien, coeffAD, powerControl, distShoot, maxPowerPasse, thetaPass, distDemar):
+    """
+    Dans la zone d'attaque, essaye de se
+    rapprocher davantage de la surface de
+    reparation pour frapper et dribble
+    l'adversaire en face de lui
+    """
+    oppDef = nearest_defender(state, state.opponents, rayDribble)
+    if oppDef is not None:
+        tm = free_teammate(state, rayDribble)
+        if tm is not None:
+            return passBall(state, tm, maxPowerPasse, thetaPass)+\
+                loseMark(state, rayDribble, distDemar)
+        return dribble(state,oppDef,angleDribble, powerDribble, coeffAD)
+    if is_close_goal(state, distShoot):
+        return shoot(state, shootPower(state, alpha, beta))
+    return control(state, powerControl)
+    
+def goForwardsMF_mod(state, angleDribble, powerDribble, rayDribble, coeffAD, powerControl, maxPowerPasse, thetaPass, distDemar):
+    """
+    Essaye d'avance sur le milieu de terrain
+    avec la balle et dribble lorsqu'il y a
+    un adversaire en face
+    """
+    oppDef = nearest_defender(state, state.opponents, rayDribble)
+    if oppDef is not None:
+        tm = free_teammate(state, rayDribble)
+        print(tm)
+        if tm is not None:
+            print("yes")
+            return passBall(state, tm, maxPowerPasse, thetaPass)+\
+                loseMark(state, rayDribble, distDemar)
+        return dribble(state, oppDef, angleDribble, powerDribble, coeffAD)
+    return control(state, powerControl)
+    
 def clearSolo(state):
     """
     Degage la balle avec une profondeur
@@ -204,9 +279,10 @@ def pushUp(state):
     tm = state.teammates[0]
     dest = Vector2D()
     dest.x = tm.position.x
-    dest.y = tm.position.y - state.height/2.
-    if dest.y < 0:
-        dest.y += state.height
+    if tm.position.y > state.center_spot.y:
+        dest.y = state.height/3.
+    else:
+        dest.y = state.height*2/3.
     return goTo(state, dest)
 
 def cutDownAngle(state, raySortie):
