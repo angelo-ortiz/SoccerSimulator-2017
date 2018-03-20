@@ -4,7 +4,7 @@ from soccersimulator import SoccerAction, Vector2D
 from soccersimulator.settings import GAME_WIDTH, GAME_HEIGHT, maxPlayerShoot, maxPlayerAcceleration, \
         ballBrakeConstant, playerBrackConstant
 from .tools import Wrapper, StateFoot, normalise_diff, coeff_friction, is_upside, nearest_defender, \
-    nearest_ball, get_empty_strategy, shootPower, passPower, get_oriented_angle
+    nearest_ball, get_empty_strategy, shootPower, passPower, get_oriented_angle, distance_horizontale
 from .conditions import profondeurDegagement, largeurDegagement, empty_goal, is_close_goal, free_teammate
 from math import acos, exp, atan2, sin, cos
 import random
@@ -112,7 +112,8 @@ def passBall(state, dest, maxPowerPasse, thetaPass):
     TODO: il faut enlever la recherche du coequipier et plutot
     le passer en parametre => plus de strategie vide
     """
-    return kickAt(state, dest, maxPowerPasse)#passPower(state, dest, maxPowerPasse, thetaPass))
+    destp = dest.position + 10*dest.vitesse
+    return kickAt(state, destp, maxPowerPasse)#passPower(state, dest, maxPowerPasse, thetaPass))
 
 def receiveBall(state, angleRecept):
     """
@@ -143,7 +144,8 @@ def loseMark(state, rayPressing, distDemar):
     """
     opp = state.nearest_opponent(rayPressing)
     if opp is None:
-        return goTo(state,state.opp_goal)
+        #return goTo(state,state.opp_goal)
+        return shiftAside(state, 10, 20)
     return shiftAsideMark(state, opp, distDemar)
 
 
@@ -198,7 +200,7 @@ def goForwardsPA_mod(state, alpha, beta, angleDribble, powerDribble, rayDribble,
     oppDef = nearest_defender(state, state.opponents, rayDribble)
     if oppDef is not None:
         tm = free_teammate(state, rayPressing)
-        if tm is not None:
+        if tm is not None and distance_horizontale(state.my_pos, tm.position) < 40.:
             return passBall(state, tm, maxPowerPasse, thetaPass)+loseMark(state, rayPressing, distDemar)
         return dribble(state,oppDef,angleDribble, powerDribble, coeffAD)
     if is_close_goal(state, distShoot):
@@ -214,7 +216,7 @@ def goForwardsMF_mod(state, angleDribble, powerDribble, rayDribble, coeffAD, pow
     oppDef = nearest_defender(state, state.opponents, rayDribble)
     if oppDef is not None:
         tm = free_teammate(state, rayPressing)
-        if tm is not None:
+        if tm is not None and distance_horizontale(state.my_pos, tm.position) < 40.:
             return passBall(state, tm, maxPowerPasse, thetaPass)+loseMark(state, rayPressing, distDemar)
         return dribble(state, oppDef, angleDribble, powerDribble, coeffAD)
     return control(state, powerControl)

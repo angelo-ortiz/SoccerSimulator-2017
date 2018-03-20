@@ -105,7 +105,7 @@ def free_teammate(stateFoot, rayPressing):
     """
     for tm in stateFoot.teammates:
         if not is_under_pressure(stateFoot, tm, rayPressing):
-            return tm.position
+            return tm
     return None
 
 def must_defend(stateFoot):
