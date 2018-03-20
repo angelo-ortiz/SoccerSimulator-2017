@@ -401,7 +401,7 @@ class GKStrikerModifTeam(GKStrikerTeam):
         self.team = SoccerTeam(self.name)
         params = self.vectors[i].params
         for p in self.playerParams[1]:
-            self.playerStrats[0].dico[p] = params[p] # params du gk -> gk
+            self.playerStrats[0].dico[p] = params[p] # params du st -> gk
             self.playerStrats[1].dico[p] = params[p] # params du st -> st
         self.team.add(self.playerStrats[1].name, self.playerStrats[1])
         for p in self.playerParams[0]:
