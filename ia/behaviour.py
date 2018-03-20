@@ -112,7 +112,7 @@ def passBall(state, dest, maxPowerPasse, thetaPass):
     TODO: il faut enlever la recherche du coequipier et plutot
     le passer en parametre => plus de strategie vide
     """
-    return kickAt(state, dest, passPower(state, dest, maxPowerPasse, thetaPass))
+    return kickAt(state, dest, maxPowerPasse)#passPower(state, dest, maxPowerPasse, thetaPass))
 
 def receiveBall(state, angleRecept):
     """
@@ -132,7 +132,8 @@ def passiveSituation(state, dico, rayRecept, angleRecept, rayPressing, distDemar
     vectBall = (state.my_pos - state.ball_pos).normalize()
     vectSpeed = state.ball_speed.copy().normalize()
     if state.distance(state.ball_pos) <= rayRecept and vectSpeed.dot(vectBall) <= angleRecept:
-        return tryInterception(state, dico)
+        #return tryInterception(state, dico)
+        return goToBall(state)
     return loseMark(state, rayPressing, distDemar)
 
 
@@ -170,11 +171,8 @@ def goForwardsMF(state, angleDribble, powerDribble, rayDribble, coeffAD, powerCo
     oppDef = nearest_defender(state, state.opponents, rayDribble)
     if oppDef is None:
         return control(state, powerControl)
-    tm = free_teammate(state, 30.)
-    if tm is None:
-        return dribble(state, oppDef, angleDribble, powerDribble, coeffAD)
-    return passBall(me, tm, 4.5, 0.8)
-
+    return dribble(state, oppDef, angleDribble, powerDribble, coeffAD)
+    
 def goForwardsPA(strat, state, alpha, beta, angleDribble, powerDribble, rayDribble, angleGardien, coeffAD, powerControl, distShoot):
     """
     Dans la zone d'attaque, essaye de se
@@ -188,12 +186,9 @@ def goForwardsPA(strat, state, alpha, beta, angleDribble, powerDribble, rayDribb
             return shoot(state, shootPower(state, alpha, beta))
         else:
             return control(state, powerControl)
-    tm = free_teammate(state, 30.)
-    if tm is None:
-        return dribble(state, oppDef, angleDribble, powerDribble, coeffAD)
-    return passBall(me, tm, 4.5, 0.8)
-
-def goForwardsPA_mod(state, alpha, beta, angleDribble, powerDribble, rayDribble, angleGardien, coeffAD, powerControl, distShoot, maxPowerPasse, thetaPass, distDemar):
+    return dribble(state, oppDef, angleDribble, powerDribble, coeffAD)
+    
+def goForwardsPA_mod(state, alpha, beta, angleDribble, powerDribble, rayDribble, angleGardien, coeffAD, powerControl, distShoot, maxPowerPasse, thetaPass, distDemar, rayPressing):
     """
     Dans la zone d'attaque, essaye de se
     rapprocher davantage de la surface de
@@ -202,16 +197,15 @@ def goForwardsPA_mod(state, alpha, beta, angleDribble, powerDribble, rayDribble,
     """
     oppDef = nearest_defender(state, state.opponents, rayDribble)
     if oppDef is not None:
-        tm = free_teammate(state, rayDribble)
+        tm = free_teammate(state, rayPressing)
         if tm is not None:
-            return passBall(state, tm, maxPowerPasse, thetaPass)+\
-                loseMark(state, rayDribble, distDemar)
+            return passBall(state, tm, maxPowerPasse, thetaPass)+loseMark(state, rayPressing, distDemar)
         return dribble(state,oppDef,angleDribble, powerDribble, coeffAD)
     if is_close_goal(state, distShoot):
         return shoot(state, shootPower(state, alpha, beta))
     return control(state, powerControl)
     
-def goForwardsMF_mod(state, angleDribble, powerDribble, rayDribble, coeffAD, powerControl, maxPowerPasse, thetaPass, distDemar):
+def goForwardsMF_mod(state, angleDribble, powerDribble, rayDribble, coeffAD, powerControl, maxPowerPasse, thetaPass, distDemar,rayPressing):
     """
     Essaye d'avance sur le milieu de terrain
     avec la balle et dribble lorsqu'il y a
@@ -219,12 +213,9 @@ def goForwardsMF_mod(state, angleDribble, powerDribble, rayDribble, coeffAD, pow
     """
     oppDef = nearest_defender(state, state.opponents, rayDribble)
     if oppDef is not None:
-        tm = free_teammate(state, rayDribble)
-        print(tm)
+        tm = free_teammate(state, rayPressing)
         if tm is not None:
-            print("yes")
-            return passBall(state, tm, maxPowerPasse, thetaPass)+\
-                loseMark(state, rayDribble, distDemar)
+            return passBall(state, tm, maxPowerPasse, thetaPass)+loseMark(state, rayPressing, distDemar)
         return dribble(state, oppDef, angleDribble, powerDribble, coeffAD)
     return control(state, powerControl)
     

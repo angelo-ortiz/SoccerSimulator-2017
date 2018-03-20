@@ -68,7 +68,7 @@ def is_under_pressure(stateFoot, joueur, rayPressing):
     distance inferieure ou egale a rayPressing
     """
     opp = nearest(joueur.position, stateFoot.opponents)
-    return stateFoot.distance(opp) < rayPressing
+    return joueur.position.distance(opp) < rayPressing
 
 def is_defensive_zone(stateFoot, distDefZone=20.):
     """
@@ -106,4 +106,14 @@ def free_teammate(stateFoot, rayPressing):
     for tm in stateFoot.teammates:
         if not is_under_pressure(stateFoot, tm, rayPressing):
             return tm.position
+    return None
+
+def must_defend(stateFoot):
+    """
+    Renvoie vrai ssi toute l'equipe est dans
+    le camp adverse, l'equipe adverse controle
+    la balle et lui, c'est le joueur le plus
+    proche de sa cage
+    """
+    opp = stateFoot.nearest_opp
     return None
