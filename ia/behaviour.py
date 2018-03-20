@@ -125,7 +125,7 @@ def receiveBall(state, angleRecept):
         return goToBall(state)
     return get_empty_strategy() #modifier
 
-def passiveSituation(state, dico, rayRecept, angleRecept, rayPressing, distDemar):
+def passiveSituation(state, rayRecept, angleRecept, rayPressing, distDemar):
     """
     TODO
     """
