@@ -2,6 +2,7 @@
 from .tools import Wrapper, StateFoot, is_in_radius_action, distance_horizontale, nearest, nearest_ball
 from soccersimulator.settings import GAME_WIDTH, GAME_GOAL_HEIGHT, GAME_HEIGHT, BALL_RADIUS, \
         PLAYER_RADIUS
+import random
 
 profondeurDegagement = GAME_WIDTH/5.
 largeurDegagement = GAME_HEIGHT/4.
@@ -26,7 +27,8 @@ def is_close_goal(stateFoot, distGoal=27.):
     distance inferieure a distGoal de la
     cage adverse
     """
-    return is_in_radius_action(stateFoot, stateFoot.opp_goal, distGoal)
+    return is_in_radius_action(stateFoot, stateFoot.opp_goal, distGoal) or \
+        distance_horizontale(stateFoot.opp_goal, stateFoot.my_pos) < distGoal
 
 def has_ball_control(stateFoot):
     """
@@ -44,7 +46,6 @@ def must_intercept(stateFoot, rayInter=distMaxInterception):
     if not is_in_radius_action(stateFoot, stateFoot.my_pos, rayInter):
         return False
     return stateFoot.is_nearest_ball()
-    #return True
 
 def must_advance(stateFoot, distMontee):
     """
@@ -77,7 +78,6 @@ def is_defensive_zone(stateFoot, distDefZone=20.):
     a distDefZone, i.e. il doit arreter de
     suivre l'adversaire et se demarquer
     """
-    #return distance_horizontale(stateFoot.my_pos, stateFoot.my_goal) < (stateFoot.width/2.-profondeurDegagement)
     return distance_horizontale(stateFoot.my_pos, stateFoot.my_goal) < distDefZone
 
 def empty_goal(strat, stateFoot, opp, angle):
@@ -90,7 +90,6 @@ def empty_goal(strat, stateFoot, opp, angle):
     vGoal = (stateFoot.opp_goal - stateFoot.ball_pos).normalize()
     vOpp = (opp.position - stateFoot.ball_pos).normalize()
     if vGoal.dot(vOpp) <= angle:
-        #print(vGoal.dot(vOpp))
         return True
     try:
         strat.dribbleGardien = not strat.dribbleGardien
@@ -117,3 +116,12 @@ def must_defend(stateFoot):
     """
     opp = stateFoot.nearest_opp
     return None
+
+def must_pass_ball(stateFoot, tm, distPasse, probPasse):
+    """
+    Renvoie vrai ssi le coequipier du joueur est
+    a une distance inferieure ou egale a distTM
+    avec une probabilite de probPasse
+    """
+    return random.random() < probPasse and \
+        distance_horizontale(stateFoot.my_pos, tm.position) < distPasse

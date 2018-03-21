@@ -223,10 +223,11 @@ class StateFoot(Wrapper):
 
     def is_valid_position(self, pos):
         """
-        
+        Renvoie vrai ssi la position rentre dans le
+        terrain de football
         """
         return pos.x >= 0. and pos.x < self.width \
-            and pos.y >= 0. and pos.y < self.height 
+            and pos.y >= 0. and pos.y < self.height
 
 
 

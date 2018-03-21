@@ -7,7 +7,7 @@ from .conditions import must_intercept, has_ball_control, is_defensive_zone, \
 from .behaviour import beh_fonceurNormal, beh_fonceurChallenge1, beh_fonceur, \
     shoot, control, shiftAside, clear, clearSolo, goToBall, goToMyGoal, \
     tryInterception, interceptBall, fonceurCh1ApprochePower, shootPower, \
-    power, goForwardsPA, goForwardsMF, cutDownAngle, pushUp, passBall, receiveBall, \
+    power, goForwardsPA, goForwardsMF, cutDownAngle, pushUp, passBall, \
     goForwardsPA_mod, goForwardsMF_mod, passiveSituation
 import pickle
 
@@ -43,16 +43,17 @@ class AttaquantModifStrategy(Strategy):
         return (self.dico['alphaShoot'], self.dico['betaShoot'], self.dico['angleDribble'], \
                 self.dico['powerDribble'], self.dico['rayDribble'], self.dico['angleGardien'], \
                 self.dico['coeffAD'], self.dico['controleAttaque'], self.dico['distShoot'], \
-                self.dico['powerPasse'], self.dico['thetaPasse'], self.dico['distDemar'], \
-                self.dico['rayPressing'])
+                self.dico['powerPasse'], self.dico['thetaPasse'], self.dico['rayPressing'], \
+                self.dico['distPasse'], self.dico['probPasse'], self.dico['coeffPushUp'])
     def args_control_dribble_pass(self):
         return (self.dico['angleDribble'], self.dico['powerDribble'], self.dico['rayDribble'], \
-                self.dico['coeffAD'], self.dico['controleMT'], \
-                self.dico['powerPasse'], self.dico['thetaPasse'], self.dico['distDemar'], \
-                self.dico['rayPressing'])
+                self.dico['coeffAD'], self.dico['controleMT'], self.dico['powerPasse'], \
+                self.dico['thetaPasse'], self.dico['rayPressing'], self.dico['distPasse'], \
+                self.dico['probPasse'], self.dico['coeffPushUp'])
     def args_receivePass_loseMark(self):
-        return (self.dico, self.dico['rayRecept'], self.dico['angleRecept'], self.dico['rayPressing'],\
-                self.dico['distDemar'])
+        return (self.dico['decalX'], self.dico['decalY'], self.dico['rayRecept'], \
+                self.dico['angleRecept'], self.dico['rayReprise'], self.dico['angleReprise'], \
+                self.dico['distMontee'], self.dico['coeffPushUp'])
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if has_ball_control(me):
@@ -117,13 +118,13 @@ class GardienModifStrategy(Strategy):
         return (self.dico['alphaShoot'], self.dico['betaShoot'], self.dico['angleDribble'], \
                 self.dico['powerDribble'], self.dico['rayDribble'], self.dico['angleGardien'], \
                 self.dico['coeffAD'], self.dico['controleAttaque'], self.dico['distShoot'], \
-                self.dico['powerPasse'], self.dico['thetaPasse'], self.dico['distDemar'], \
-                self.dico['rayPressing'])
+                self.dico['powerPasse'], self.dico['thetaPasse'], self.dico['rayPressing'], \
+                self.dico['distPasse'], self.dico['probPasse'], self.dico['coeffPushUp'])
     def args_control_dribble_pass(self):
         return (self.dico['angleDribble'], self.dico['powerDribble'], self.dico['rayDribble'], \
-                self.dico['coeffAD'], self.dico['controleMT'], \
-                self.dico['powerPasse'], self.dico['thetaPasse'], self.dico['distDemar'], \
-                self.dico['rayPressing'])
+                self.dico['coeffAD'], self.dico['controleMT'], self.dico['powerPasse'], \
+                self.dico['thetaPasse'], self.dico['rayPressing'], self.dico['distPasse'], \
+                self.dico['probPasse'], self.dico['coeffPushUp'])
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if has_ball_control(me):
@@ -137,10 +138,8 @@ class GardienModifStrategy(Strategy):
             return goToBall(me)
         if must_intercept(me, self.dico['rayInter']):
             return tryInterception(me, self.dico)
-        #
         if must_advance(me, self.dico['distMontee']):
-            return pushUp(me)
-        #
+            return pushUp(me, self.dico['coeffPushUp'])
         if me.is_nearest_ball():
             return goToBall(me)
         if opponent_approaches_my_goal(me, self.dico['distSortie']):
@@ -174,7 +173,7 @@ class GardienStrategy(Strategy):
             return clear(me, self.dico['profDeg'], self.dico['amplDeg'], self.dico['powerDeg'])
         '''
         if must_advance(me, self.dico['distMontee']):
-            return pushUp(me)
+            return pushUp(me)#, self.dico['coeffPushUp']
         '''
         if must_intercept(me, self.dico['rayInter']):
             return tryInterception(me, self.dico)

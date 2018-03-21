@@ -5,7 +5,7 @@ from soccersimulator.settings import GAME_WIDTH, GAME_HEIGHT, maxPlayerShoot, ma
         ballBrakeConstant, playerBrackConstant
 from .tools import Wrapper, StateFoot, normalise_diff, coeff_friction, is_upside, nearest_defender, \
     nearest_ball, get_empty_strategy, shootPower, passPower, get_oriented_angle, distance_horizontale
-from .conditions import profondeurDegagement, largeurDegagement, empty_goal, is_close_goal, free_teammate, must_advance, is_defensive_zone
+from .conditions import profondeurDegagement, largeurDegagement, empty_goal, is_close_goal, free_teammate, must_advance, is_defensive_zone, must_pass_ball
 from math import acos, exp, atan2, sin, cos
 import random
 
@@ -76,11 +76,12 @@ def shoot(state, power):
     """
     return kickAt(state,state.opp_goal,power)
 
-def control(state, powerControl=controlPower):#TODO changer le controle pour avancer dans les cotes
+def control(state, powerControl=controlPower):
     """
-    Avance avec la balle au pied
+    Avance avec la balle au pied parallelement
+    a la ligne de touche
     """
-    return kickAt(state,state.opp_goal,powerControl)
+    return kickAt(state,Vector2D(state.opp_goal.x, state.my_pos.y),powerControl)
 
 def dribble(state, opp, angleDribble, powerDribble, coeffAD):
     """
@@ -105,43 +106,40 @@ def dribble(state, opp, angleDribble, powerDribble, coeffAD):
     destDribble.y = sin(angle)
     return kickAt(state, state.ball_pos + destDribble, powerDribble)
 
-def passBall(state, dest, maxPowerPasse, thetaPass):
+def passBall(state, dest, maxPowerPasse, thetaPass, coeffPushUp):
     """
     Fait une passe vers un coequipier sans
     marquage
     TODO: il faut enlever la recherche du coequipier et plutot
     le passer en parametre => plus de strategie vide
     """
-    destp = dest.position + 10*dest.vitesse
-    return kickAt(state, destp, maxPowerPasse)#passPower(state, dest, maxPowerPasse, thetaPass))
+    destp = dest.position + coeffPushUp*dest.vitesse
+    return kickAt(state, destp, passPower(state, destp, maxPowerPasse, thetaPass))
 
-def receiveBall(state, angleRecept):
+def passiveSituation(state, decalX, decalY, rayRecept, angleRecept, rayReprise, angleReprise, distMontee, coeffPushUp):
     """
-    Recoit une passe
-    TODO: enlever la strategie vide
+    Quand le joueur n'a pas le controle sur
+    la balle:
+    - si la balle approche il s'approche pour
+    recevoir la balle
+    - s'il est le joueur le plus proche de la
+    balle ou s'il vient de faire un dribble/controle
+    il se dirige de nouveau vers la balle
+    - si un coequipier a franchi une distance
+    avec la balle, il monte de le terrain
+    pour lui proposer des solutions
+    - sinon il se decale lateralement
     """
     vectBall = (state.my_pos - state.ball_pos).normalize()
     vectSpeed = state.ball_speed.copy().normalize()
-    if state.distance(state.ball_pos) <= 10 and vectSpeed.dot(vectBall) >= angleRecept:
+    if state.distance(state.ball_pos) <= rayRecept and vectSpeed.dot(vectBall) >= angleRecept:
         return goToBall(state)
-    return get_empty_strategy() #modifier
-
-def passiveSituation(state, dico, rayRecept, angleRecept, rayPressing, distDemar):
-    """
-    TODO
-    """
-    vectBall = (state.my_pos - state.ball_pos).normalize()
-    vectSpeed = state.ball_speed.copy().normalize()
-    if state.distance(state.ball_pos) <= rayRecept and vectSpeed.dot(vectBall) >= 0.5:#angleRecept:
-        #return tryInterception(state, dico)
-        return goToBall(state)
-    if state.is_nearest_ball():
+    if state.is_nearest_ball() or \
+       (state.distance_ball(state.my_pos) <= rayReprise and vectSpeed.dot(vectBall) <= angleReprise):
         return goToBall(state)
     if must_advance(state, 40):
-        return pushUp(state)
-    #if is_defensive_zone(me, dico['distDefZone']):
-    return shiftAside(state, dico['decalX'], dico['decalY'])
-    #return loseMark(state, rayPressing, distDemar)
+        return pushUp(state, coeffPushUp)
+    return shiftAside(state, decalX, decalY)
 
 
 def loseMark(state, rayPressing, distDemar):
@@ -180,7 +178,7 @@ def goForwardsMF(state, angleDribble, powerDribble, rayDribble, coeffAD, powerCo
     if oppDef is None:
         return control(state, powerControl)
     return dribble(state, oppDef, angleDribble, powerDribble, coeffAD)
-    
+
 def goForwardsPA(strat, state, alpha, beta, angleDribble, powerDribble, rayDribble, angleGardien, coeffAD, powerControl, distShoot):
     """
     Dans la zone d'attaque, essaye de se
@@ -195,8 +193,8 @@ def goForwardsPA(strat, state, alpha, beta, angleDribble, powerDribble, rayDribb
         else:
             return control(state, powerControl)
     return dribble(state, oppDef, angleDribble, powerDribble, coeffAD)
-    
-def goForwardsPA_mod(state, alpha, beta, angleDribble, powerDribble, rayDribble, angleGardien, coeffAD, powerControl, distShoot, maxPowerPasse, thetaPass, distDemar, rayPressing):
+
+def goForwardsPA_mod(state, alpha, beta, angleDribble, powerDribble, rayDribble, angleGardien, coeffAD, powerControl, distShoot, maxPowerPasse, thetaPass, rayPressing, distPasse, probPasse, coeffPushUp):
     """
     Dans la zone d'attaque, essaye de se
     rapprocher davantage de la surface de
@@ -206,14 +204,14 @@ def goForwardsPA_mod(state, alpha, beta, angleDribble, powerDribble, rayDribble,
     oppDef = nearest_defender(state, state.opponents, rayDribble)
     if oppDef is not None:
         tm = free_teammate(state, rayPressing)
-        if tm is not None and distance_horizontale(state.my_pos, tm.position) < 40.:
-            return passBall(state, tm, maxPowerPasse, thetaPass)+loseMark(state, rayPressing, distDemar)
+        if tm is not None and must_pass_ball(state, tm, distPasse, probPasse):
+            return passBall(state, tm, maxPowerPasse, thetaPass, coeffPushUp)+pushUp(state, coeffPushUp)
         return dribble(state,oppDef,angleDribble, powerDribble, coeffAD)
     if is_close_goal(state, distShoot):
         return shoot(state, shootPower(state, alpha, beta))
     return control(state, powerControl)
-    
-def goForwardsMF_mod(state, angleDribble, powerDribble, rayDribble, coeffAD, powerControl, maxPowerPasse, thetaPass, distDemar,rayPressing):
+
+def goForwardsMF_mod(state, angleDribble, powerDribble, rayDribble, coeffAD, powerControl, maxPowerPasse, thetaPass, rayPressing, distPasse, probPasse, coeffPushUp):
     """
     Essaye d'avance sur le milieu de terrain
     avec la balle et dribble lorsqu'il y a
@@ -222,11 +220,11 @@ def goForwardsMF_mod(state, angleDribble, powerDribble, rayDribble, coeffAD, pow
     oppDef = nearest_defender(state, state.opponents, rayDribble)
     if oppDef is not None:
         tm = free_teammate(state, rayPressing)
-        if tm is not None and distance_horizontale(state.my_pos, tm.position) < 40.:
-            return passBall(state, tm, maxPowerPasse, thetaPass)+loseMark(state, rayPressing, distDemar)
+        if tm is not None and must_pass_ball(state, tm, distPasse, probPasse):
+            return passBall(state, tm, maxPowerPasse, thetaPass, coeffPushUp)+pushUp(state, coeffPushUp)
         return dribble(state, oppDef, angleDribble, powerDribble, coeffAD)
     return control(state, powerControl)
-    
+
 def clearSolo(state):
     """
     Degage la balle avec une profondeur
@@ -267,20 +265,22 @@ def shiftAside(state, decalX, decalY):
     dec = Vector2D(ecart_x,ecart_y)
     return goTo(state, dec + state.center_spot)
 
-def pushUp(state):
+def pushUp(state, coeffPushUp):
     """
     Monte dans le terrain pour proposer
     des possibilites de passe aux
     coequipiers
-    TODO: la positionnement dans le terrain
-    est a revoir
+    TODO: Quid des nombres magiques ?
     """
     tm = state.teammates[0]
     dest = Vector2D()
-    dest.x = tm.position.x
-    dest.y = tm.position.y - 30. #changer car si en haut, descends : devrait y rester
-    if dest.y < 15.:
-        dest.y += 60.
+    dest.x = tm.position.x + state.my_speed.x*coeffPushUp
+    if state.my_pos.y - tm.position.y >= 25. and state.my_pos.y <=75.:
+        dest.y = state.my_pos.y
+    else:
+        dest.y = tm.position.y - 30.
+        if dest.y < 15.:
+            dest.y += 60.
     return goTo(state, dest)
 
 def cutDownAngle(state, raySortie):

@@ -85,7 +85,9 @@ class dictParams(object):
                 'distAttaque': 0., 'controleAttaque': 0., 'distMontee': 0., \
                 'distDefZone': 0., 'powerDeg': 0., 'tempsContr': 0., \
                 'powerPasse': 0., 'thetaPasse': 0., 'distDemar': 0., \
-                'rayPressing': 0., 'rayRecept': 0., 'angleRecept': 0.}
+                'rayPressing': 0., 'rayRecept': 0., 'angleRecept': 0., \
+                'rayReprise': 0., 'angleReprise': 0., 'coeffPushUp': 0., \
+                'distPasse': 0., 'probPasse': 0., 'hauteProbPasse': 0.}
         self.res = [0,0,0] # le compteur de resultats (V,N,D)
         self.pts = 0 # le nombre de points obtenus (V,N,D) = (3,1,0)
         self.fg = 0     # le nombre de buts marques
@@ -115,7 +117,9 @@ class dictParams(object):
                 'distMontee': (40.,80.), 'distDefZone': (10.,40.), 'powerDeg': (2.,5.), \
                 'tempsContr': (8,15), 'powerPasse': (1.5,5.), 'thetaPasse': (0.,0.6), \
                 'distDemar': (15.,60.), 'rayPressing': (5.,35.), 'rayRecept': (5., 40.), \
-                'angleRecept': (0.7,1.)}
+                'angleRecept': (0.7,1.), 'rayReprise': (5., 15.), 'angleReprise': (-1, -0.7), \
+                'coeffPushUp': (0., 15.), 'distPasse': (30., 60.), 'probPasse': (0.4, 0.6), \
+                'hauteProbPasse': (0.5, 0.7)}
 
     def random(self, parameters):
         """
@@ -349,7 +353,7 @@ class GKStrikerTeam(GeneTeam):
     @classmethod
     def gk_params(cls):
         return ['tempsI', 'rayInter', 'distSortie', 'raySortie', \
-                'profDeg', 'amplDeg', 'distMontee', 'powerDeg', 'tempsContr']
+                'profDeg', 'amplDeg', 'powerDeg', 'tempsContr']
 
     @classmethod
     def st_params(cls):
@@ -357,7 +361,9 @@ class GKStrikerTeam(GeneTeam):
                 'distShoot', 'rayDribble', 'angleGardien', 'coeffAD', \
                 'controleMT', 'decalX', 'decalY', 'distAttaque', \
                 'controleAttaque', 'distDefZone', 'powerPasse', 'thetaPasse',\
-                'distDemar', 'rayPressing', 'rayRecept', 'angleRecept']
+                'distDemar', 'rayPressing', 'rayRecept', 'angleRecept', \
+                'rayReprise', 'angleReprise', 'coeffPushUp', 'distPasse', \
+                'probPasse', 'hauteProbPasse', 'distMontee']
 
     def gkDict(self):
         """
