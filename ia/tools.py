@@ -214,7 +214,7 @@ class StateFoot(Wrapper):
         Renvoie vrai ssi il est le joueur le plus proche
         de la balle
         """
-        liste_opp = self.opponents
+        liste_opp = self.opponents + self.teammates
         dist_ball_joueur = self.distance(self.ball_pos)
         for opp in liste_opp:
             if dist_ball_joueur >= self.distance_ball(opp.position):

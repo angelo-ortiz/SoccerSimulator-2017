@@ -5,7 +5,7 @@ from soccersimulator.settings import GAME_WIDTH, GAME_HEIGHT, maxPlayerShoot, ma
         ballBrakeConstant, playerBrackConstant
 from .tools import Wrapper, StateFoot, normalise_diff, coeff_friction, is_upside, nearest_defender, \
     nearest_ball, get_empty_strategy, shootPower, passPower, get_oriented_angle, distance_horizontale
-from .conditions import profondeurDegagement, largeurDegagement, empty_goal, is_close_goal, free_teammate
+from .conditions import profondeurDegagement, largeurDegagement, empty_goal, is_close_goal, free_teammate, must_advance, is_defensive_zone
 from math import acos, exp, atan2, sin, cos
 import random
 
@@ -126,16 +126,22 @@ def receiveBall(state, angleRecept):
         return goToBall(state)
     return get_empty_strategy() #modifier
 
-def passiveSituation(state, rayRecept, angleRecept, rayPressing, distDemar):
+def passiveSituation(state, dico, rayRecept, angleRecept, rayPressing, distDemar):
     """
     TODO
     """
     vectBall = (state.my_pos - state.ball_pos).normalize()
     vectSpeed = state.ball_speed.copy().normalize()
-    if state.distance(state.ball_pos) <= rayRecept and vectSpeed.dot(vectBall) <= angleRecept:
+    if state.distance(state.ball_pos) <= rayRecept and vectSpeed.dot(vectBall) >= 0.5:#angleRecept:
         #return tryInterception(state, dico)
         return goToBall(state)
-    return loseMark(state, rayPressing, distDemar)
+    if state.is_nearest_ball():
+        return goToBall(state)
+    if must_advance(state, 40):
+        return pushUp(state)
+    #if is_defensive_zone(me, dico['distDefZone']):
+    return shiftAside(state, dico['decalX'], dico['decalY'])
+    #return loseMark(state, rayPressing, distDemar)
 
 
 def loseMark(state, rayPressing, distDemar):
@@ -272,10 +278,9 @@ def pushUp(state):
     tm = state.teammates[0]
     dest = Vector2D()
     dest.x = tm.position.x
-    if tm.position.y > state.center_spot.y:
-        dest.y = state.height/3.
-    else:
-        dest.y = state.height*2/3.
+    dest.y = tm.position.y - 30. #changer car si en haut, descends : devrait y rester
+    if dest.y < 15.:
+        dest.y += 60.
     return goTo(state, dest)
 
 def cutDownAngle(state, raySortie):

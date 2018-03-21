@@ -39,7 +39,6 @@ class AttaquantModifStrategy(Strategy):
                 self.dico = pickle.load(f)
         else:
             self.dico = dict()
-        self.dico['distDemar'] = 45.
     def args_dribble_pass_shoot(self):
         return (self.dico['alphaShoot'], self.dico['betaShoot'], self.dico['angleDribble'], \
                 self.dico['powerDribble'], self.dico['rayDribble'], self.dico['angleGardien'], \
@@ -52,7 +51,7 @@ class AttaquantModifStrategy(Strategy):
                 self.dico['powerPasse'], self.dico['thetaPasse'], self.dico['distDemar'], \
                 self.dico['rayPressing'])
     def args_receivePass_loseMark(self):
-        return (self.dico['rayRecept'], self.dico['angleRecept'], self.dico['rayPressing'],\
+        return (self.dico, self.dico['rayRecept'], self.dico['angleRecept'], self.dico['rayPressing'],\
                 self.dico['distDemar'])
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
@@ -114,7 +113,6 @@ class GardienModifStrategy(Strategy):
             self.dico = dict()
         self.dico['n'] = 0
         self.dico['n_c'] = 0
-        self.dico['powerPasse'] = 5.
     def args_dribble_pass_shoot(self):
         return (self.dico['alphaShoot'], self.dico['betaShoot'], self.dico['angleDribble'], \
                 self.dico['powerDribble'], self.dico['rayDribble'], self.dico['angleGardien'], \
@@ -143,6 +141,8 @@ class GardienModifStrategy(Strategy):
         if must_advance(me, self.dico['distMontee']):
             return pushUp(me)
         #
+        if me.is_nearest_ball():
+            return goToBall(me)
         if opponent_approaches_my_goal(me, self.dico['distSortie']):
             return cutDownAngle(me, self.dico['raySortie'])
         return goToMyGoal(me)
