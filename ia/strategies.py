@@ -39,6 +39,17 @@ class AttaquantModifStrategy(Strategy):
                 self.dico = pickle.load(f)
         else:
             self.dico = dict()
+        self.dico['rayRecept']=30.
+        self.dico['angleRecept']=0.5
+        self.dico['rayReprise']=15.
+        self.dico['angleReprise']=-0.7
+        self.dico['coeffPushUp']=10.
+        self.dico['distPasse']=50.
+        self.dico['powerPasse']=3.5
+        self.dico['thetaPasse']=0.8
+        self.dico['probPasse']=0.5
+        self.dico['hauteProbPasse']=0.6
+        self.dico['distMontee']=40.
     def args_dribble_pass_shoot(self):
         return (self.dico['alphaShoot'], self.dico['betaShoot'], self.dico['angleDribble'], \
                 self.dico['powerDribble'], self.dico['rayDribble'], self.dico['angleGardien'], \
@@ -114,6 +125,17 @@ class GardienModifStrategy(Strategy):
             self.dico = dict()
         self.dico['n'] = 0
         self.dico['n_c'] = 0
+        self.dico['tempsContr'] = 10.
+        self.dico['rayRecept']=30.
+        self.dico['angleRecept']=0.5
+        self.dico['rayReprise']=15.
+        self.dico['angleReprise']=-0.7
+        self.dico['coeffPushUp']=10.
+        self.dico['distPasse']=50.
+        self.dico['powerPasse']=3.5
+        self.dico['thetaPasse']=0.8
+        self.dico['probPasse']=0.5
+        self.dico['hauteProbPasse']=0.6
     def args_dribble_pass_shoot(self):
         return (self.dico['alphaShoot'], self.dico['betaShoot'], self.dico['angleDribble'], \
                 self.dico['powerDribble'], self.dico['rayDribble'], self.dico['angleGardien'], \
@@ -143,7 +165,7 @@ class GardienModifStrategy(Strategy):
         if me.is_nearest_ball():
             return goToBall(me)
         if opponent_approaches_my_goal(me, self.dico['distSortie']):
-            return cutDownAngle(me, self.dico['raySortie'])
+            return cutDownAngle(me, self.dico['raySortie'], self.dico['rayInter'])
         return goToMyGoal(me)
 
 
@@ -178,7 +200,31 @@ class GardienStrategy(Strategy):
         if must_intercept(me, self.dico['rayInter']):
             return tryInterception(me, self.dico)
         if opponent_approaches_my_goal(me, self.dico['distSortie']):
-            return cutDownAngle(me, self.dico['raySortie'])
+            return cutDownAngle(me, self.dico['raySortie'], self.dico['rayInter'])
+        return goToMyGoal(me)
+
+
+
+class CBNaifStrategy(Strategy):
+    def __init__(self, fn_gk=None):
+        Strategy.__init__(self,"CBNaif")
+        if fn_gk is not None:
+            with open(loadPath(fn_gk),"rb") as f:
+                self.dico = pickle.load(f)
+        else:
+            self.dico = dict()
+        self.dico['tempsI'] = int(self.dico['tempsI'])
+        self.dico['n'] = self.dico['tempsI']
+    def compute_strategy(self,state,id_team,id_player):
+        me = StateFoot(state,id_team,id_player)
+        if has_ball_control(me):
+            return clearSolo(me)
+        if me.distance(me.my_goal) > 25.:
+            return goToMyGoal(me)
+        if must_intercept(me, self.dico['rayInter']):
+            return tryInterception(me, self.dico)
+        if opponent_approaches_my_goal(me, self.dico['distSortie']):
+            return cutDownAngle(me, 20., 10.)
         return goToMyGoal(me)
 
 

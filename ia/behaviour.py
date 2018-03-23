@@ -283,17 +283,17 @@ def pushUp(state, coeffPushUp):
             dest.y += 60.
     return goTo(state, dest)
 
-def cutDownAngle(state, raySortie):
+def cutDownAngle(state, raySortie, rayInter):
     """
     Sort de la cage pour reduire
     l'angle de frappe a l'attaquant
     adverse
     """
-    trajectoire = state.my_goal
-    diff = state.ball_pos - trajectoire
-    diff.norm = raySortie
-    trajectoire += diff
-    return goTo(state,trajectoire)
+    position = state.my_goal
+    diff = state.ball_pos - position
+    diff.norm = max(raySortie, diff.norm - rayInter)
+    position += diff
+    return goTo(state,position)
 
 def tryInterception(state, dico):
     """
