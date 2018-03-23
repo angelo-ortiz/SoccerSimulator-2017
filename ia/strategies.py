@@ -39,6 +39,7 @@ class AttaquantModifStrategy(Strategy):
                 self.dico = pickle.load(f)
         else:
             self.dico = dict()
+        """
         self.dico['rayRecept']=30.
         self.dico['angleRecept']=0.5
         self.dico['rayReprise']=15.
@@ -50,6 +51,7 @@ class AttaquantModifStrategy(Strategy):
         self.dico['probPasse']=0.5
         self.dico['hauteProbPasse']=0.6
         self.dico['distMontee']=40.
+        """
     def args_dribble_pass_shoot(self):
         return (self.dico['alphaShoot'], self.dico['betaShoot'], self.dico['angleDribble'], \
                 self.dico['powerDribble'], self.dico['rayDribble'], self.dico['angleGardien'], \
@@ -125,6 +127,7 @@ class GardienModifStrategy(Strategy):
             self.dico = dict()
         self.dico['n'] = 0
         self.dico['n_c'] = 0
+        """
         self.dico['tempsContr'] = 10.
         self.dico['rayRecept']=30.
         self.dico['angleRecept']=0.5
@@ -136,6 +139,7 @@ class GardienModifStrategy(Strategy):
         self.dico['thetaPasse']=0.8
         self.dico['probPasse']=0.5
         self.dico['hauteProbPasse']=0.6
+        """
     def args_dribble_pass_shoot(self):
         return (self.dico['alphaShoot'], self.dico['betaShoot'], self.dico['angleDribble'], \
                 self.dico['powerDribble'], self.dico['rayDribble'], self.dico['angleGardien'], \
