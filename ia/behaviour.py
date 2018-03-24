@@ -5,8 +5,8 @@ from soccersimulator.settings import GAME_WIDTH, GAME_HEIGHT, maxPlayerShoot, ma
         ballBrakeConstant, playerBrackConstant
 from .tools import Wrapper, StateFoot, normalise_diff, coeff_friction, is_upside, nearest_defender, \
     nearest_ball, get_empty_strategy, shootPower, passPower, get_oriented_angle, distance_horizontale
-from .conditions import profondeurDegagement, largeurDegagement, empty_goal, is_close_goal, free_teammate, must_advance, is_defensive_zone, must_pass_ball
-from math import acos, exp, atan2, sin, cos
+from .conditions import profondeurDegagement, largeurDegagement, empty_goal, is_close_goal, free_teammate, must_advance, is_defensive_zone, must_pass_ball, had_ball_control
+from math import acos, exp, atan2, sin, cos, atan
 import random
 
 distMaxFonceurCh1Shoot = GAME_WIDTH/3.
@@ -81,7 +81,33 @@ def control(state, powerControl=controlPower):
     Avance avec la balle au pied parallelement
     a la ligne de touche
     """
-    return kickAt(state,Vector2D(state.opp_goal.x, state.my_pos.y),powerControl)
+    #TODO changer => eviter l'adversaire le plus proche
+    return kickAt(state,Vector2D(state.my_pos.x, state.my_pos.y),powerControl)
+
+def dribble_prec(state, opp, angleDribble, powerDribble, coeffAD):
+    """
+    Fait un dribble avec une direction aleatoire
+    soit vers l'axe, soit vers l'un des deux cotes
+    """
+    destDribble = Vector2D()
+    oPos = opp.position
+    angle = atan2(oPos.y-state.my_pos.y,oPos.x-state.my_pos.x)
+    try:
+        theta = atan((abs(oPos.y-state.my_pos.y) / abs(oPos.x-state.my_pos.x)))/acos(0.)
+    except ZeroDivisionError:
+        theta = 1.
+    rand = exp(-coeffAD*theta)/2.
+    quad = state.quadrant
+    if random.random() < rand: # mauvais angle (vers l'adversaire)
+        if quad == "II" or quad == "IV":
+            angleDribble = -angleDribble
+    else: # bon angle (vers la cage adverse)
+        if quad == "I" or quad == "III":
+            angleDribble = -angleDribble
+    angle += angleDribble
+    destDribble.x = cos(angle)
+    destDribble.y = sin(angle)
+    return kickAt(state, state.ball_pos + destDribble, powerDribble)
 
 def dribble(state, opp, angleDribble, powerDribble, coeffAD):
     """
@@ -134,8 +160,7 @@ def passiveSituation(state, decalX, decalY, rayRecept, angleRecept, rayReprise, 
     vectSpeed = state.ball_speed.copy().normalize()
     if state.distance(state.ball_pos) <= rayRecept and vectSpeed.dot(vectBall) >= angleRecept:
         return goToBall(state)
-    if state.is_nearest_ball() or \
-       (state.distance_ball(state.my_pos) <= rayReprise and vectSpeed.dot(vectBall) <= angleReprise):
+    if state.is_nearest_ball() or had_ball_control(state, rayReprise, angleReprise):
         return goToBall(state)
     if must_advance(state, 40):
         return pushUp(state, coeffPushUp)
@@ -206,7 +231,8 @@ def goForwardsPA_mod(state, alpha, beta, angleDribble, powerDribble, rayDribble,
         tm = free_teammate(state, rayPressing)
         if tm is not None and must_pass_ball(state, tm, distPasse, probPasse):
             return passBall(state, tm, maxPowerPasse, thetaPass, coeffPushUp)+pushUp(state, coeffPushUp)
-        return dribble(state,oppDef,angleDribble, powerDribble, coeffAD)
+        #return dribble(state,oppDef,angleDribble, powerDribble, coeffAD)
+        return shoot(state,6.)
     if is_close_goal(state, distShoot):
         return shoot(state, shootPower(state, alpha, beta))
     return control(state, powerControl)
@@ -222,7 +248,8 @@ def goForwardsMF_mod(state, angleDribble, powerDribble, rayDribble, coeffAD, pow
         tm = free_teammate(state, rayPressing)
         if tm is not None and must_pass_ball(state, tm, distPasse, probPasse):
             return passBall(state, tm, maxPowerPasse, thetaPass, coeffPushUp)+pushUp(state, coeffPushUp)
-        return dribble(state, oppDef, angleDribble, powerDribble, coeffAD)
+        #return dribble(state, oppDef, angleDribble, powerDribble, coeffAD)
+        return shoot(state, 6.)
     return control(state, powerControl)
 
 def clearSolo(state):

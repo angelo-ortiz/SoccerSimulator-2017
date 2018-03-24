@@ -109,16 +109,16 @@ class dictParams(object):
         """
         return {'alphaShoot': (0.,0.6), 'betaShoot': (0.5,1.2), 'powerDribble': (1.,4.), \
                 'tempsI': (2,13), 'angleDribble': (0.,PI/2.), 'rayInter': (5.,20.), \
-                'distShoot': (10.,40.), 'rayDribble': (10.,25.), \
+                'distShoot': (20.,40.), 'rayDribble': (10.,25.), \
                 'angleGardien':  (0.5,1.), 'coeffAD': (0.7,1.5), \
                 'distSortie': (40.,70.), 'raySortie': (10.,30.), 'controleMT': (1.04,1.1), \
                 'profDeg': (10.,50.), 'amplDeg': (20.,45.), 'decalX': (10.,50.), \
                 'decalY': (20.,45.), 'distAttaque': (40.,70.), 'controleAttaque': (0.7, 1.2), \
-                'distMontee': (40.,80.), 'distDefZone': (10.,40.), 'powerDeg': (2.,5.), \
-                'tempsContr': (8,15), 'powerPasse': (1.5,5.), 'thetaPasse': (0.,0.6), \
-                'distDemar': (15.,60.), 'rayPressing': (5.,35.), 'rayRecept': (5., 40.), \
-                'angleRecept': (0.7,1.), 'rayReprise': (5., 15.), 'angleReprise': (-1, -0.7), \
-                'coeffPushUp': (0., 15.), 'distPasse': (30., 60.), 'probPasse': (0.4, 0.6), \
+                'distMontee': (40.,60.), 'distDefZone': (10.,40.), 'powerDeg': (2.,5.), \
+                'tempsContr': (8,15), 'powerPasse': (2.,4.5), 'thetaPasse': (0.,0.6), \
+                'distDemar': (15.,60.), 'rayPressing': (5.,30.), 'rayRecept': (5., 35.), \
+                'angleRecept': (0.7,1.), 'rayReprise': (8., 15.), 'angleReprise': (-1, -0.5), \
+                'coeffPushUp': (0., 15.), 'distPasse': (30., 50.), 'probPasse': (0.4, 0.6), \
                 'hauteProbPasse': (0.5, 0.7)}
 
     def random(self, parameters):

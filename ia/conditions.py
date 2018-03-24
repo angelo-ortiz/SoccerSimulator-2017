@@ -30,12 +30,28 @@ def is_close_goal(stateFoot, distGoal=27.):
     return is_in_radius_action(stateFoot, stateFoot.opp_goal, distGoal) or \
         distance_horizontale(stateFoot.opp_goal, stateFoot.my_pos) < distGoal
 
+def is_kick_off(stateFoot):
+    """
+    """
+    return stateFoot.center_spot == stateFoot.ball_pos
+
 def has_ball_control(stateFoot):
     """
     Renvoie vrai ssi le joueur a la balle au pied
     et le moteur du jeu lui permet de frapper
     """
     return is_close_ball(stateFoot) and stateFoot.player_state(*stateFoot.key).can_shoot()
+
+def had_ball_control(stateFoot, rayReprise, angleReprise):
+    """
+    Renvoie vrai ssi le joueur a eu la balle au pied
+    juste avant cet instant, i.e. il a fait un
+    controle ou un dribble
+    """
+    vectBall = (stateFoot.my_pos - stateFoot.ball_pos).normalize()
+    vectSpeed = stateFoot.ball_speed.copy().normalize()
+    return stateFoot.distance_ball(stateFoot.my_pos) < rayReprise and \
+        vectSpeed.dot(vectBall) <= angleReprise
 
 def must_intercept(stateFoot, rayInter=distMaxInterception):
     """
