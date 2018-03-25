@@ -68,10 +68,11 @@ def must_advance(stateFoot, distMontee):
     Renvoie vrai ssi le balle est loin de la
     cage et elle s'en eloigne
     """
-    if stateFoot.team_controls_ball():
-        return True
+    control = stateFoot.team_controls_ball()
+    if control is not None:
+        return control
     vect = (stateFoot.my_goal - stateFoot.opp_goal)
-    if stateFoot.ball_speed.dot(vect) >= 0.:
+    if stateFoot.ball_speed.dot(vect) > 0.:
         return False
     tm = stateFoot.teammates[0]
     tmBall = (stateFoot.ball_pos - tm.position).normalize()
@@ -146,15 +147,24 @@ def must_defend(stateFoot):
     opp = stateFoot.nearest_opp
     return None
 
-def must_pass_ball(stateFoot, tm, distPasse, probPasse):
+def must_pass_ball(stateFoot, tm, distPasse, angleInter):
     """
     Renvoie vrai ssi le coequipier du joueur est
     a une distance inferieure ou egale a distTM
     avec une probabilite de probPasse
     """
-    #modif 10.
-    if distance_horizontale(stateFoot.my_pos, stateFoot.opp_goal) +10.< \
+    #modif 20.
+    if distance_horizontale(stateFoot.my_pos, stateFoot.opp_goal) +20.< \
        distance_horizontale(tm.position, stateFoot.opp_goal):
         return False
-    return random.random() < probPasse and \
-        stateFoot.distance(tm.position) < distPasse#distance_horizontale(stateFoot.my_pos, tm.position) < distPasse
+    return stateFoot.free_pass_trajectory(angleInter)
+
+def must_assist(stateFoot, tm, distPasse, angleInter, coeffPushUp):
+    """
+    """
+    if not must_pass_ball(stateFoot, tm, distPasse, angleInter):
+        return False
+    meVect = (stateFoot.my_pos - stateFoot.opp_goal).normalize()
+    tmVect = (tm.position + coeffPushUp*tm.vitesse- stateFoot.opp_goal).normalize()
+    ref = (stateFoot.my_goal - stateFoot.opp_goal).normalize()
+    return ref.dot(meVect) < 0.7 and ref.dot(tmVect) >= 0.7

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from soccersimulator  import SoccerAction, Vector2D
 from soccersimulator.settings import GAME_HEIGHT, GAME_WIDTH, GAME_GOAL_HEIGHT, maxPlayerShoot
-from math import acos, exp, asin
+from math import acos, exp, asin, sin
 
 ## Classe enveloppe de notre super-etat du jeu
 class Wrapper(object):
@@ -246,14 +246,28 @@ class StateFoot(Wrapper):
         """
         liste = [self.my_state] + self.teammates + self.opponents
         p = None
-        distMin = 1024.
+        distMin = 20.
         for o in liste:
             dist = self.distance_ball(o.position)
             if dist < distMin:
                 p = o
                 distMin = dist
-        return not p in self.opponents
+        if p is not None:
+            return not p in self.opponents
+        return None
 
+    def free_pass_trajectory(self, angleInter):
+        """
+        """
+        tm = self.teammates[0]
+        vect = (tm.position - self.my_pos).normalize()
+        for opp in self.opponents:
+            diff = opp.position-self.my_pos
+            angle = get_oriented_angle(vect, diff.normalize())
+            if self.is_team_left(): angle = -angle
+            if angle >= 0. and angle < angleInter:
+                return False
+        return True
 
 
 def get_random_vector():
