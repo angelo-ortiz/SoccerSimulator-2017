@@ -111,7 +111,7 @@ class dictParams(object):
                 'tempsI': (2,15), 'angleDribble': (0.,PI/2.), 'rayInter': (10.,20.), \
                 'distShoot': (35.,45.), 'rayDribble': (10.,25.), \
                 'angleGardien':  (0.5,1.), 'coeffAD': (0.7,1.5), \
-                'distSortie': (40.,70.), 'raySortie': (5.,25.), 'controleMT': (1.04,5.), \
+                'distSortie': (40.,70.), 'raySortie': (5.,25.), 'controleMT': (1.04,1.1), \
                 'profDeg': (10.,50.), 'amplDeg': (20.,45.), 'decalX': (10.,50.), \
                 'decalY': (20.,45.), 'distAttaque': (40.,70.), 'controleAttaque': (1.04, 1.1), \
                 'distMontee': (40.,70.), 'distDefZone': (10.,40.), 'powerDeg': (2.,5.), \
