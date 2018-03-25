@@ -44,6 +44,7 @@ class AttaquantModifStrategy(Strategy):
             self.dico = dict()
         self.dico['n'] = -1
         self.dico['tempsI'] = 4.8
+        self.dico['rayDribble'] = 23.
         self.dico['rayRecept'] = 30.
         self.dico['coeffPushUp'] = 6.
     def args_dribble_pass_shoot(self):
@@ -96,6 +97,7 @@ class GardienModifStrategy(Strategy):
             self.dico = dict()
         self.dico['n'] = -1
         self.dico['tempsI'] = 4.8
+        self.dico['rayDribble'] = 23.
         self.dico['rayRecept'] = 30.
         self.dico['coeffPushUp'] = 6.
     def args_dribble_pass_shoot(self):
