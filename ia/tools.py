@@ -221,6 +221,18 @@ class StateFoot(Wrapper):
                 return False
         return True
 
+    def is_nearest_ball_my_team(self):
+        """
+        Renvoie vrai ssi il est le joueur le plus proche
+        de la balle
+        """
+        liste_opp = self.teammates
+        dist_ball_joueur = self.distance(self.ball_pos)
+        for opp in liste_opp:
+            if dist_ball_joueur >= self.distance_ball(opp.position):
+                return False
+        return True
+
     def is_valid_position(self, pos):
         """
         Renvoie vrai ssi la position rentre dans le
@@ -228,6 +240,19 @@ class StateFoot(Wrapper):
         """
         return pos.x >= 0. and pos.x < self.width \
             and pos.y >= 0. and pos.y < self.height
+
+    def team_controls_ball(self):
+        """
+        """
+        liste = [self.my_state] + self.teammates + self.opponents
+        p = None
+        distMin = 1024.
+        for o in liste:
+            dist = self.distance_ball(o.position)
+            if dist < distMin:
+                p = o
+                distMin = dist
+        return not p in self.opponents
 
 
 

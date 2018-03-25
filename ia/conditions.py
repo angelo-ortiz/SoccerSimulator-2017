@@ -68,6 +68,19 @@ def must_advance(stateFoot, distMontee):
     Renvoie vrai ssi le balle est loin de la
     cage et elle s'en eloigne
     """
+    if stateFoot.team_controls_ball():
+        return True
+    vect = (stateFoot.my_goal - stateFoot.opp_goal)
+    if stateFoot.ball_speed.dot(vect) >= 0.:
+        return False
+    tm = stateFoot.teammates[0]
+    tmBall = (stateFoot.ball_pos - tm.position).normalize()
+    meBall = (stateFoot.ball_pos - stateFoot.my_pos).normalize()
+    return tmBall.dot(stateFoot.ball_speed.copy().normalize()) >= 0.995 or \
+        meBall.dot(stateFoot.ball_speed.copy().normalize()) >= 0.995
+    if not tm.is_nearest_ball():
+        return False
+    return True
     return stateFoot.distance_ball(stateFoot.my_goal) >= distMontee and \
             stateFoot.ball_speed.dot(stateFoot.ball_pos-stateFoot.my_goal) > 0
 
@@ -77,7 +90,7 @@ def opponent_approaches_my_goal(stateFoot, distSortie):
     moyennement loin, i.e. le gardien doit sortir
     couvrir plus d'angle face a l'attaquant
     """
-    return is_in_radius_action(stateFoot, stateFoot.my_pos, distSortie)
+    return is_in_radius_action(stateFoot, stateFoot.my_goal, distSortie)
 
 def is_under_pressure(stateFoot, joueur, rayPressing):
     """
@@ -139,5 +152,9 @@ def must_pass_ball(stateFoot, tm, distPasse, probPasse):
     a une distance inferieure ou egale a distTM
     avec une probabilite de probPasse
     """
+    #modif 10.
+    if distance_horizontale(stateFoot.my_pos, stateFoot.opp_goal) +10.< \
+       distance_horizontale(tm.position, stateFoot.opp_goal):
+        return False
     return random.random() < probPasse and \
-        distance_horizontale(stateFoot.my_pos, tm.position) < distPasse
+        stateFoot.distance(tm.position) < distPasse#distance_horizontale(stateFoot.my_pos, tm.position) < distPasse

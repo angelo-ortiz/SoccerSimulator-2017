@@ -108,18 +108,18 @@ class dictParams(object):
         parametre
         """
         return {'alphaShoot': (0.,0.6), 'betaShoot': (0.5,1.2), 'powerDribble': (1.,4.), \
-                'tempsI': (2,13), 'angleDribble': (0.,PI/2.), 'rayInter': (5.,20.), \
-                'distShoot': (20.,40.), 'rayDribble': (10.,25.), \
+                'tempsI': (2,15), 'angleDribble': (0.,PI/3.), 'rayInter': (5.,20.), \
+                'distShoot': (25.,45.), 'rayDribble': (10.,25.), \
                 'angleGardien':  (0.5,1.), 'coeffAD': (0.7,1.5), \
                 'distSortie': (40.,70.), 'raySortie': (10.,30.), 'controleMT': (1.04,1.1), \
                 'profDeg': (10.,50.), 'amplDeg': (20.,45.), 'decalX': (10.,50.), \
-                'decalY': (20.,45.), 'distAttaque': (40.,70.), 'controleAttaque': (0.7, 1.2), \
-                'distMontee': (40.,60.), 'distDefZone': (10.,40.), 'powerDeg': (2.,5.), \
-                'tempsContr': (8,15), 'powerPasse': (2.,4.5), 'thetaPasse': (0.,0.6), \
+                'decalY': (20.,45.), 'distAttaque': (40.,70.), 'controleAttaque': (1.04, 1.2), \
+                'distMontee': (40.,70.), 'distDefZone': (10.,40.), 'powerDeg': (2.,5.), \
+                'tempsContr': (8,15), 'powerPasse': (2.,5.), 'thetaPasse': (0.,0.6), \
                 'distDemar': (15.,60.), 'rayPressing': (5.,30.), 'rayRecept': (5., 35.), \
                 'angleRecept': (0.7,1.), 'rayReprise': (8., 15.), 'angleReprise': (-1, -0.5), \
-                'coeffPushUp': (0., 15.), 'distPasse': (30., 50.), 'probPasse': (0.4, 0.6), \
-                'hauteProbPasse': (0.5, 0.7)}
+                'coeffPushUp': (8., 15.), 'distPasse': (30., 60.), 'probPasse': (0.5, 0.8), \
+                'hauteProbPasse': (0.5, 0.8)}
 
     def random(self, parameters):
         """
@@ -286,7 +286,7 @@ class GeneTeam(object):
         self.sortVectors()
         size = len(self.vectors)
         nKeep = int(size * self.keep)
-        for k in range(nKeep, size):
+        for k in range(nKeep, size-2):
             while True:
                 i, j = getDistinctTuple(high=nKeep)
                 r = random.random()
@@ -296,6 +296,12 @@ class GeneTeam(object):
                 elif r < self.coProb:
                     self.crossover(i, j, k)
                     break
+        pList = self.paramsList()
+        for k in range(size-2, size):
+            self.vectors[k] = dictParams()
+        for k in range(size-2, size):
+            self.vectors[k].random(pList)
+
 
     def printVectors(self, nVect):
         """
@@ -406,11 +412,10 @@ class GKStrikerModifTeam(GKStrikerTeam):
         """
         self.team = SoccerTeam(self.name)
         params = self.vectors[i].params
-        for p in self.playerParams[1]:
-            self.playerStrats[0].dico[p] = params[p] # params du st -> gk
-            self.playerStrats[1].dico[p] = params[p] # params du st -> st
-        self.team.add(self.playerStrats[1].name, self.playerStrats[1])
-        for p in self.playerParams[0]:
-            self.playerStrats[0].dico[p] = params[p] # params du gk -> gk
+        for i in range(2):
+            for p in self.playerParams[i]:
+                self.playerStrats[0].dico[p] = params[p] # params du gk
+                self.playerStrats[1].dico[p] = params[p] # params du st
         self.team.add(self.playerStrats[0].name, self.playerStrats[0])
+        self.team.add(self.playerStrats[1].name, self.playerStrats[1])
         return self.team
