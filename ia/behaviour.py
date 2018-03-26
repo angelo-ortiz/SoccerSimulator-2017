@@ -4,7 +4,8 @@ from soccersimulator import SoccerAction, Vector2D
 from soccersimulator.settings import GAME_WIDTH, GAME_HEIGHT, maxPlayerShoot, maxPlayerAcceleration, \
         ballBrakeConstant, playerBrackConstant
 from .tools import Wrapper, StateFoot, normalise_diff, coeff_friction, is_upside, nearest_defender, \
-    nearest_ball, get_empty_strategy, shootPower, passPower, get_oriented_angle, distance_horizontale
+    nearest_ball, get_empty_strategy, shootPower, passPower, get_oriented_angle, distance_horizontale, \
+    nearest_state, delete_teammate, distance_verticale
 from .conditions import profondeurDegagement, largeurDegagement, empty_goal, is_close_goal, free_teammate, must_advance, is_defensive_zone, must_pass_ball, had_ball_control, must_assist
 from math import acos, exp, atan2, sin, cos, atan
 import random
@@ -240,7 +241,7 @@ def goForwardsPA_mod(state, alpha, beta, angleDribble, powerDribble, rayDribble,
     reparation pour frapper et dribble
     l'adversaire en face de lui
     """
-    tm = free_teammate(state, rayPressing)
+    tm = free_teammate(state, angleInter)
     if is_close_goal(state, distShoot):
         if tm is not None and must_assist(state, tm, distPasse, angleInter, coeffPushUp):
             return passBall(state, tm, maxPowerPasse, thetaPass, coeffPushUp/2.)+pushUp(state, coeffPushUp)
@@ -260,7 +261,7 @@ def goForwardsMF_mod(state, angleDribble, powerDribble, rayDribble, coeffAD, pow
     """
     oppDef = nearest_defender(state, state.opponents, rayDribble)
     if oppDef is not None:
-        tm = free_teammate(state, rayPressing)
+        tm = free_teammate(state, angleInter)
         if tm is not None and must_pass_ball(state, tm, distPasse, angleInter):
             return passBall(state, tm, maxPowerPasse, thetaPass, coeffPushUp)+pushUp(state, coeffPushUp)
         return dribble(state, oppDef, angleDribble, powerDribble, coeffAD)
@@ -299,7 +300,7 @@ def shiftAside(state, decalX, decalY):
     Se decale lateralement pour avoir
     une meilleure reception de la balle
     """
-    deccalY = 20.
+    decalY = 20.
     opp = nearest_ball(state, state.opponents)
     ecart_y = decalY
     if is_upside(opp,state.center_spot):  ecart_y = -ecart_y
@@ -314,13 +315,57 @@ def pushUp(state, coeffPushUp):
     des possibilites de passe aux
     coequipiers
     TODO: Quid des nombres magiques ?
+    Hypothese: CB c'est le joueur 1
     """
-    tm = state.teammates[0]
+    porteur = nearest_state(state.ball_pos, state.teammates)
+    #print(porteur)
+    #print(state.my_pos)
+    #for tm in state.teammates:
+    #    print(tm)
+    tm_list = state.teammates[1::]
+    delete_teammate(porteur, tm_list)
+    #except ValueError:
+    #    a=None
+    tm = tm_list[0]
     dest = Vector2D()
-    dest.x = tm.position.x + state.my_speed.x*coeffPushUp
-    dest.y = tm.position.y + 30.
-    if dest.y > 75.:
-        dest.y = tm.position.y - 30.
+    #tm = state.teammates[0]
+    #dest.x = tm.position.x + state.my_speed.x*coeffPushUp
+    #dest.y = tm.position.y + 30.
+    dest.x = porteur.position.x + state.my_speed.x*coeffPushUp
+    distMoi = distance_verticale(state.my_pos, porteur.position)
+    distTM = distance_verticale(tm.position, porteur.position)
+    diff = 25.
+    entree = -1
+    if distMoi < distTM:
+        if is_upside(state.my_pos, porteur.position):
+            dest.y = porteur.position.y + diff
+            entree = 1
+            if dest.y >= 90.:
+                dest.y = porteur.position.y - diff
+        else:
+            dest.y = porteur.position.y - diff
+            entree = 2
+            if dest.y < 0.:
+                dest.y = porteur.position.y + diff
+    else:
+        if is_upside(tm.position, porteur.position):
+            if porteur.position.y + diff < 90.:
+                if porteur.position.y + 2*diff < 90.:
+                    dest.y = porteur.position.y + 2*diff
+                else:
+                    dest.y = porteur.position.y - diff
+            else:
+                dest.y = porteur.position.y - 2*diff
+        else:
+            if porteur.position.y - diff > 0.:
+                if porteur.position.y - 2*diff > 0.:
+                    dest.y = porteur.position.y - 2*diff
+                else:
+                    dest.y = porteur.position.y + diff
+            else:
+                dest.y = porteur.position.y + 2*diff
+    if dest.y < 0. or dest.y >= 90.:
+        raise ValueError(state.my_pos, distMoi, distTM, dest.y)
     return goTo(state, dest)
 
 def cutDownAngle(state, raySortie, rayInter):

@@ -3,7 +3,7 @@ from soccersimulator import Strategy, Vector2D
 from .tools import StateFoot, get_random_strategy, is_in_radius_action, nearest_defender
 from .conditions import must_intercept, has_ball_control, is_defensive_zone, \
         is_close_goal, is_close_ball, opponent_approaches_my_goal, must_advance, \
-        free_teammate, had_ball_control, is_kick_off
+        free_teammate, had_ball_control, is_kick_off, must_pass_ball
 from .behaviour import beh_fonceurNormal, beh_fonceurChallenge1, beh_fonceur, \
     shoot, control, shiftAside, clear, clearSolo, goToBall, goToMyGoal, \
     tryInterception, interceptBall, fonceurCh1ApprochePower, shootPower, \
@@ -204,27 +204,36 @@ class GardienStrategy(Strategy):
 
 
 class CBNaifStrategy(Strategy):
-    def __init__(self, fn_gk=None):
+    def __init__(self, fn_gk=None, fn_st=None):
         Strategy.__init__(self,"CBNaif")
-        if fn_gk is not None:
-            with open(loadPath(fn_gk),"rb") as f:
+        if fn_st is not None:
+            with open(loadPath(fn_st),"rb") as f:
                 self.dico = pickle.load(f)
+            with open(loadPath(fn_gk),"rb") as f:
+                self.dico.update(pickle.load(f))
         else:
             self.dico = dict()
-        self.dico['tempsI'] = int(self.dico['tempsI'])
-        self.dico['n'] = self.dico['tempsI']
+        self.dico['n'] = -1
+        self.dico['tempsI'] = 4.8
+        self.dico['rayDribble'] = 23.
+        self.dico['rayRecept'] = 30.
+        self.dico['coeffPushUp'] = 6.
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if has_ball_control(me):
+            tm = free_teammate(me, self.dico['angleInter'])
+            if tm is not None and must_pass_ball(me, tm, self.dico['distPasse'], self.dico['angleInter']):
+                return passBall(me, tm, self.dico['powerPasse'], self.dico['thetaPasse'], self.dico['coeffPushUp'])
             return clearSolo(me)
-        if me.distance(me.my_goal) > 25.:
-            return goToMyGoal(me)
         if must_intercept(me, self.dico['rayInter']):
-            return tryInterception(me, self.dico)
-        if opponent_approaches_my_goal(me, self.dico['distSortie']):
+            #return tryInterception(me, self.dico)
+            return goToBall(me)
+        if opponent_approaches_my_goal(me, self.dico['distShoot']):#self.dico['distSortie']):
+            #return goToBall(me)
             return cutDownAngle(me, 20., 10.)
-        return goToMyGoal(me)
-
+        #return goToMyGoal(me)
+        return cutDownAngle_gk(me, self.dico['distMontee']-20)
+    
 
 
 ## Strategie Fonceur

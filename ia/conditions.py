@@ -74,11 +74,13 @@ def must_advance(stateFoot, distMontee):
     vect = (stateFoot.my_goal - stateFoot.opp_goal)
     if stateFoot.ball_speed.dot(vect) > 0.:
         return False
-    tm = stateFoot.teammates[0]
-    tmBall = (stateFoot.ball_pos - tm.position).normalize()
+    ball_speed = stateFoot.ball_speed.copy().normalize()
     meBall = (stateFoot.ball_pos - stateFoot.my_pos).normalize()
-    return tmBall.dot(stateFoot.ball_speed.copy().normalize()) >= 0.995 or \
-        meBall.dot(stateFoot.ball_speed.copy().normalize()) >= 0.995
+    if meBall.dot(ball_speed) >= 0.995: return True
+    for tm in stateFoot.teammates:
+        tmBall = (stateFoot.ball_pos - tm.position).normalize()
+        if tmBall.dot(ball_speed) >= 0.995: return True
+    return False
     if not tm.is_nearest_ball():
         return False
     return True
@@ -127,15 +129,28 @@ def empty_goal(strat, stateFoot, opp, angle):
         strat.dribbleGardien = True
     return not strat.dribbleGardien
 
-def free_teammate(stateFoot, rayPressing):
+def free_teammate(stateFoot, angleInter):#rayPressing):
     """
     Renvoie le premier coequipier libre de
     marquage
+    """
     """
     for tm in stateFoot.teammates:
         if not is_under_pressure(stateFoot, tm, rayPressing):
             return tm
     return None
+    """
+    tm_best = None
+    dist_best = 1024.
+    for tm in stateFoot.teammates:
+        if tm.position.distance(stateFoot.my_goal) < 35.:
+            continue
+        if stateFoot.free_pass_trajectory(tm, angleInter):
+            dist = stateFoot.distance(tm.position)
+            if dist < dist_best:
+                tm_best = tm
+                dist_best = dist
+    return tm_best
 
 def must_defend(stateFoot):
     """
@@ -154,10 +169,10 @@ def must_pass_ball(stateFoot, tm, distPasse, angleInter):
     avec une probabilite de probPasse
     """
     #modif 20.
-    if distance_horizontale(stateFoot.my_pos, stateFoot.opp_goal) +20.< \
+    if distance_horizontale(stateFoot.my_pos, stateFoot.opp_goal)+20.< \
        distance_horizontale(tm.position, stateFoot.opp_goal):
         return False
-    return stateFoot.free_pass_trajectory(angleInter)
+    return stateFoot.free_pass_trajectory(tm, angleInter)
 
 def must_assist(stateFoot, tm, distPasse, angleInter, coeffPushUp):
     """
