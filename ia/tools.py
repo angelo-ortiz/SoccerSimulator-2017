@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from soccersimulator  import SoccerAction, Vector2D
 from soccersimulator.settings import GAME_HEIGHT, GAME_WIDTH, GAME_GOAL_HEIGHT, maxPlayerShoot
-from math import acos, exp, asin
+from math import acos, exp, asin, sin
 
 ## Classe enveloppe de notre super-etat du jeu
 class Wrapper(object):
@@ -41,6 +41,13 @@ class StateFoot(Wrapper):
         Son identifiant
         """
         return self.key[1]
+
+    @property
+    def my_state(self):
+        """
+        Son etat
+        """
+        return self.player_state(*self.key)
 
     @property
     def my_pos(self):
@@ -162,6 +169,20 @@ class StateFoot(Wrapper):
                 opp = p
         return opp
 
+    def nearest_opponent(self, rayPressing):
+        """
+        L'adversaire le plus proche du joueur
+        """
+        liste = self.opponents
+        distMin = rayPressing
+        opp = None
+        for p in liste:
+            dist = self.distance(p.position)
+            if self.distance(p.position) < distMin:
+                distMin = dist
+                opp = p
+        return opp
+
     def opponent_1v1(self):
         """
         Son adversaire lorsque c'est un match 1v1
@@ -193,13 +214,60 @@ class StateFoot(Wrapper):
         Renvoie vrai ssi il est le joueur le plus proche
         de la balle
         """
-        liste_opp = self.opponents
+        liste_opp = self.opponents + self.teammates
         dist_ball_joueur = self.distance(self.ball_pos)
         for opp in liste_opp:
             if dist_ball_joueur >= self.distance_ball(opp.position):
                 return False
         return True
 
+    def is_nearest_ball_my_team(self):
+        """
+        Renvoie vrai ssi il est le joueur le plus proche
+        de la balle
+        """
+        liste_opp = self.teammates
+        dist_ball_joueur = self.distance(self.ball_pos)
+        for opp in liste_opp:
+            if dist_ball_joueur >= self.distance_ball(opp.position):
+                return False
+        return True
+
+    def is_valid_position(self, pos):
+        """
+        Renvoie vrai ssi la position rentre dans le
+        terrain de football
+        """
+        return pos.x >= 0. and pos.x < self.width \
+            and pos.y >= 0. and pos.y < self.height
+
+    def team_controls_ball(self):
+        """
+        """
+        liste = [self.my_state] + self.teammates + self.opponents
+        p = None
+        distMin = 20.
+        for o in liste:
+            dist = self.distance_ball(o.position)
+            if dist < distMin:
+                p = o
+                distMin = dist
+        if p is not None:
+            return not p in self.opponents
+        return None
+
+    def free_pass_trajectory(self, angleInter):
+        """
+        """
+        tm = self.teammates[0]
+        vect = (tm.position - self.my_pos).normalize()
+        for opp in self.opponents:
+            diff = opp.position-self.my_pos
+            angle = get_oriented_angle(vect, diff.normalize())
+            if self.is_team_left(): angle = -angle
+            if angle >= 0. and angle < angleInter:
+                return False
+        return True
 
 
 def get_random_vector():
@@ -286,7 +354,7 @@ def passPower(stateFoot, dest, maxPower, thetaPass):
     va faire une passer selon la distance
     de entre la balle et le recepteur
     """
-    dist = dest.distance(stateFoot.ball_pos)/50.
+    dist = dest.distance(stateFoot.ball_pos)
     return maxPower*(1.-exp(-(thetaPass*dist)))
 
 def nearest(ref, liste):
@@ -321,7 +389,7 @@ def nearest_defender(stateFoot, liste, distRef):
     dist_min = distRef
     for j in liste:
         dist_j = stateFoot.distance_ball(j.position)
-        if dist_j < dist_min and j.position.distance(og) < dog:
+        if dist_j < dist_min and (j.position.distance(og) < dog or dist_j < 3.):
             oppDef = j
             dist_dmin = dist_j
     return oppDef

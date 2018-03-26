@@ -2,6 +2,7 @@
 from .tools import Wrapper, StateFoot, is_in_radius_action, distance_horizontale, nearest, nearest_ball
 from soccersimulator.settings import GAME_WIDTH, GAME_GOAL_HEIGHT, GAME_HEIGHT, BALL_RADIUS, \
         PLAYER_RADIUS
+import random
 
 profondeurDegagement = GAME_WIDTH/5.
 largeurDegagement = GAME_HEIGHT/4.
@@ -26,7 +27,13 @@ def is_close_goal(stateFoot, distGoal=27.):
     distance inferieure a distGoal de la
     cage adverse
     """
-    return is_in_radius_action(stateFoot, stateFoot.opp_goal, distGoal)
+    return is_in_radius_action(stateFoot, stateFoot.opp_goal, distGoal) or \
+        distance_horizontale(stateFoot.opp_goal, stateFoot.my_pos) < distGoal
+
+def is_kick_off(stateFoot):
+    """
+    """
+    return stateFoot.center_spot == stateFoot.ball_pos
 
 def has_ball_control(stateFoot):
     """
@@ -34,6 +41,17 @@ def has_ball_control(stateFoot):
     et le moteur du jeu lui permet de frapper
     """
     return is_close_ball(stateFoot) and stateFoot.player_state(*stateFoot.key).can_shoot()
+
+def had_ball_control(stateFoot, rayReprise, angleReprise):
+    """
+    Renvoie vrai ssi le joueur a eu la balle au pied
+    juste avant cet instant, i.e. il a fait un
+    controle ou un dribble
+    """
+    vectBall = (stateFoot.my_pos - stateFoot.ball_pos).normalize()
+    vectSpeed = stateFoot.ball_speed.copy().normalize()
+    return stateFoot.distance_ball(stateFoot.my_pos) < rayReprise and \
+        vectSpeed.dot(vectBall) <= angleReprise
 
 def must_intercept(stateFoot, rayInter=distMaxInterception):
     """
@@ -44,13 +62,26 @@ def must_intercept(stateFoot, rayInter=distMaxInterception):
     if not is_in_radius_action(stateFoot, stateFoot.my_pos, rayInter):
         return False
     return stateFoot.is_nearest_ball()
-    #return True
 
 def must_advance(stateFoot, distMontee):
     """
     Renvoie vrai ssi le balle est loin de la
     cage et elle s'en eloigne
     """
+    control = stateFoot.team_controls_ball()
+    if control is not None:
+        return control
+    vect = (stateFoot.my_goal - stateFoot.opp_goal)
+    if stateFoot.ball_speed.dot(vect) > 0.:
+        return False
+    tm = stateFoot.teammates[0]
+    tmBall = (stateFoot.ball_pos - tm.position).normalize()
+    meBall = (stateFoot.ball_pos - stateFoot.my_pos).normalize()
+    return tmBall.dot(stateFoot.ball_speed.copy().normalize()) >= 0.995 or \
+        meBall.dot(stateFoot.ball_speed.copy().normalize()) >= 0.995
+    if not tm.is_nearest_ball():
+        return False
+    return True
     return stateFoot.distance_ball(stateFoot.my_goal) >= distMontee and \
             stateFoot.ball_speed.dot(stateFoot.ball_pos-stateFoot.my_goal) > 0
 
@@ -60,7 +91,7 @@ def opponent_approaches_my_goal(stateFoot, distSortie):
     moyennement loin, i.e. le gardien doit sortir
     couvrir plus d'angle face a l'attaquant
     """
-    return is_in_radius_action(stateFoot, stateFoot.my_pos, distSortie)
+    return is_in_radius_action(stateFoot, stateFoot.my_goal, distSortie)
 
 def is_under_pressure(stateFoot, joueur, rayPressing):
     """
@@ -77,7 +108,6 @@ def is_defensive_zone(stateFoot, distDefZone=20.):
     a distDefZone, i.e. il doit arreter de
     suivre l'adversaire et se demarquer
     """
-    #return distance_horizontale(stateFoot.my_pos, stateFoot.my_goal) < (stateFoot.width/2.-profondeurDegagement)
     return distance_horizontale(stateFoot.my_pos, stateFoot.my_goal) < distDefZone
 
 def empty_goal(strat, stateFoot, opp, angle):
@@ -90,7 +120,6 @@ def empty_goal(strat, stateFoot, opp, angle):
     vGoal = (stateFoot.opp_goal - stateFoot.ball_pos).normalize()
     vOpp = (opp.position - stateFoot.ball_pos).normalize()
     if vGoal.dot(vOpp) <= angle:
-        #print(vGoal.dot(vOpp))
         return True
     try:
         strat.dribbleGardien = not strat.dribbleGardien
@@ -105,5 +134,37 @@ def free_teammate(stateFoot, rayPressing):
     """
     for tm in stateFoot.teammates:
         if not is_under_pressure(stateFoot, tm, rayPressing):
-            return tm.position
+            return tm
     return None
+
+def must_defend(stateFoot):
+    """
+    Renvoie vrai ssi toute l'equipe est dans
+    le camp adverse, l'equipe adverse controle
+    la balle et lui, c'est le joueur le plus
+    proche de sa cage
+    """
+    opp = stateFoot.nearest_opp
+    return None
+
+def must_pass_ball(stateFoot, tm, distPasse, angleInter):
+    """
+    Renvoie vrai ssi le coequipier du joueur est
+    a une distance inferieure ou egale a distTM
+    avec une probabilite de probPasse
+    """
+    #modif 20.
+    if distance_horizontale(stateFoot.my_pos, stateFoot.opp_goal) +20.< \
+       distance_horizontale(tm.position, stateFoot.opp_goal):
+        return False
+    return stateFoot.free_pass_trajectory(angleInter)
+
+def must_assist(stateFoot, tm, distPasse, angleInter, coeffPushUp):
+    """
+    """
+    if not must_pass_ball(stateFoot, tm, distPasse, angleInter):
+        return False
+    meVect = (stateFoot.my_pos - stateFoot.opp_goal).normalize()
+    tmVect = (tm.position + coeffPushUp*tm.vitesse- stateFoot.opp_goal).normalize()
+    ref = (stateFoot.my_goal - stateFoot.opp_goal).normalize()
+    return ref.dot(meVect) < 0.7 and ref.dot(tmVect) >= 0.7
