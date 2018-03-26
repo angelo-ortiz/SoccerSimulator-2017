@@ -68,16 +68,6 @@ class AttaquantModifStrategy(Strategy):
             if has_ball_control(me):
                 return kickAt(me, Vector2D(me.opp_goal.x, 100.),6.)
             return goToBall(me)
-        """
-        if me.distance_ball(me.my_goal) < self.dico['rayInter']:
-            if has_ball_control(me):
-                oppDef = nearest_defender(me, me.opponents, self.dico['rayDribble'])
-                if oppDef is not None:
-                    return dribble(me,oppDef, self.dico['angleDribble'], 6., self.dico['coeffAD'])
-                return clearSolo(me)
-            return tryInterception(me, self.dico)
-            #return goToBall(me)
-        """
         if has_ball_control(me):
             self.dico['n'] = self.dico['tempsI'] - 1
             if is_close_goal(me, self.dico['distAttaque']):
@@ -119,16 +109,6 @@ class GardienModifStrategy(Strategy):
             if has_ball_control(me):
                 return shoot(me,6.)
             return goToBall(me)
-        """
-        if me.distance_ball(me.my_goal) < self.dico['rayInter']:
-            if has_ball_control(me):
-                oppDef = nearest_defender(me, me.opponents, self.dico['rayDribble'])
-                if oppDef is not None:
-                    return dribble(me,oppDef, self.dico['angleDribble'], 6., self.dico['coeffAD'])
-                return clearSolo(me)
-            return tryInterception(me, self.dico)
-            #return goToBall(me)
-        """
         if has_ball_control(me):
             self.dico['n'] = self.dico['tempsI'] - 1
             if is_close_goal(me, self.dico['distAttaque']):
