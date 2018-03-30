@@ -6,7 +6,7 @@ from soccersimulator.settings import GAME_WIDTH, GAME_HEIGHT, maxPlayerShoot, ma
 from .tools import Wrapper, StateFoot, normalise_diff, coeff_friction, is_upside, nearest_defender, \
     nearest_ball, get_empty_strategy, shootPower, passPower, get_oriented_angle, distance_horizontale, \
     nearest_state, delete_teammate, distance_verticale
-from .conditions import profondeurDegagement, largeurDegagement, empty_goal, is_close_goal, free_teammate, must_advance, is_defensive_zone, must_pass_ball, had_ball_control, must_assist
+from .conditions import profondeurDegagement, largeurDegagement, empty_goal, is_close_goal, free_teammate, must_advance, is_defensive_zone, must_pass_ball, had_ball_control, must_assist, free_opponent
 from math import acos, exp, atan2, sin, cos, atan
 import random
 
@@ -153,7 +153,7 @@ def passBall(state, dest, maxPowerPasse, thetaPass, coeffPushUp):
     destp += coeffPushUp*vitesse
     return kickAt(state, destp, passPower(state, destp, maxPowerPasse, thetaPass))
 
-def passiveSituation(state, dico, decalX, decalY, rayRecept, angleRecept, rayReprise, angleReprise, distMontee, coeffPushUp):
+def passiveSituation(state, dico, decalX, decalY, rayRecept, angleRecept, rayReprise, angleReprise, distMontee, coeffPushUp, distDefZone, rayPressing):
     """
     Quand le joueur n'a pas le controle sur
     la balle:
@@ -180,6 +180,9 @@ def passiveSituation(state, dico, decalX, decalY, rayRecept, angleRecept, rayRep
     if state.is_nearest_ball_my_team() and state.distance_ball(state.my_goal) < distMontee:
         return tryInterception(state, dico)
         #return goToBall(state)
+    opp = free_opponent(state, distDefZone, rayPressing)
+    if is_defensive_zone(state, distDefZone) and opp is not None:
+        return mark(state, opp, rayPressing)
     return cutDownAngle(state, 40., 20.)
 
 def loseMark(state, rayPressing, distDemar):
@@ -192,8 +195,14 @@ def loseMark(state, rayPressing, distDemar):
         return shiftAside(state, 10, 20)
     return shiftAsideMark(state, opp, distDemar)
 
-
-
+def mark(state, opp, distMar):
+    """
+    Doc
+    """
+    vect = (state.ball_pos - opp.position).normalize()
+    vect.norm = distMar
+    return goTo(state, opp.position + vect)
+    
 def shiftAsideMark(state, opp, distDemar):
     """
     Se decale en s'eloignant
@@ -273,7 +282,8 @@ def clearSolo(state):
     profondeurDegagement et une largeur
     largeurDegagement
     """
-    return shoot(state, maxPlayerShoot)
+    vect = (state.opp_goal - state.my_goal).normalize()
+    return kickAt(state, vect+state.ball_pos, 4.)
     ecart_x = profondeurDegagement
     if not state.is_team_left(): ecart_x = -ecart_x
     x = state.my_pos.x + ecart_x

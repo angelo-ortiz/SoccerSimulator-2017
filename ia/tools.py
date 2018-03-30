@@ -409,7 +409,7 @@ def nearest_defender(stateFoot, liste, distRef):
     dist_min = distRef
     for j in liste:
         dist_j = stateFoot.distance_ball(j.position)
-        if dist_j < dist_min and (j.position.distance(og) < dog or dist_j < 3.):
+        if dist_j < dist_min and (j.position.distance(og) < dog or dist_j < 5.):
             oppDef = j
             dist_dmin = dist_j
     return oppDef

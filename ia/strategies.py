@@ -12,6 +12,10 @@ from .behaviour import beh_fonceurNormal, beh_fonceurChallenge1, beh_fonceur, \
     cutDownAngle_gk, dribble
 import pickle
 
+#TODO si la balle arrive vers le joueur (vecteurs "opposes"), il faut
+# prendre en compte sa vitesse d'arrivee, notamment en ajoutant
+# ce vecteur au control prealable
+
 def loadPath(fn):
     """
     Renvoie le chemin d'acces absolu du fichier
@@ -44,9 +48,12 @@ class AttaquantModifStrategy(Strategy):
             self.dico = dict()
         self.dico['n'] = -1
         self.dico['tempsI'] = 4.8
-        self.dico['rayDribble'] = 23.
+        self.dico['rayDribble'] = 19.
         self.dico['rayRecept'] = 30.
         self.dico['coeffPushUp'] = 6.
+        self.dico['controleAttaque'] = self.dico['controleMT']
+        self.dico['rayPressing'] = 10.
+        self.dico['distDefZone'] = 60.
     def args_dribble_pass_shoot(self):
         return (self.dico['alphaShoot'], self.dico['betaShoot'], self.dico['angleDribble'], \
                 self.dico['powerDribble'], self.dico['rayDribble'], self.dico['angleGardien'], \
@@ -61,7 +68,8 @@ class AttaquantModifStrategy(Strategy):
     def args_receivePass_loseMark(self):
         return (self.dico['decalX'], self.dico['decalY'], self.dico['rayRecept'], \
                 self.dico['angleRecept'], self.dico['rayReprise'], self.dico['angleReprise'], \
-                self.dico['distMontee'], self.dico['coeffPushUp'])
+                self.dico['distMontee'], self.dico['coeffPushUp'], self.dico['distDefZone'], \
+                self.dico['rayPressing'])
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if is_kick_off(me):
@@ -89,9 +97,11 @@ class GardienModifStrategy(Strategy):
             self.dico = dict()
         self.dico['n'] = -1
         self.dico['tempsI'] = 4.8
-        self.dico['rayDribble'] = 23.
+        self.dico['rayDribble'] = 19.
         self.dico['rayRecept'] = 30.
         self.dico['coeffPushUp'] = 6.
+        print(self.dico['distSortie'])
+        self.dico['controleAttaque'] = self.dico['controleMT']
     def args_dribble_pass_shoot(self):
         return (self.dico['alphaShoot'], self.dico['betaShoot'], self.dico['angleDribble'], \
                 self.dico['powerDribble'], self.dico['rayDribble'], self.dico['angleGardien'], \
@@ -122,10 +132,11 @@ class GardienModifStrategy(Strategy):
             #return goToBall(me)
         if must_advance(me, self.dico['distMontee']):
             return pushUp(me, self.dico['coeffPushUp'])
-        if opponent_approaches_my_goal(me, self.dico['distSortie']):
-            return goToMyGoal(me)
         if must_intercept(me, self.dico['rayInter']):
             return tryInterception(me, self.dico)
+        if opponent_approaches_my_goal(me, self.dico['distSortie']):
+            return goToMyGoal(me)
+            #return cutDownAngle_gk(me, self.dico['rayDribble'])
         return cutDownAngle_gk(me, self.dico['distMontee'])
 
 
@@ -215,9 +226,15 @@ class CBNaifStrategy(Strategy):
             self.dico = dict()
         self.dico['n'] = -1
         self.dico['tempsI'] = 4.8
-        self.dico['rayDribble'] = 23.
+        self.dico['rayDribble'] = 19.
         self.dico['rayRecept'] = 30.
         self.dico['coeffPushUp'] = 6.
+        self.dico['controleAttaque'] = self.dico['controleMT']
+    def args_control_dribble_pass(self):
+        return (self.dico['angleDribble'], self.dico['powerDribble'], self.dico['rayDribble'], \
+                self.dico['coeffAD'], self.dico['controleMT'], self.dico['powerPasse'], \
+                self.dico['thetaPasse'], self.dico['rayPressing'], self.dico['distPasse'], \
+                self.dico['angleInter'], self.dico['coeffPushUp'])
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if has_ball_control(me):
@@ -225,6 +242,7 @@ class CBNaifStrategy(Strategy):
             if tm is not None and must_pass_ball(me, tm, self.dico['distPasse'], self.dico['angleInter']):
                 return passBall(me, tm, self.dico['powerPasse'], self.dico['thetaPasse'], self.dico['coeffPushUp'])
             return clearSolo(me)
+            #return goToBall(me)
         if must_intercept(me, self.dico['rayInter']):
             #return tryInterception(me, self.dico)
             return goToBall(me)

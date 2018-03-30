@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from .tools import Wrapper, StateFoot, is_in_radius_action, distance_horizontale, nearest, nearest_ball
+from .tools import Wrapper, StateFoot, is_in_radius_action, distance_horizontale, \
+    nearest, nearest_state, nearest_ball
 from soccersimulator.settings import GAME_WIDTH, GAME_GOAL_HEIGHT, GAME_HEIGHT, BALL_RADIUS, \
         PLAYER_RADIUS
 import random
@@ -151,6 +152,22 @@ def free_teammate(stateFoot, angleInter):#rayPressing):
                 tm_best = tm
                 dist_best = dist
     return tm_best
+
+
+def free_opponent(stateFoot, distDefZone, rayPressing):
+    """
+    """
+    oppAtt = None
+    my_team = stateFoot.teammates + [stateFoot.my_state]
+    my_team = my_team[2::]
+    for opp in stateFoot.opponents:
+        if distance_horizontale(stateFoot.my_pos, opp.position) > distDefZone:
+            continue
+        tm = nearest_state(opp.position, my_team)
+        if tm.position.distance(opp.position) > rayPressing and tm.position == stateFoot.my_pos:
+            oppAtt = opp
+            break;
+    return oppAtt
 
 def must_defend(stateFoot):
     """
