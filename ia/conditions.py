@@ -64,6 +64,11 @@ def must_intercept(stateFoot, rayInter=distMaxInterception):
         return False
     return stateFoot.is_nearest_ball()
 
+def ball_advances(stateFoot):
+    """
+    """
+    return stateFoot.ball_speed.dot(stateFoot.attacking_vector) > 0.
+
 def must_advance(stateFoot, distMontee):
     """
     Renvoie vrai ssi le balle est loin de la
@@ -72,8 +77,7 @@ def must_advance(stateFoot, distMontee):
     control = stateFoot.team_controls_ball()
     if control is not None:
         return control
-    vect = (stateFoot.my_goal - stateFoot.opp_goal)
-    if stateFoot.ball_speed.dot(vect) > 0.:
+    if not ball_advances(stateFoot):
         return False
     ball_speed = stateFoot.ball_speed.copy().normalize()
     meBall = (stateFoot.ball_pos - stateFoot.my_pos).normalize()
@@ -82,11 +86,6 @@ def must_advance(stateFoot, distMontee):
         tmBall = (stateFoot.ball_pos - tm.position).normalize()
         if tmBall.dot(ball_speed) >= 0.8: return True
     return False
-    if not tm.is_nearest_ball():
-        return False
-    return True
-    return stateFoot.distance_ball(stateFoot.my_goal) >= distMontee and \
-            stateFoot.ball_speed.dot(stateFoot.ball_pos-stateFoot.my_goal) > 0
 
 def opponent_approaches_my_goal(stateFoot, distSortie):
     """
@@ -144,7 +143,8 @@ def free_teammate(stateFoot, angleInter):
     tm_best = None
     dist_best = 0.
     for tm in stateFoot.offensive_teammates:
-        if tm.position.distance(stateFoot.my_goal) < 35.:
+        if tm.position.distance(stateFoot.my_goal) < 35. or \
+           distance_horizontale(tm.position, stateFoot.my_goal) < 25.:
             continue
         if stateFoot.free_pass_trajectory(tm, angleInter):
             opp = nearest(tm.position, stateFoot.opponents)

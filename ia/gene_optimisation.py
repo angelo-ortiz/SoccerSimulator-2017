@@ -328,7 +328,7 @@ class GeneTeam(object):
         Hypothese : sortVectors() doit avoir ete appele
         auparavant
         """
-        if self.playerStrats[i] is None:
+        if self.playerParams[i] is None:
             return None
         play_dict = self.vectors[0].params
         return {k:play_dict[k] for k in self.playerParams[i] if k in play_dict}

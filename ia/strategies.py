@@ -5,7 +5,7 @@ from .conditions import must_intercept, has_ball_control, is_defensive_zone, \
         is_close_goal, is_close_ball, opponent_approaches_my_goal, must_advance, \
         free_teammate, had_ball_control, is_kick_off, must_pass_ball, distance_horizontale
 from .behaviour import beh_fonceurNormal, beh_fonceurChallenge1, beh_fonceur, \
-    shoot, control, shiftAside, clear, clearSolo, goToBall, goToMyGoal, \
+    shoot, shiftAside, clear, clearSolo, goToBall, goToMyGoal, \
     tryInterception, interceptBall, fonceurCh1ApprochePower, shootPower, \
     power, goForwardsPA, goForwardsMF, cutDownAngle, pushUp, passBall, \
     goForwardsPA_mod, goForwardsMF_mod, passiveSituation, kickAt, \
@@ -53,7 +53,7 @@ class AttaquantModifStrategy(Strategy):
         self.dico['coeffPushUp'] = 6.
         self.dico['controleAttaque'] = self.dico['controleMT']
         self.dico['rayPressing'] = 30.
-        self.dico['distDefZone'] = 60.
+        self.dico['distDefZone'] = 75.
         self.dico['distShoot'] = 40.
     def args_dribble_pass_shoot(self):
         return (self.dico['alphaShoot'], self.dico['betaShoot'], self.dico['angleDribble'], \
@@ -126,11 +126,9 @@ class GardienModifStrategy(Strategy):
                 return goForwardsPA_mod(me, *self.args_dribble_pass_shoot())
             return goForwardsMF_mod(me, *self.args_control_dribble_pass())
         if me.is_nearest_ball() or had_ball_control(me, self.dico['rayReprise'], self.dico['angleReprise']):
-            #return goToBall(me)
             return tryInterception(me, self.dico)
         if distance_horizontale(me.ball_pos, me.opp_goal) < self.dico['distAttaque']  and \
-           me.ball_speed.dot(me.attacking_vector) <= 0. and me.is_nearest_ball_my_team():
-            # return goToBall(me)
+           me.ball_speed.dot(me.attacking_vector) >= 0. and me.is_nearest_ball_my_team():
             return tryInterception(me, self.dico)
         if must_advance(me, self.dico['distMontee']):
             return pushUp(me, self.dico['coeffPushUp'])
@@ -140,7 +138,6 @@ class GardienModifStrategy(Strategy):
             return goToBall(me)
         if opponent_approaches_my_goal(me, self.dico['distSortie']):
             return goToMyGoal(me)
-            #return cutDownAngle_gk(me, self.dico['rayDribble'])
         return cutDownAngle_gk(me, self.dico['distMontee'])
 
 
@@ -211,7 +208,7 @@ class GardienStrategy(Strategy):
             return clearSolo(me)
         '''
         if must_advance(me, self.dico['distMontee']):
-cccccbbb            return pushUp(me)#, self.dico['coeffPushUp']
+            return pushUp(me)#, self.dico['coeffPushUp']
         '''
         if must_intercept(me, self.dico['rayInter']):
             return tryInterception(me, self.dico)
@@ -247,22 +244,16 @@ class CBNaifStrategy(Strategy):
         if has_ball_control(me):
             tm = free_teammate(me, self.dico['angleInter'])
             if tm is not None and must_pass_ball(me, tm, self.dico['distPasse'], self.dico['angleInter']):
-                return passBall(me, tm, 2.*self.dico['powerPasse'], self.dico['thetaPasse'], self.dico['coeffPushUp'])
-            return clear_gk(me)
+                return passBall(me, tm, 2.*self.dico['powerPasse'], self.dico['thetaPasse'], self.dico['coeffPushUp']) + goToMyGoal(me)
+            return clear_gk(me) + goToMyGoal(me)
         if me.is_nearest_ball():
-            #return goToBall(me)
             return tryInterception(me, self.dico)
-        # if me.distance_ball(me.my_goal) <= 45.:
-        #     return goToBall(me)
         if must_intercept(me, self.dico['rayInter']) and me.distance_ball(me.my_goal) < self.dico['distMontee']-20:
             return tryInterception(me, self.dico)
-            #return goToBall(me)
-        #if opponent_approaches_my_goal(me, self.dico['distShoot']):#self.dico['distSortie']):
         if opponent_approaches_my_goal(me, self.dico['distSortie']):
             return cutDownAngle(me, 20., 10.)
-        #return goToMyGoal(me)
         return cutDownAngle_gk(me, self.dico['distMontee']-20.)
-    
+
 
 
 ## Strategie Fonceur

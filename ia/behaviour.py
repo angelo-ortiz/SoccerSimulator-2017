@@ -77,15 +77,26 @@ def shoot(state, power):
     """
     return kickAt(state,state.opp_goal,power)
 
-def control(state, powerControl=controlPower):
+def bestShoot(state, power):
+    """
+    Fait un tir droit au but
+    """
+    dest = state.opp_goal
+    if random.random() < 0.5:
+        dest.y += 5.
+    else:
+        dest.y -= 5.
+    return kickAt(state,dest,power)
+
+def parallelControl(state, powerControl=controlPower):
     """
     Avance avec la balle au pied parallelement
     a la ligne de touche
     """
-    vect = (state.opp_goal - state.my_goal).normalize()
+    vect = state.attacking_vector
     return kickAt(state,state.ball_pos + vect*10,powerControl)
 
-def control_prec(state, powerControl=controlPower):
+def goalControl(state, powerControl=controlPower):
     """
     Avance avec la balle au pied parallelement
     a la ligne de touche
@@ -97,7 +108,6 @@ def dribble_prec(state, opp, angleDribble, powerDribble, coeffAD):
     Fait un dribble avec une direction aleatoire
     soit vers l'axe, soit vers l'un des deux cotes
     """
-    #print('dribble_prec')
     coeffAD=1.305
     destDribble = Vector2D()
     oPos = opp.position
@@ -124,11 +134,10 @@ def dribble(state, opp, angleDribble, powerDribble, coeffAD):
     Fait un dribble avec une direction aleatoire
     soit vers l'axe, soit vers l'un des deux cotes
     """
-    print('dribble')
     destDribble = Vector2D()
     me_opp = (opp.position - state.my_pos).normalize()
     #me_goal = (state.opp_goal - state.my_pos).normalize()
-    me_goal = (state.opp_goal - state.my_goal).normalize()
+    me_goal = state.attacking_vector
     angle = atan2(me_opp.y,me_opp.x)
     theta = get_oriented_angle(me_goal, me_opp)/acos(0.)
     rand = exp(-coeffAD*abs(theta))/2.
@@ -151,7 +160,7 @@ def passBall(state, dest, maxPowerPasse, thetaPass, coeffPushUp):
     TODO: il faut enlever la recherche du coequipier et plutot
     le passer en parametre => plus de strategie vide
     """
-    vectGoal = (state.opp_goal - state.my_goal).normalize()
+    vectGoal = state.attacking_vector
     destp = dest.position
     #if vectGoal.dot(dest.vitesse.copy().normalize()) >= 0.:
     #    destp += coeffPushUp*dest.vitesse
@@ -160,6 +169,27 @@ def passBall(state, dest, maxPowerPasse, thetaPass, coeffPushUp):
         vitesse = (-1) * vitesse
     destp += coeffPushUp*vitesse
     return kickAt(state, destp, passPower(state, destp, maxPowerPasse, thetaPass))
+
+def passiveSituationSolo(state, dico, decalX, decalY, rayReprise, angleReprise, distMontee, distDefZone, distAttaque):
+    """
+    Quand le joueur n'a pas le controle sur
+    la balle:
+    - si la balle approche il s'approche pour
+    recevoir la balle
+    - s'il est le joueur le plus proche de la
+    balle ou s'il vient de faire un dribble/controle
+    il se dirige de nouveau vers la balle
+    - si un coequipier a franchi une distance
+    avec la balle, il monte de le terrain
+    pour lui proposer des solutions
+    - sinon il se decale lateralement
+    """
+    if state.is_nearest_ball() or had_ball_control(state, rayReprise, angleReprise):
+        return tryInterception(state, dico)
+    if distance_horizontale(state.ball_pos, state.opp_goal) < distAttaque and \
+       state.ball_speed.dot(state.attacking_vector) <= 0. and state.is_nearest_ball_my_team():
+        return tryInterception(state, dico)
+    return cutDownAngle_gk(state, 20.) #modif
 
 def passiveSituation(state, dico, decalX, decalY, rayRecept, angleRecept, rayReprise, angleReprise, distMontee, coeffPushUp, distDefZone, rayPressing, distAttaque):
     """
@@ -178,48 +208,22 @@ def passiveSituation(state, dico, decalX, decalY, rayRecept, angleRecept, rayRep
     vectBall = (state.my_pos - state.ball_pos).normalize()
     vectSpeed = state.ball_speed.copy().normalize()
     if state.distance(state.ball_pos) <= rayRecept and vectSpeed.dot(vectBall) >= angleRecept:
-        return goToBall(state)
-        #return tryInterception(state, dico)
+        return tryInterception(state, dico)
     if state.is_nearest_ball() or had_ball_control(state, rayReprise, angleReprise):
-        #return goToBall(state)
         return tryInterception(state, dico)
     if distance_horizontale(state.ball_pos, state.opp_goal) < distAttaque and \
-       state.ball_speed.dot(state.attacking_vector) <= 0. and state.is_nearest_ball_my_team():
-        #return goToBall(state)
+       state.ball_speed.dot(state.attacking_vector) >= 0. and state.is_nearest_ball_my_team():
         return tryInterception(state, dico)
     if must_advance(state, distMontee):#40 distMontee
         return pushUp(state, coeffPushUp)
     if state.is_nearest_ball_my_team() and state.distance_ball(state.my_goal) < distMontee:
-        #return tryInterception(state, dico)
-        return goToBall(state)
+        return tryInterception(state, dico)
     opp = free_opponent(state, distDefZone, rayPressing)
-    if is_defensive_zone(state, distDefZone) and opp is not None:
-        return mark(state, opp, rayPressing)
-    #return goToBall(state)
+    if is_defensive_zone(state, distDefZone+10.) and opp is not None:
+        return mark(state, opp, 20.)#rayPressing)
+    # if is_defensive_zone(state, distDefZone-20):
+    #     return loseMark(state, rayPressing, 45.)
     return cutDownAngle(state, 40., 20.) #modif
-
-def passiveSituationSolo(state, dico, decalX, decalY, rayReprise, angleReprise, distMontee, distDefZone, distAttaque):
-    """
-    Quand le joueur n'a pas le controle sur
-    la balle:
-    - si la balle approche il s'approche pour
-    recevoir la balle
-    - s'il est le joueur le plus proche de la
-    balle ou s'il vient de faire un dribble/controle
-    il se dirige de nouveau vers la balle
-    - si un coequipier a franchi une distance
-    avec la balle, il monte de le terrain
-    pour lui proposer des solutions
-    - sinon il se decale lateralement
-    """
-    if state.is_nearest_ball() or had_ball_control(state, rayReprise, angleReprise):
-        #return goToBall(state)
-        return tryInterception(state, dico)
-    if distance_horizontale(state.ball_pos, state.opp_goal) < distAttaque and \
-       state.ball_speed.dot(state.attacking_vector) <= 0. and state.is_nearest_ball_my_team():
-        #return goToBall(state)
-        return tryInterception(state, dico)
-    return cutDownAngle_gk(state, 20.) #modif
 
 def loseMark(state, rayPressing, distDemar):
     """
@@ -227,7 +231,6 @@ def loseMark(state, rayPressing, distDemar):
     """
     opp = state.nearest_opponent(rayPressing)
     if opp is None:
-        #return goTo(state,state.opp_goal)
         return shiftAside(state, 10, 20)
     return shiftAsideMark(state, opp, distDemar)
 
@@ -249,7 +252,8 @@ def shiftAsideMark(state, opp, distDemar):
         dest = Vector2D.create_random(low=-1, high=1)
         dest.norm = distDemar
         dest += opp.position
-        if state.is_valid_position(dest):
+        if state.is_valid_position(dest) and \
+           distance_horizontale(dest, state.my_goal) > distance_horizontale(opp.position, state.my_goal):
             break
     return goTo(state, dest)
 
@@ -261,7 +265,7 @@ def goForwardsMF(state, angleDribble, powerDribble, rayDribble, coeffAD, powerCo
     """
     oppDef = nearest_defender(state, state.opponents, rayDribble)
     if oppDef is None:
-        return control_prec(state, powerControl)
+        return goalControl(state, powerControl)
     return dribble_prec(state, oppDef, angleDribble, powerDribble, coeffAD)
 
 def goForwardsPA(strat, state, alpha, beta, angleDribble, powerDribble, rayDribble, angleGardien, coeffAD, powerControl, distShoot):
@@ -272,11 +276,11 @@ def goForwardsPA(strat, state, alpha, beta, angleDribble, powerDribble, rayDribb
     l'adversaire en face de lui
     """
     oppDef = nearest_defender(state, state.opponents, rayDribble)
-    if oppDef is None or state.free_trajectory(state.opp_goal, 0.52):#empty_goal(strat, state, oppDef, angleGardien):
+    if oppDef is None or state.free_trajectory(state.opp_goal, 0.52):
         if is_close_goal(state, distShoot):
             return shoot(state, shootPower(state, alpha, beta))
         else:
-            return control_prec(state, powerControl)
+            return goalControl(state, powerControl)
     return dribble_prec(state, oppDef, angleDribble, powerDribble, coeffAD)
 
 def goForwardsPA_mod(state, alpha, beta, angleDribble, powerDribble, rayDribble, angleGardien, coeffAD, powerControl, distShoot, maxPowerPasse, thetaPass, rayPressing, distPasse, angleInter, coeffPushUp):
@@ -289,8 +293,8 @@ def goForwardsPA_mod(state, alpha, beta, angleDribble, powerDribble, rayDribble,
     if is_close_goal(state, distShoot) and state.free_trajectory(state.opp_goal, 0.52):#angleInter):
         return shoot(state, shootPower(state, alpha, beta))
     oppDef = nearest_defender(state, state.opponents, rayDribble)
+    tm = free_teammate(state, angleInter)
     if oppDef is not None:
-        tm = free_teammate(state, angleInter)
         if tm is not None:
             if is_close_goal(state, distShoot) and must_assist(state, tm, distPasse, angleInter, coeffPushUp):
                 return passBall(state, tm, maxPowerPasse, thetaPass, coeffPushUp/2.)+pushUp(state, coeffPushUp)
@@ -299,7 +303,12 @@ def goForwardsPA_mod(state, alpha, beta, angleDribble, powerDribble, rayDribble,
         return dribble(state,oppDef,angleDribble, powerDribble, coeffAD)
     if is_close_goal(state, 20.):
         return shoot(state, shootPower(state, alpha, beta))
-    return control(state, powerControl)
+    if distance_horizontale(state.my_pos, state.opp_goal) < 30.:
+        if tm is not None and must_assist(state, tm, distPasse, angleInter, coeffPushUp):
+            return passBall(state, tm, maxPowerPasse, thetaPass, 0.)+pushUp(state, coeffPushUp)
+        else:
+            return goalControl(state, powerControl)
+    return parallelControl(state, powerControl)
 
 def goForwardsMF_mod(state, angleDribble, powerDribble, rayDribble, coeffAD, powerControl, maxPowerPasse, thetaPass, rayPressing, distPasse, angleInter, coeffPushUp):
     """
@@ -308,9 +317,7 @@ def goForwardsMF_mod(state, angleDribble, powerDribble, rayDribble, coeffAD, pow
     un adversaire en face
     """
     if state.distance(state.my_goal) < rayPressing:
-        oppDef = nearest_state(state.my_pos, state.opponents)
-        if oppDef is not None and state.distance(oppDef.position) > rayDribble:
-            oppDef = None
+        oppDef = state.nearest_opponent(rayDribble)
     else:
         oppDef = nearest_defender(state, state.opponents, rayDribble)
     if oppDef is not None:
@@ -318,7 +325,7 @@ def goForwardsMF_mod(state, angleDribble, powerDribble, rayDribble, coeffAD, pow
         if tm is not None and must_pass_ball(state, tm, distPasse, angleInter) and random.random() < 0.5:
             return passBall(state, tm, maxPowerPasse, thetaPass, coeffPushUp)+pushUp(state, coeffPushUp)
         return dribble(state, oppDef, angleDribble, powerDribble, coeffAD)
-    return control(state, powerControl)
+    return parallelControl(state, powerControl)
 
 def clearSolo(state):
     """
@@ -326,7 +333,7 @@ def clearSolo(state):
     profondeurDegagement et une largeur
     largeurDegagement
     """
-    vect = (state.opp_goal - state.my_goal).normalize()
+    vect = state.attacking_vector
     return kickAt(state, vect+state.ball_pos, 4.)
     ecart_x = profondeurDegagement
     if not state.is_team_left(): ecart_x = -ecart_x
@@ -342,11 +349,9 @@ def clear_gk(state, angleClear=1.):
     destClear = Vector2D()
     opp = nearest_defender(state, state.opponents, 50.)
     if opp is None:
-        # print('naif')
         return clearSolo(state)
-    # print('opp')
     me_opp = (opp.position - state.my_pos).normalize()
-    me_goal = (state.opp_goal - state.my_goal).normalize()
+    me_goal = state.attacking_vector
     angle = atan2(me_opp.y,me_opp.x)
     quad = state.quadrant
     if state.is_team_left(): # mauvais angle (vers l'adversaire)
@@ -396,19 +401,10 @@ def pushUp(state, coeffPushUp):
     Hypothese: CB c'est le joueur 1
     """
     porteur = nearest_state(state.ball_pos, state.teammates)
-    #print(porteur)
-    #print(state.my_pos)
-    #for tm in state.teammates:
-    #    print(tm)
     tm_list = state.teammates[1::]
     delete_teammate(porteur, tm_list)
-    #except ValueError:
-    #    a=None
     tm = tm_list[0]
     dest = Vector2D()
-    #tm = state.teammates[0]
-    #dest.x = tm.position.x + state.my_speed.x*coeffPushUp
-    #dest.y = tm.position.y + 30.
     dest.x = porteur.position.x + state.my_speed.x*coeffPushUp
     distMoi = distance_verticale(state.my_pos, porteur.position)
     distTM = distance_verticale(tm.position, porteur.position)
@@ -442,8 +438,6 @@ def pushUp(state, coeffPushUp):
                     dest.y = porteur.position.y + diff
             else:
                 dest.y = porteur.position.y + 2*diff
-    if dest.y < 0. or dest.y >= 90.:
-        raise ValueError(state.my_pos, distMoi, distTM, dest.y)
     return goTo(state, dest)
 
 def cutDownAngle(state, raySortie, rayInter):

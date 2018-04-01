@@ -374,7 +374,7 @@ def shootPower(stateFoot, alphaShoot, betaShoot):
     u = stateFoot.opp_goal - stateFoot.my_pos
     dist = u.norm
     theta = acos(abs(vect.dot(u))/u.norm)/acos(0.)
-    return maxPlayerShoot*(1.-exp(-(alphaShoot*dist)))*exp(-betaShoot*theta)
+    return max(1.,maxPlayerShoot*(1.-exp(-(alphaShoot*dist)))*exp(-betaShoot*theta))
 
 def passPower(stateFoot, dest, maxPower, thetaPass):
     """.

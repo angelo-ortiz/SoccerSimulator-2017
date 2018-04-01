@@ -3,6 +3,6 @@ __pycache__/
 *$py.class
 module*/
 jouer.py
-confronterBest.py
+confronter*.py
 match2equipes.py
 testPoints.py
