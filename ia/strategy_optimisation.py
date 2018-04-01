@@ -2,7 +2,7 @@
 from soccersimulator import Strategy, Vector2D
 from .tools import StateFoot, get_empty_strategy, shootPower
 from .conditions import must_intercept, has_ball_control, is_close_ball, is_close_goal
-from .behaviour import dribble, shoot, clearSolo, goToBall, goTo, goToMyGoal, interceptBall, power, goForwardsPA, control, passBall, receiveBall
+from .behaviour import dribble, shoot, clearSolo, goToBall, goTo, goToMyGoal, interceptBall, power, goForwardsPA, control, passBall#, receiveBall
 
 class ShootTestStrategy(Strategy):
     def __init__(self, dist=None, alpha=None, beta=None):
@@ -86,8 +86,8 @@ class PasseTestStrategy(Strategy):
                 return shoot(me, fonceurCh1ApprochePower)
             return passBall(me, 10., self.power, 0.8)
             #return control(me, power(me))
-        return receiveBall(me, 0.5)
-        #return goToBall(me)
+        #return receiveBall(me, 0.5) pas de commentaire ici !!!
+        return goToBall(me)
 
 
 
@@ -103,3 +103,18 @@ class TestAccStrategy(Strategy):
             return get_empty_strategy()
         print("1")
         return goTo(me, vect)
+
+
+class ReceptionTestStrategy(Strategy):
+    def __init__(self, coeff=None):
+        Strategy.__init__(self,"ReceptionTest")
+        self.coeff = coeff
+        self.cont = True
+    def compute_strategy(self,state,id_team,id_player):
+        me = StateFoot(state,id_team,id_player)
+        if has_ball_control(me):
+            self.cont = False
+            return control(me, self.coeff)
+        if self.cont:
+            return goToBall(me)
+        return get_empty_strategy()

@@ -29,7 +29,7 @@ def is_close_goal(stateFoot, distGoal=27.):
     cage adverse
     """
     return is_in_radius_action(stateFoot, stateFoot.opp_goal, distGoal) or \
-        distance_horizontale(stateFoot.opp_goal, stateFoot.my_pos) < distGoal
+        distance_horizontale(stateFoot.opp_goal, stateFoot.my_pos) < (distGoal-5.)
 
 def is_kick_off(stateFoot):
     """
@@ -80,7 +80,7 @@ def must_advance(stateFoot, distMontee):
     if meBall.dot(ball_speed) >= 0.995: return True
     for tm in stateFoot.teammates:
         tmBall = (stateFoot.ball_pos - tm.position).normalize()
-        if tmBall.dot(ball_speed) >= 0.995: return True
+        if tmBall.dot(ball_speed) >= 0.8: return True
     return False
     if not tm.is_nearest_ball():
         return False
@@ -130,7 +130,7 @@ def empty_goal(strat, stateFoot, opp, angle):
         strat.dribbleGardien = True
     return not strat.dribbleGardien
 
-def free_teammate(stateFoot, angleInter):#rayPressing):
+def free_teammate(stateFoot, angleInter):
     """
     Renvoie le premier coequipier libre de
     marquage
@@ -142,13 +142,15 @@ def free_teammate(stateFoot, angleInter):#rayPressing):
     return None
     """
     tm_best = None
-    dist_best = 1024.
-    for tm in stateFoot.teammates:
+    dist_best = 0.
+    for tm in stateFoot.offensive_teammates:
         if tm.position.distance(stateFoot.my_goal) < 35.:
             continue
         if stateFoot.free_pass_trajectory(tm, angleInter):
-            dist = stateFoot.distance(tm.position)
-            if dist < dist_best:
+            opp = nearest(tm.position, stateFoot.opponents)
+            dist = tm.position.distance(opp)
+            # dist = stateFoot.distance(tm.position)
+            if dist > dist_best:
                 tm_best = tm
                 dist_best = dist
     return tm_best
@@ -161,10 +163,10 @@ def free_opponent(stateFoot, distDefZone, rayPressing):
     my_team = stateFoot.teammates + [stateFoot.my_state]
     my_team = my_team[2::]
     for opp in stateFoot.opponents:
-        if distance_horizontale(stateFoot.my_pos, opp.position) > distDefZone:
+        if distance_horizontale(stateFoot.my_goal, opp.position) > distDefZone:
             continue
         tm = nearest_state(opp.position, my_team)
-        if tm.position.distance(opp.position) > rayPressing and tm.position == stateFoot.my_pos:
+        if stateFoot.distance_ball(opp.position) > rayPressing and tm.position == stateFoot.my_pos:
             oppAtt = opp
             break;
     return oppAtt

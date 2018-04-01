@@ -139,6 +139,12 @@ class StateFoot(Wrapper):
                 return "IV"
 
     @property
+    def attacking_vector(self):
+        """
+        """
+        return (self.opp_goal - self.my_goal).normalize()
+
+    @property
     def teammates(self):
         """
         Ses coequipiers
@@ -147,6 +153,17 @@ class StateFoot(Wrapper):
         liste = [self.player_state(team,i) for i in range(self.nb_players(team))]
         liste.remove(self.player_state(*self.key))
         return liste
+
+    @property
+    def offensive_teammates(self):
+        """
+        """
+        team = self.teammates
+        try:
+            delete_teammate(self.player_state(state.my_team, 0), team)
+        except:
+            pass
+        return team
 
     @property
     def opponents(self):
@@ -256,10 +273,10 @@ class StateFoot(Wrapper):
             return not p in self.opponents
         return None
 
-    def free_pass_trajectory(self, tm, angleInter):
+    def free_trajectory(self, dest, angleInter):
         """
         """
-        vect = (tm.position - self.my_pos).normalize()
+        vect = (dest - self.my_pos).normalize()
         for opp in self.opponents:
             diff = opp.position-self.my_pos
             angle = get_oriented_angle(vect, diff.normalize())
@@ -267,6 +284,11 @@ class StateFoot(Wrapper):
             if angle >= 0. and angle < angleInter:
                 return False
         return True
+
+    def free_pass_trajectory(self, tm, angleInter):
+        """
+        """
+        return self.free_trajectory(tm.position, angleInter)
 
 
 def get_random_vector():
@@ -409,7 +431,7 @@ def nearest_defender(stateFoot, liste, distRef):
     dist_min = distRef
     for j in liste:
         dist_j = stateFoot.distance_ball(j.position)
-        if dist_j < dist_min and (j.position.distance(og) < dog or dist_j < 5.):
+        if dist_j < dist_min and (j.position.distance(og) < dog or dist_j < 3.):
             oppDef = j
             dist_dmin = dist_j
     return oppDef

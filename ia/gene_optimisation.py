@@ -1,7 +1,7 @@
 # coding: utf-8
 from __future__ import print_function, division
 from soccersimulator import SoccerTeam
-from ia.strategies import FonceurStrategy, GardienStrategy, AttaquantStrategy, GardienModifStrategy, AttaquantModifStrategy
+from ia.strategies import FonceurStrategy, GardienStrategy, AttaquantStrategy, GardienModifStrategy, AttaquantModifStrategy, FonceurModifStrategy
 from functools import total_ordering
 from math import pi as PI, sqrt
 import random
@@ -418,3 +418,40 @@ class GKStrikerModifTeam(GKStrikerTeam):
         self.team.add(self.playerStrats[0].name, self.playerStrats[0])
         self.team.add(self.playerStrats[1].name, self.playerStrats[1])
         return self.team
+
+class STTeam(GeneTeam):
+    def __init__(self, size=20, keep=0.5, coProb=0.7, mProb=0.01):
+        super(STTeam, self).__init__(name="STTeam", \
+            playerStrats=[FonceurModifStrategy(), None, None, None], \
+            playerParams=[GKStrikerTeam.gk_params(), GKStrikerTeam.st_params(), [], []], \
+            size=size, keep=keep, coProb=coProb, mProb=mProb)
+
+    def stDict(self):
+        """
+        Renvoie le sous-dictionnaire du meilleur vecteur de
+        parametres compose uniquement de ceux concernant
+        l'attaquant
+        Hypothese : sortVectors() doit avoir ete appele
+        auparavant
+        """
+        return super(STTeam, self).playerDict(0)
+
+    def getTeam(self, i):
+        """
+        Doc a modifier
+        """
+        self.team = SoccerTeam(self.name)
+        params = self.vectors[i].params
+        for i in range(2):
+            for p in self.playerParams[i]:
+                self.playerStrats[0].dico[p] = params[p] # params du st
+        self.team.add(self.playerStrats[0].name, self.playerStrats[0])
+        return self.team
+
+    def save(self, fn_gk="fonceur_gk_dico.pkl", fn_st="fonceur_st_dico.pkl"):
+        """
+        Sauvegarde le dictionnaire de parametres du gardien
+        et de l'attaquant dans des fichiers dans le repertoire
+        'parameters'
+        """
+        return super(STTeam, self).save([fn_gk, fn_st, None, None])
