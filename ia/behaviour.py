@@ -218,9 +218,10 @@ def passiveSituation(state, dico, decalX, decalY, rayRecept, angleRecept, rayRep
         return pushUp(state, coeffPushUp)
     if state.is_nearest_ball_my_team() and state.distance_ball(state.my_goal) < distMontee:
         return tryInterception(state, dico)
-    opp = free_opponent(state, distDefZone, rayPressing)
-    if is_defensive_zone(state, distDefZone+10.) and opp is not None:
-        return mark(state, opp, 20.)#rayPressing)
+    if state.numPlayers == 4:
+        opp = free_opponent(state, distDefZone, rayPressing)
+        if is_defensive_zone(state, distDefZone+10.) and opp is not None:
+            return mark(state, opp, 20.)#rayPressing)
     # if is_defensive_zone(state, distDefZone-20):
     #     return loseMark(state, rayPressing, 45.)
     return cutDownAngle(state, 40., 20.) #modif
@@ -343,7 +344,7 @@ def clearSolo(state):
     y = state.my_pos.y + ecart_y
     return kickAt(state,Vector2D(x,y), maxPlayerShoot)
 
-def clear_gk(state, angleClear=1.):
+def clear_gk(state, angleClear=1., power=4.):
     """
     """
     destClear = Vector2D()
@@ -363,7 +364,7 @@ def clear_gk(state, angleClear=1.):
     angle += angleClear
     destClear.x = cos(angle)
     destClear.y = sin(angle)
-    return kickAt(state, state.ball_pos + destClear, 4.)
+    return kickAt(state, state.ball_pos + 10*destClear, power)
 
 def clear(state, profondeur, largeur, powerDegage=maxPlayerShoot):
     """
@@ -393,6 +394,13 @@ def shiftAside(state, decalX, decalY):
     return goTo(state, dec + state.center_spot)
 
 def pushUp(state, coeffPushUp):
+    """
+    """
+    if state.numPlayers == 4:
+        return pushUp4v4(state, coeffPushUp)
+    return pushUp2v2(state, coeffPushUp)
+
+def pushUp4v4(state, coeffPushUp):
     """
     Monte dans le terrain pour proposer
     des possibilites de passe aux
@@ -438,6 +446,21 @@ def pushUp(state, coeffPushUp):
                     dest.y = porteur.position.y + diff
             else:
                 dest.y = porteur.position.y + 2*diff
+    return goTo(state, dest)
+
+def pushUp2v2(state, coeffPushUp):
+    """
+    Monte dans le terrain pour proposer
+    des possibilites de passe aux
+    coequipiers
+    TODO: Quid des nombres magiques ?
+    """
+    tm = state.teammates[0]
+    dest = Vector2D()
+    dest.x = tm.position.x + state.my_speed.x*coeffPushUp
+    dest.y = tm.position.y + 30.
+    if dest.y > 75.:
+        dest.y = tm.position.y - 30.
     return goTo(state, dest)
 
 def cutDownAngle(state, raySortie, rayInter):

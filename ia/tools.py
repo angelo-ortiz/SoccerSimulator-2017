@@ -17,9 +17,10 @@ class Wrapper(object):
 #### de la configuration courante du terrain
 #### depuis la perspective d'un joueur
 class StateFoot(Wrapper):
-    def __init__(self,state,id_team,id_player):
+    def __init__(self,state,id_team,id_player, numPlayers):
         super(StateFoot,self).__init__(state)
         self.key = (id_team,id_player)
+        self.numPlayers = numPlayers
 
     @property
     def my_team(self):
