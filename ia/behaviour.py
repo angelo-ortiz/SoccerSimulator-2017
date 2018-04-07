@@ -2,28 +2,27 @@
 from __future__ import print_function
 from soccersimulator import SoccerAction, Vector2D
 from soccersimulator.settings import GAME_WIDTH, GAME_HEIGHT, maxPlayerShoot, maxPlayerAcceleration, \
-        ballBrakeConstant, playerBrackConstant
+    ballBrakeConstant, playerBrackConstant
 from .tools import Wrapper, StateFoot, normalise_diff, coeff_friction, is_upside, nearest_defender, \
     nearest_ball, get_empty_strategy, shootPower, passPower, get_oriented_angle, distance_horizontale, \
     nearest_state, delete_teammate, distance_verticale
-from .conditions import profondeurDegagement, largeurDegagement, empty_goal, is_close_goal, free_teammate, must_advance, is_defensive_zone, must_pass_ball, had_ball_control, must_assist, free_opponent
+from .conditions import empty_goal, is_close_goal, free_teammate, must_advance, is_defensive_zone, \
+    must_pass_ball, had_ball_control, must_assist, free_opponent
 from math import acos, exp, atan2, sin, cos, atan
 import random
 
-distMaxFonceurCh1Shoot = GAME_WIDTH/3.
-distMaxFonceurNormShoot = GAME_WIDTH/4.
-fonceurCh1ApprochePower = 2.65
-fonceurCh1HPPower = 4.6
-fonceur100Power = 6.
-fonceurHPPower = 4.3
-controlPower = 1.2
-
 def beh_fonceurNormal(state):
+    distMaxFonceurNormShoot = GAME_WIDTH/4.
+    fonceur100Power = 6.
+    fonceurHPPower = 4.3
     if is_close_goal(state,distMaxFonceurNormShoot):
         return fonceurHPPower
     return fonceur100Power
 
 def beh_fonceurChallenge1(state):
+    distMaxFonceurCh1Shoot = GAME_WIDTH/3.
+    fonceurCh1ApprochePower = 2.65
+    fonceurCh1HPPower = 4.6
     if is_close_goal(state,distMaxFonceurCh1Shoot):
         return fonceurCh1HPPower
     return fonceurCh1ApprochePower
@@ -32,13 +31,6 @@ def beh_fonceur(state, shooter="normal"):
     if shooter == "ch1":
         return beh_fonceurChallenge1(state)
     return beh_fonceurNormal(state)
-
-def power(dribble):
-    CONTROL = 0.98
-    DRIBBLE = 0.47#TODO
-    if dribble:
-        return DRIBBLE
-    return CONTROL
 
 def goWith(acceleration):
     """
@@ -88,7 +80,7 @@ def bestShoot(state, power):
         dest.y -= 5.
     return kickAt(state,dest,power)
 
-def parallelControl(state, powerControl=controlPower):
+def parallelControl(state, powerControl=1.04):
     """
     Avance avec la balle au pied parallelement
     a la ligne de touche
@@ -96,7 +88,7 @@ def parallelControl(state, powerControl=controlPower):
     vect = state.attacking_vector
     return kickAt(state,state.ball_pos + vect*10,powerControl)
 
-def goalControl(state, powerControl=controlPower):
+def goalControl(state, powerControl=1.04):
     """
     Avance avec la balle au pied parallelement
     a la ligne de touche
@@ -187,7 +179,7 @@ def passiveSituationSolo(state, dico, decalX, decalY, rayReprise, angleReprise, 
     if state.is_nearest_ball() or had_ball_control(state, rayReprise, angleReprise):
         return tryInterception(state, dico)
     if distance_horizontale(state.ball_pos, state.opp_goal) < distAttaque and \
-       state.ball_speed.dot(state.attacking_vector) <= 0. and state.is_nearest_ball_my_team():
+       state.ball_speed.dot(state.attacking_vector) <= 0.:
         return tryInterception(state, dico)
     return cutDownAngle_gk(state, 20.) #modif
 
@@ -228,7 +220,8 @@ def passiveSituation(state, dico, decalX, decalY, rayRecept, angleRecept, rayRep
 
 def loseMark(state, rayPressing, distDemar):
     """
-    Doc
+    Se demarque de l'adversaire le plus proche
+    s'il en a un, se decale sinon
     """
     opp = state.nearest_opponent(rayPressing)
     if opp is None:
@@ -237,7 +230,9 @@ def loseMark(state, rayPressing, distDemar):
 
 def mark(state, opp, distMar):
     """
-    Doc
+    Se positionne a une distance distMar
+    de opp tout en lui bloquant la trajectoire
+    de reception de la balle
     """
     vect = (state.ball_pos - opp.position).normalize()
     vect.norm = distMar
@@ -317,10 +312,7 @@ def goForwardsMF_mod(state, angleDribble, powerDribble, rayDribble, coeffAD, pow
     avec la balle et dribble lorsqu'il y a
     un adversaire en face
     """
-    if state.distance(state.my_goal) < rayPressing:
-        oppDef = state.nearest_opponent(rayDribble)
-    else:
-        oppDef = nearest_defender(state, state.opponents, rayDribble)
+    oppDef = nearest_defender(state, state.opponents, rayDribble)
     if oppDef is not None:
         tm = free_teammate(state, angleInter)
         if tm is not None and must_pass_ball(state, tm, distPasse, angleInter) and random.random() < 0.5:
@@ -330,10 +322,12 @@ def goForwardsMF_mod(state, angleDribble, powerDribble, rayDribble, coeffAD, pow
 
 def clearSolo(state):
     """
-    Degage la balle avec une profondeur
-    profondeurDegagement et une largeur
-    largeurDegagement
+    Degage la balle avec une trajectoire
+    horizontale a partir de sa position vers
+    la cage adverse
     """
+    profondeurDegagement = GAME_WIDTH/5.
+    largeurDegagement = GAME_HEIGHT/4.
     vect = state.attacking_vector
     return kickAt(state, vect+state.ball_pos, 4.)
     ecart_x = profondeurDegagement
@@ -346,6 +340,12 @@ def clearSolo(state):
 
 def clear_gk(state, angleClear=1., power=4.):
     """
+    Degage la balle dans sa ligne
+    horizontale si personne ne le
+    presse, fait une ouverture
+    d'un certain angle par rapport
+    a l'adversaire le marquant s'il
+    y en a un
     """
     destClear = Vector2D()
     opp = nearest_defender(state, state.opponents, 50.)
@@ -395,6 +395,9 @@ def shiftAside(state, decalX, decalY):
 
 def pushUp(state, coeffPushUp):
     """
+    Monte dans le terrain pour proposer
+    des possibilites de passe aux
+    coequipiers
     """
     if state.numPlayers == 4:
         return pushUp4v4(state, coeffPushUp)
@@ -402,9 +405,8 @@ def pushUp(state, coeffPushUp):
 
 def pushUp4v4(state, coeffPushUp):
     """
-    Monte dans le terrain pour proposer
-    des possibilites de passe aux
-    coequipiers
+    C.f. pushUp
+    Specifique au 4v4
     TODO: Quid des nombres magiques ?
     Hypothese: CB c'est le joueur 1
     """
@@ -450,9 +452,8 @@ def pushUp4v4(state, coeffPushUp):
 
 def pushUp2v2(state, coeffPushUp):
     """
-    Monte dans le terrain pour proposer
-    des possibilites de passe aux
-    coequipiers
+    C.f. pushUp
+    Specifique au 2v2
     TODO: Quid des nombres magiques ?
     """
     tm = state.teammates[0]
@@ -508,7 +509,6 @@ def interceptBall(state,n):
     la balle pour une estimation
     de n instants de temps
     """
-    # n = 10
     v = state.my_speed
     r = state.my_pos
     vb = state.ball_speed

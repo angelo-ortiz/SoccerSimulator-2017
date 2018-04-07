@@ -8,7 +8,7 @@ nbIter = 15#500
 nVect = 5
 gk_st_team = GKStrikerTeam(size=size)
 gk_st_team.start()
-gk_cf_team = GKStrikerTeam(size=size) #GKCForwardTeam(size)
+gk_cf_team = GKStrikerTeam(size=size)
 gk_cf_team.start()
 for n in range(nbIter):
     gk_st_team.restart()
@@ -24,7 +24,6 @@ for n in range(nbIter):
                 team[1], team[2] = team[2], team[1]
             simu = Simulation(team[1][0],team[2][0])
             simu.start()
-            #print(j)
             setCounters(simu, team[1][1], team[2][1])
     print(n)
     gk_st_team.update()

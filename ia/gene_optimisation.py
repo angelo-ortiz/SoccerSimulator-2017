@@ -1,7 +1,8 @@
 # coding: utf-8
 from __future__ import print_function, division
 from soccersimulator import SoccerTeam
-from ia.strategies import FonceurStrategy, GardienStrategy, AttaquantStrategy, GardienModifStrategy, AttaquantModifStrategy, FonceurModifStrategy
+from ia.strategies import AttaquantStrategy, GardienStrategy
+from ia.strategies import Gardien2v2Strategy, Attaquant2v2Strategy, Fonceur1v1Strategy
 from functools import total_ordering
 from math import pi as PI, sqrt
 import random
@@ -108,7 +109,7 @@ class dictParams(object):
         parametre
         """
         return {'alphaShoot': (0.,0.6), 'betaShoot': (0.7,1.2), 'powerDribble': (1.,4.), \
-                'tempsI': (2,15), 'angleDribble': (0.,PI/2.), 'rayInter': (10.,20.), \
+                'tempsI': (2,12), 'angleDribble': (0.,PI/2.), 'rayInter': (10.,20.), \
                 'distShoot': (35.,45.), 'rayDribble': (10.,25.), \
                 'angleGardien':  (0.5,1.), 'coeffAD': (0.7,1.5), \
                 'distSortie': (40.,70.), 'raySortie': (5.,25.), 'controleMT': (1.04,1.1), \
@@ -116,9 +117,9 @@ class dictParams(object):
                 'decalY': (20.,45.), 'distAttaque': (40.,70.), 'controleAttaque': (1.04, 1.1), \
                 'distMontee': (40.,70.), 'distDefZone': (10.,40.), 'powerDeg': (2.,5.), \
                 'tempsContr': (8,15), 'powerPasse': (1.5,4.), 'thetaPasse': (0.,0.6), \
-                'distDemar': (15.,60.), 'rayPressing': (5.,30.), 'rayRecept': (5., 35.), \
+                'distDemar': (15.,50.), 'rayPressing': (5.,30.), 'rayRecept': (5., 35.), \
                 'angleRecept': (0.7,1.), 'rayReprise': (8., 15.), 'angleReprise': (-1, -0.5), \
-                'coeffPushUp': (6., 12.), 'distPasse': (45., 60.), 'angleInter': (0.,PI/3.)}
+                'coeffPushUp': (6., 12.), 'distPasse': (45., 60.), 'angleInter': (PI/8.,PI/3.)}
 
     def random(self, parameters):
         """
@@ -279,8 +280,9 @@ class GeneTeam(object):
     def update(self):
         """
         Garde les meilleurs resultats, qui representent le
-        keep*100% superieur, et modifie le reste avec soit une
-        mutation, soit un croisement des meilleurs scores
+        keep*100% superieur, et modifie le reste avec une
+        mutation, un croisement des meilleurs scores ou
+        des valeurs aleatoires (deux vecteurs)
         """
         self.sortVectors()
         size = len(self.vectors)
@@ -351,7 +353,7 @@ class GeneTeam(object):
 class GKStrikerTeam(GeneTeam):
     def __init__(self, size=20, keep=0.5, coProb=0.7, mProb=0.01):
         super(GKStrikerTeam, self).__init__(name="GKStrikerTeam", \
-            playerStrats=[GardienModifStrategy(), AttaquantModifStrategy(), None, None], \
+            playerStrats=[Gardien2v2Strategy(), Attaquant2v2Strategy(), None, None], \
             playerParams=[GKStrikerTeam.gk_params(), GKStrikerTeam.st_params(), [], []], \
             size=size, keep=keep, coProb=coProb, mProb=mProb)
 
@@ -400,14 +402,17 @@ class GKStrikerTeam(GeneTeam):
 
 
 
-class GKStrikerModifTeam(GKStrikerTeam):
+class GKStrikerMixTeam(GKStrikerTeam):
     def __init__(self, size=20, keep=0.5, coProb=0.7, mProb=0.01):
-        super(GKStrikerModifTeam, self).__init__(size=size, keep=keep, \
+        super(GKStrikerMixTeam, self).__init__(size=size, keep=keep, \
             coProb=coProb, mProb=mProb)
 
     def getTeam(self, i):
         """
-        Doc a modifier
+        Renvoie l'equipe composee des strategies contenues
+        dans l'instance avec l'i-ieme vecteur de parametres
+        applique a toutes les deux i.e. une SoccerTeam dont
+        les deux joueurs ont les meme parametres
         """
         self.team = SoccerTeam(self.name)
         params = self.vectors[i].params
@@ -419,10 +424,12 @@ class GKStrikerModifTeam(GKStrikerTeam):
         self.team.add(self.playerStrats[1].name, self.playerStrats[1])
         return self.team
 
+
+
 class STTeam(GeneTeam):
     def __init__(self, size=20, keep=0.5, coProb=0.7, mProb=0.01):
         super(STTeam, self).__init__(name="STTeam", \
-            playerStrats=[FonceurModifStrategy(), None, None, None], \
+            playerStrats=[Fonceur1v1Strategy(), None, None, None], \
             playerParams=[GKStrikerTeam.gk_params(), GKStrikerTeam.st_params(), [], []], \
             size=size, keep=keep, coProb=coProb, mProb=mProb)
 
@@ -438,7 +445,10 @@ class STTeam(GeneTeam):
 
     def getTeam(self, i):
         """
-        Doc a modifier
+        Renvoie l'equipe composee de la strategie contenue
+        dans l'instance avec l'i-ieme vecteur de parametres
+        i.e. une SoccerTeam d'un joueur ayant les deux types
+        de parametres
         """
         self.team = SoccerTeam(self.name)
         params = self.vectors[i].params
@@ -450,8 +460,8 @@ class STTeam(GeneTeam):
 
     def save(self, fn_gk="fonceur_gk_dico.pkl", fn_st="fonceur_st_dico.pkl"):
         """
-        Sauvegarde le dictionnaire de parametres du gardien
-        et de l'attaquant dans des fichiers dans le repertoire
+        Sauvegarde les deux dictionnaires de parametres utilises
+        par le fonceur dans des fichiers dans le repertoire
         'parameters'
         """
         return super(STTeam, self).save([fn_gk, fn_st, None, None])

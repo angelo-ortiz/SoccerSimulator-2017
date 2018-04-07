@@ -142,6 +142,8 @@ class StateFoot(Wrapper):
     @property
     def attacking_vector(self):
         """
+        Vecteur unitaire qui se dirige vers la cage adverse
+        depuis sa propre cage
         """
         return (self.opp_goal - self.my_goal).normalize()
 
@@ -158,6 +160,8 @@ class StateFoot(Wrapper):
     @property
     def offensive_teammates(self):
         """
+        Ses coequipiers offensives
+        Hypothese : le CB est le premier joueur
         """
         team = self.teammates
         try:
@@ -190,6 +194,7 @@ class StateFoot(Wrapper):
     def nearest_opponent(self, rayPressing):
         """
         L'adversaire le plus proche du joueur
+        dans un rayon rayPressing
         """
         liste = self.opponents
         distMin = rayPressing
@@ -241,8 +246,8 @@ class StateFoot(Wrapper):
 
     def is_nearest_ball_my_team(self):
         """
-        Renvoie vrai ssi il est le joueur le plus proche
-        de la balle
+        Renvoie vrai ssi il est le joueur de son equipe
+        le plus proche de la balle
         """
         liste_opp = self.teammates
         dist_ball_joueur = self.distance(self.ball_pos)
@@ -261,6 +266,11 @@ class StateFoot(Wrapper):
 
     def team_controls_ball(self):
         """
+        Recherche d'abord le joueur le plus proche
+        de la balle dans un rayon de 20 m ;
+        renvoie vrai si le joueur appartient a son
+        equipe, faux s'il joue pour l'equipe adverse,
+        et None s'il n'y en a pas
         """
         liste = [self.my_state] + self.teammates + self.opponents
         p = None
@@ -276,6 +286,9 @@ class StateFoot(Wrapper):
 
     def free_trajectory(self, dest, angleInter):
         """
+        Renvoie vrai ssi il n'y a pas d'adversaire
+        dans un angle angleInter a partir du vecteur
+        allant vers dest
         """
         vect = (dest - self.my_pos).normalize()
         for opp in self.opponents:
@@ -288,6 +301,9 @@ class StateFoot(Wrapper):
 
     def free_pass_trajectory(self, tm, angleInter):
         """
+        Renvoie vrai ssi aucun adversaire n'est
+        susceptible d'intercepter la trajectoire d'une
+        passe vers tm
         """
         return self.free_trajectory(tm.position, angleInter)
 
@@ -439,6 +455,7 @@ def nearest_defender(stateFoot, liste, distRef):
 
 def delete_teammate(tm, liste):
     """
+    Supprime un joueur d'un liste
     """
     index = -1
     for i in range(len(liste)):

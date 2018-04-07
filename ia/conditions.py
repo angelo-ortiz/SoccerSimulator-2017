@@ -5,15 +5,6 @@ from soccersimulator.settings import GAME_WIDTH, GAME_GOAL_HEIGHT, GAME_HEIGHT, 
         PLAYER_RADIUS
 import random
 
-profondeurDegagement = GAME_WIDTH/5.
-largeurDegagement = GAME_HEIGHT/4.
-distMaxInterception = GAME_WIDTH/6.
-n_inst = [23.]*8 #[40.]*4
-courte = [False]*8
-distInterceptionCourte = GAME_GOAL_HEIGHT
-interceptionCourte = 7. #15.
-interceptionLongue = 23. #40.
-
 def is_close_ball(stateFoot):
     """
     Renvoie vrai ssi le joueur est proche de la
@@ -33,6 +24,8 @@ def is_close_goal(stateFoot, distGoal=27.):
 
 def is_kick_off(stateFoot):
     """
+    Renvoie vrai ssi la balle est dans le
+    centre du terrain
     """
     return stateFoot.center_spot == stateFoot.ball_pos
 
@@ -54,7 +47,7 @@ def had_ball_control(stateFoot, rayReprise, angleReprise):
     return stateFoot.distance_ball(stateFoot.my_pos) < rayReprise and \
         vectSpeed.dot(vectBall) <= angleReprise
 
-def must_intercept(stateFoot, rayInter=distMaxInterception):
+def must_intercept(stateFoot, rayInter=GAME_WIDTH/6.):
     """
     Renvoie vraie ssi le joueur est a une distance
     inferieure ou egale a distInter de la balle et
@@ -66,6 +59,8 @@ def must_intercept(stateFoot, rayInter=distMaxInterception):
 
 def ball_advances(stateFoot):
     """
+    Renvoie vrai ssi la balle se deplace en
+    direction de la cage adverse
     """
     return stateFoot.ball_speed.dot(stateFoot.attacking_vector) > 0.
 
@@ -134,12 +129,6 @@ def free_teammate(stateFoot, angleInter):
     Renvoie le premier coequipier libre de
     marquage
     """
-    """
-    for tm in stateFoot.teammates:
-        if not is_under_pressure(stateFoot, tm, rayPressing):
-            return tm
-    return None
-    """
     tm_best = None
     dist_best = 0.
     for tm in stateFoot.offensive_teammates:
@@ -158,6 +147,9 @@ def free_teammate(stateFoot, angleInter):
 
 def free_opponent(stateFoot, distDefZone, rayPressing):
     """
+    Renvoie l'adversaire dans la defensive de
+    son equipe le plus proche de sa cage et sans
+    marquage
     """
     oppAtt = None
     my_team = stateFoot.teammates + [stateFoot.my_state]
@@ -195,6 +187,10 @@ def must_pass_ball(stateFoot, tm, distPasse, angleInter):
 
 def must_assist(stateFoot, tm, distPasse, angleInter, coeffPushUp):
     """
+    Renvoie vrai si le jouer est dans une position
+    trop decale de l'axe et qu'un coequipier est
+    dans une meilleure position et la passe est
+    tout a fait possible
     """
     if not must_pass_ball(stateFoot, tm, distPasse, angleInter):
         return False
