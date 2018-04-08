@@ -7,7 +7,7 @@ from .tools import Wrapper, StateFoot, normalise_diff, coeff_friction, is_upside
     nearest_ball, get_empty_strategy, shootPower, passPower, get_oriented_angle, distance_horizontale, \
     nearest_state, delete_teammate, distance_verticale
 from .conditions import empty_goal, is_close_goal, free_teammate, must_advance, is_defensive_zone, \
-    must_pass_ball, had_ball_control, must_assist, free_opponent
+    must_pass_ball, had_ball_control, must_assist, free_opponent, is_close_ball
 from math import acos, exp, atan2, sin, cos, atan
 import random
 
@@ -214,6 +214,10 @@ def passiveSituation(state, dico, decalX, decalY, rayRecept, angleRecept, rayRep
         opp = free_opponent(state, distDefZone, rayPressing)
         if is_defensive_zone(state, distDefZone+10.) and opp is not None:
             return mark(state, opp, 20.)#rayPressing)
+    # if state.numPlayers == 2:
+    #     opp = free_opponent(state, 60., rayPressing)
+    #     if opp is not None:
+    #         return mark(state, opp, 20.)
     # if is_defensive_zone(state, distDefZone-20):
     #     return loseMark(state, rayPressing, 45.)
     return cutDownAngle(state, 40., 20.) #modif
@@ -318,6 +322,17 @@ def goForwardsMF_mod(state, angleDribble, powerDribble, rayDribble, coeffAD, pow
         if tm is not None and must_pass_ball(state, tm, distPasse, angleInter) and random.random() < 0.5:
             return passBall(state, tm, maxPowerPasse, thetaPass, coeffPushUp)+pushUp(state, coeffPushUp)
         return dribble(state, oppDef, angleDribble, powerDribble, coeffAD)
+    return parallelControl(state, powerControl)
+
+def goForwardsDef_mod(state, angleDribble, powerDribble, rayDribble, coeffAD, powerControl, maxPowerPasse, thetaPass, rayPressing, distPasse, angleInter, coeffPushUp):
+    """
+    Essaye d'avance sur la zone defensive
+    avec la balle et dribble lorsqu'il y a
+    un adversaire en face
+    """
+    oppDef = nearest_defender(state, state.opponents, rayDribble)
+    if oppDef is not None:
+        return clear_gk(state, angleClear=1.2)
     return parallelControl(state, powerControl)
 
 def clearSolo(state):
@@ -488,13 +503,25 @@ def cutDownAngle_gk(state, raySortie):
     position += diff
     return goTo(state,position)
 
+def cutDownAngle_def(state, raySortie, rayInter):
+    """
+    Sort de la cage pour reduire
+    l'angle de frappe a l'attaquant
+    adverse
+    """
+    position = state.my_goal
+    diff = state.ball_pos - position
+    diff.norm = max(min(raySortie, diff.norm - rayInter), 5.)
+    position += diff
+    return goTo(state,position)
+
 def tryInterception(state, dico):
     """
     Essaye d'intercepter la balle
     s'il lui reste de temps,
     reinitialise son compteur et
     rest immobile sinon
-    """
+-    """
     if dico['n'] == -1:
         dico['n'] = dico['tempsI']
     dico['n'] -= 1

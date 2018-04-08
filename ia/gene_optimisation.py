@@ -88,7 +88,7 @@ class dictParams(object):
                 'powerPasse': 0., 'thetaPasse': 0., 'distDemar': 0., \
                 'rayPressing': 0., 'rayRecept': 0., 'angleRecept': 0., \
                 'rayReprise': 0., 'angleReprise': 0., 'coeffPushUp': 0., \
-                'distPasse': 0., 'angleInter': 0.}
+                'distPasse': 0., 'angleInter': 0., 'coeffDef': 0.}
         self.res = [0,0,0] # le compteur de resultats (V,N,D)
         self.pts = 0 # le nombre de points obtenus (V,N,D) = (3,1,0)
         self.fg = 0     # le nombre de buts marques
@@ -108,18 +108,19 @@ class dictParams(object):
         Renvoie un dictionnaire avec les bornes de chaque
         parametre
         """
-        return {'alphaShoot': (0.,0.6), 'betaShoot': (0.7,1.2), 'powerDribble': (1.,4.), \
+        return {'alphaShoot': (0.,0.6), 'betaShoot': (0.7,1.2), 'powerDribble': (1.5,4.), \
                 'tempsI': (2,12), 'angleDribble': (0.,PI/2.), 'rayInter': (10.,20.), \
-                'distShoot': (35.,45.), 'rayDribble': (10.,25.), \
+                'distShoot': (35.,45.), 'rayDribble': (15.,25.), \
                 'angleGardien':  (0.5,1.), 'coeffAD': (0.7,1.5), \
                 'distSortie': (40.,70.), 'raySortie': (5.,25.), 'controleMT': (1.04,1.1), \
                 'profDeg': (10.,50.), 'amplDeg': (20.,45.), 'decalX': (10.,50.), \
-                'decalY': (20.,45.), 'distAttaque': (40.,70.), 'controleAttaque': (1.04, 1.1), \
-                'distMontee': (40.,70.), 'distDefZone': (10.,40.), 'powerDeg': (2.,5.), \
+                'decalY': (20.,45.), 'distAttaque': (50.,75.), 'controleAttaque': (1.04, 1.1), \
+                'distMontee': (40.,70.), 'distDefZone': (20.,45.), 'powerDeg': (2.,5.), \
                 'tempsContr': (8,15), 'powerPasse': (1.5,4.), 'thetaPasse': (0.,0.6), \
-                'distDemar': (15.,50.), 'rayPressing': (5.,30.), 'rayRecept': (5., 35.), \
+                'distDemar': (15.,50.), 'rayPressing': (5.,30.), 'rayRecept': (15., 35.), \
                 'angleRecept': (0.7,1.), 'rayReprise': (8., 15.), 'angleReprise': (-1, -0.5), \
-                'coeffPushUp': (6., 12.), 'distPasse': (45., 60.), 'angleInter': (PI/8.,PI/3.)}
+                'coeffPushUp': (6., 12.), 'distPasse': (45., 60.), 'angleInter': (PI/8.,PI/3.), \
+                'coeffDef': (1.5,2.7)}
 
     def random(self, parameters):
         """
@@ -370,7 +371,7 @@ class GKStrikerTeam(GeneTeam):
                 'controleAttaque', 'distDefZone', 'powerPasse', 'thetaPasse',\
                 'distDemar', 'rayPressing', 'rayRecept', 'angleRecept', \
                 'rayReprise', 'angleReprise', 'coeffPushUp', 'distPasse', \
-                'distMontee', 'angleInter']
+                'distMontee', 'angleInter', 'coeffDef']
 
     def gkDict(self):
         """

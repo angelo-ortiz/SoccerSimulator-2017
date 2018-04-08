@@ -1,5 +1,5 @@
 from ia.gs_optimisation import ParamSearchShoot, ParamSearchGoal, ParamSearchDribble, ParamSearchControle, ParamSearchPasse, ParamSearchReception
-from ia.strategy_optimisation import ControlerTestStrategy, ShootTestStrategy, DribblerTestStrategy, GardienTestStrategy, PasseTestStrategy, ReceptionTestStrategy
+from ia.strategies_gs_optimisation import ControlerTestStrategy, ShootTestStrategy, DribblerTestStrategy, GardienTestStrategy, PasseTestStrategy, ReceptionTestStrategy
 import operator
 
 #==============================================
@@ -8,8 +8,8 @@ dist = [i/1. for i in range(30,56,5)]
 alpha = [i/100. for i in range(8,21, 4)]
 beta = [i/100. for i in range(70, 111, 5)]
 
-#expe = ParamSearchShoot(strategy=ShootTestStrategy(),
-#        params={'dist': dist, 'alpha' : alpha, 'beta' : beta})
+expe = ParamSearchShoot(strategy=ShootTestStrategy(),
+        params={'dist': dist, 'alpha' : alpha, 'beta' : beta})
 
 #==============================================
 
@@ -46,8 +46,8 @@ powerP = [r/10. for r in range(20, 31)]
 
 coeff = [r/100. for r in range(1, 120)]
 
-expe = ParamSearchReception(strategy=ReceptionTestStrategy(),
-                   params={'coeff': coeff})
+#expe = ParamSearchReception(strategy=ReceptionTestStrategy(),
+#                   params={'coeff': coeff})
 
 expe.start()
 print(expe.get_res())

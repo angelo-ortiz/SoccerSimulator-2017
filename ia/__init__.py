@@ -13,7 +13,6 @@ def get_team(nb_players):
         # myteam.add("  1_Goal", Gardien2v2Strategy(fn_gk="gk_dico_0325_p5_short.pkl",fn_st="st_dico_0325_p5_short.pkl"))
         myteam.add("  7_Attaquant", Attaquant2v2Strategy(fn_gk="gk_dico_0407_3.pkl", fn_st="st_dico_0407_3.pkl"))
         myteam.add("  1_Goal", Gardien2v2Strategy(fn_gk="gk_dico_0407_3.pkl", fn_st="st_dico_0407_3.pkl"))
-        #myteam.add("  3_CBNaif",CBNaif2v2Strategy(fn_gk="gk_dico_0325_p5_short.pkl",fn_st="st_dico_0325_p5_short.pkl"))
     if nb_players == 4:
         myteam.add("  3_CBNaif",CBNaif4v4Strategy(fn_gk="gk_dico_0325_p5_short.pkl",fn_st="st_dico_0325_p5_short.pkl"))
         myteam.add("  1_Goal", Gardien4v4Strategy(fn_gk="gk_dico_0325_p5_short.pkl",fn_st="st_dico_0325_p5_short.pkl"))

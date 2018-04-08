@@ -2,7 +2,7 @@
 from soccersimulator import Strategy, Vector2D
 from .tools import StateFoot, get_empty_strategy, shootPower
 from .conditions import must_intercept, has_ball_control, is_close_ball, is_close_goal
-from .behaviour import dribble, shoot, clearSolo, goToBall, goTo, goToMyGoal, interceptBall, power, goForwardsPA, control, passBall#, receiveBall
+from .behaviour import dribble, shoot, clearSolo, goToBall, goTo, goToMyGoal, interceptBall, goForwardsPA, goalControl, passBall
 
 class ShootTestStrategy(Strategy):
     def __init__(self, dist=None, alpha=None, beta=None):
@@ -29,7 +29,6 @@ class GardienTestStrategy(Strategy):
             return clearSolo(me)
         if must_intercept(me, self.distance):
             self.n -= 1
-            #print(self.n)
             if self.n <= 0 :
                 return get_empty_strategy()
             return interceptBall(me,self.n)
@@ -44,7 +43,7 @@ class ControlerTestStrategy(Strategy):
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player)
         if has_ball_control(me):
-            return control(me, self.power)
+            return goalControl(me, self.power)
         if is_close_ball(me):
             return get_empty_strategy()
         return goToBall(me)
@@ -85,8 +84,6 @@ class PasseTestStrategy(Strategy):
             if is_close_goal(me, 10.):
                 return shoot(me, fonceurCh1ApprochePower)
             return passBall(me, 10., self.power, 0.8)
-            #return control(me, power(me))
-        #return receiveBall(me, 0.5) pas de commentaire ici !!!
         return goToBall(me)
 
 
@@ -99,9 +96,7 @@ class TestAccStrategy(Strategy):
         me = StateFoot(state,id_team,id_player)
         vect = Vector2D(me.width*0.1+self.dist,me.goal_height)
         if me.my_pos.x >= vect.x:
-            print("0")
             return get_empty_strategy()
-        print("1")
         return goTo(me, vect)
 
 
@@ -114,7 +109,7 @@ class ReceptionTestStrategy(Strategy):
         me = StateFoot(state,id_team,id_player)
         if has_ball_control(me):
             self.cont = False
-            return control(me, self.coeff)
+            return goalControl(me, self.coeff)
         if self.cont:
             return goToBall(me)
         return get_empty_strategy()

@@ -5,13 +5,13 @@ from soccersimulator.settings import GAME_WIDTH, GAME_GOAL_HEIGHT, GAME_HEIGHT, 
         PLAYER_RADIUS
 import random
 
-def is_close_ball(stateFoot):
+def is_close_ball(stateFoot, player):
     """
     Renvoie vrai ssi le joueur est proche de la
     balle d'une telle maniere qu'il pourrait
     frapper
     """
-    return stateFoot.distance(stateFoot.ball_pos) <= PLAYER_RADIUS + BALL_RADIUS
+    return stateFoot.distance_ball(player) <= PLAYER_RADIUS + BALL_RADIUS
 
 def is_close_goal(stateFoot, distGoal=27.):
     """
@@ -27,14 +27,15 @@ def is_kick_off(stateFoot):
     Renvoie vrai ssi la balle est dans le
     centre du terrain
     """
-    return stateFoot.center_spot == stateFoot.ball_pos
+    #return stateFoot.center_spot == stateFoot.ball_pos
+    return stateFoot.distance_ball(stateFoot.center_spot) < 10.
 
 def has_ball_control(stateFoot):
     """
     Renvoie vrai ssi le joueur a la balle au pied
     et le moteur du jeu lui permet de frapper
     """
-    return is_close_ball(stateFoot) and stateFoot.player_state(*stateFoot.key).can_shoot()
+    return is_close_ball(stateFoot, stateFoot.my_pos) and stateFoot.player_state(*stateFoot.key).can_shoot()
 
 def had_ball_control(stateFoot, rayReprise, angleReprise):
     """
@@ -153,7 +154,8 @@ def free_opponent(stateFoot, distDefZone, rayPressing):
     """
     oppAtt = None
     my_team = stateFoot.teammates + [stateFoot.my_state]
-    my_team = my_team[2::]
+    if stateFoot.numPlayers == 4:
+        my_team = my_team[2::]
     for opp in stateFoot.opponents:
         if distance_horizontale(stateFoot.my_goal, opp.position) > distDefZone:
             continue
@@ -198,3 +200,12 @@ def must_assist(stateFoot, tm, distPasse, angleInter, coeffPushUp):
     tmVect = (tm.position + coeffPushUp*tm.vitesse- stateFoot.opp_goal).normalize()
     ref = (stateFoot.my_goal - stateFoot.opp_goal).normalize()
     return ref.dot(meVect) < 0.7 and ref.dot(tmVect) >= 0.7
+
+def both_must_kick(stateFoot):
+    """
+    """
+    state = 0
+    for opp in stateFoot.opponents:
+        if stateFoot.distance_ball(opp.position) > 10.:
+            state += 1
+    return state

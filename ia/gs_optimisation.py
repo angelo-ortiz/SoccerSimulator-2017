@@ -3,7 +3,7 @@ from __future__ import print_function, division
 from soccersimulator import SoccerTeam, Simulation, Strategy, show_simu, Vector2D
 from soccersimulator.settings import GAME_WIDTH, GAME_HEIGHT
 from ia.strategies import FonceurStrategy
-from ia.strategy_optimisation import PasseTestStrategy
+from ia.strategies_gs_optimisation import PasseTestStrategy
 from ia.tools import StateFoot
 from ia.conditions import has_ball_control
 from math import cos, sin, pi
@@ -39,7 +39,6 @@ class ParamSearchShoot(object):
         self.cpt = 0  # Counter for trials
         self.param_keys = list(self.params.keys())  # Name of all parameters
         self.param_id = [0] * len(self.params)  # Index of the parameter values
-        self.param_id_id = len(self.params) - 1  # Index of the current parameter
         self.res = dict()  # Dictionary of results
 
     def begin_round(self, team1, team2, state):
@@ -86,19 +85,18 @@ class ParamSearchShoot(object):
             self.cpt = 0
 
             # Go to the next parameter value to try
-            key3 = self.param_keys[self.param_id_id]
-            key2 = self.param_keys[self.param_id_id-1]
-            key1 = self.param_keys[self.param_id_id-2]
-            if self.param_id[self.param_id_id] < len(self.params[key3]) - 1:
-                self.param_id[self.param_id_id] += 1
-            elif self.param_id[self.param_id_id-1] < len(self.params[key2]) - 1:
-                self.param_id[self.param_id_id] = 0
-                self.param_id[self.param_id_id-1] += 1
-            elif self.param_id[self.param_id_id-2] < len(self.params[key1]) - 1:
-                self.param_id[self.param_id_id] = 0
-                self.param_id[self.param_id_id-1] = 0
-                self.param_id[self.param_id_id-2] += 1
-                self.param_id_id += 1
+            key3 = self.param_keys[2]
+            key2 = self.param_keys[1]
+            key1 = self.param_keys[0]
+            if self.param_id[2] < len(self.params[key3]) - 1:
+                self.param_id[2] += 1
+            elif self.param_id[1] < len(self.params[key2]) - 1:
+                self.param_id[2] = 0
+                self.param_id[1] += 1
+            elif self.param_id[0] < len(self.params[key1]) - 1:
+                self.param_id[2] = 0
+                self.param_id[1] = 0
+                self.param_id[0] += 1
             else:
                 self.simu.end_match()
 
@@ -139,7 +137,6 @@ class ParamSearchGoal(object):
         self.cpt = 0  # Counter for trials
         self.param_keys = list(self.params.keys())  # Name of all parameters
         self.param_id = [0] * len(self.params)  # Index of the parameter values
-        self.param_id_id = 1  # Index of the current parameter
         self.res = dict()  # Dictionary of results
 
     def begin_round(self, team1, team2, state):
@@ -169,10 +166,6 @@ class ParamSearchGoal(object):
         if self.strategy.n <= 0:
             self.simu.end_round()
 
-        #if can_shoot(me):
-        #    self.crit += 1
-        #    self.simu.end_round()
-
         # Stop the round if it is too long
         if state.step > self.last + self.max_round_step:
             self.simu.end_round()
@@ -197,13 +190,13 @@ class ParamSearchGoal(object):
             self.cpt = 0
 
             # Go to the next parameter value to try
-            key2 = self.param_keys[self.param_id_id]
-            key1 = self.param_keys[self.param_id_id-1]
-            if self.param_id[self.param_id_id] < len(self.params[key2]) - 1:
-                self.param_id[self.param_id_id] += 1
-            elif self.param_id[self.param_id_id-1] < len(self.params[key1]) - 1:
-                self.param_id[self.param_id_id] = 0
-                self.param_id[self.param_id_id-1] += 1
+            key2 = self.param_keys[1]
+            key1 = self.param_keys[0]
+            if self.param_id[1] < len(self.params[key2]) - 1:
+                self.param_id[1] += 1
+            elif self.param_id[0] < len(self.params[key1]) - 1:
+                self.param_id[1] = 0
+                self.param_id[0] += 1
             else:
                 self.simu.end_match()
 
@@ -244,7 +237,6 @@ class ParamSearchControle(object):
         self.cpt = 0  # Counter for trials
         self.param_keys = list(self.params.keys())  # Name of all parameters
         self.param_id = [0] * len(self.params)  # Index of the parameter values
-        self.param_id_id = len(self.params) - 1  # Index of the current parameter
         self.res = dict()  # Dictionary of results
 
     def begin_round(self, team1, team2, state):
@@ -294,9 +286,9 @@ class ParamSearchControle(object):
             self.cpt = 0
 
             # Go to the next parameter value to try
-            key = self.param_keys[self.param_id_id]
-            if self.param_id[self.param_id_id] < len(self.params[key]) - 1:
-                self.param_id[self.param_id_id] += 1
+            key = self.param_keys[0]
+            if self.param_id[0] < len(self.params[key]) - 1:
+                self.param_id[0] += 1
             else:
                 self.simu.end_match()
 
@@ -338,7 +330,6 @@ class ParamSearchDribble(object):
         self.cpt = 0  # Counter for trials
         self.param_keys = list(self.params.keys())  # Name of all parameters
         self.param_id = [0] * len(self.params)  # Index of the parameter values
-        self.param_id_id = len(self.params) - 1  # Index of the current parameter
         self.res = dict()  # Dictionary of results
 
     def begin_round(self, team1, team2, state):
@@ -389,13 +380,13 @@ class ParamSearchDribble(object):
             self.cpt = 0
 
             # Go to the next parameter value to try
-            key2 = self.param_keys[self.param_id_id]
-            key1 = self.param_keys[self.param_id_id-1]
-            if self.param_id[self.param_id_id] < len(self.params[key2]) - 1:
-                self.param_id[self.param_id_id] += 1
-            elif self.param_id[self.param_id_id-1] < len(self.params[key1]) - 1:
-                self.param_id[self.param_id_id] = 0
-                self.param_id[self.param_id_id-1] += 1
+            key2 = self.param_keys[1]
+            key1 = self.param_keys[0]
+            if self.param_id[1] < len(self.params[key2]) - 1:
+                self.param_id[1] += 1
+            elif self.param_id[0] < len(self.params[key1]) - 1:
+                self.param_id[1] = 0
+                self.param_id[0] += 1
             else:
                 self.simu.end_match()
 
@@ -437,7 +428,6 @@ class ParamSearchPasse(object):
         self.cpt = 0  # Counter for trials
         self.param_keys = list(self.params.keys())  # Name of all parameters
         self.param_id = [0] * len(self.params)  # Index of the parameter values
-        self.param_id_id = len(self.params) - 1  # Index of the current parameter
         self.res = dict()  # Dictionary of results
 
     def begin_round(self, team1, team2, state):
@@ -482,9 +472,9 @@ class ParamSearchPasse(object):
             self.cpt = 0
 
             # Go to the next parameter value to try
-            key = self.param_keys[self.param_id_id]
-            if self.param_id[self.param_id_id] < len(self.params[key]) - 1:
-                self.param_id[self.param_id_id] += 1
+            key = self.param_keys[0]
+            if self.param_id[0] < len(self.params[key]) - 1:
+                self.param_id[0] += 1
             else:
                 self.simu.end_match()
 
@@ -525,7 +515,6 @@ class ParamSearchReception(object):
         self.cpt = 0  # Counter for trials
         self.param_keys = list(self.params.keys())  # Name of all parameters
         self.param_id = [0] * len(self.params)  # Index of the parameter values
-        self.param_id_id = len(self.params) - 1  # Index of the current parameter
         self.res = dict()  # Dictionary of results
 
     def begin_round(self, team1, team2, state):
@@ -549,7 +538,6 @@ class ParamSearchReception(object):
         me = StateFoot(state, 1, 0)
         # Stop the round if it is too long
         if state.step > self.last + self.max_round_step:
-            #print(me.my_pos - me.center_point)
             self.simu.end_round()
 
     def end_round(self, team1, team2, state):
@@ -568,9 +556,9 @@ class ParamSearchReception(object):
             self.cpt = 0
 
             # Go to the next parameter value to try
-            key = self.param_keys[self.param_id_id]
-            if self.param_id[self.param_id_id] < len(self.params[key]) - 1:
-                self.param_id[self.param_id_id] += 1
+            key = self.param_keys[0]
+            if self.param_id[0] < len(self.params[key]) - 1:
+                self.param_id[0] += 1
             else:
                 self.simu.end_match()
 

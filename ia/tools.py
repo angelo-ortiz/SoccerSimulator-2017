@@ -17,7 +17,7 @@ class Wrapper(object):
 #### de la configuration courante du terrain
 #### depuis la perspective d'un joueur
 class StateFoot(Wrapper):
-    def __init__(self,state,id_team,id_player, numPlayers):
+    def __init__(self,state,id_team,id_player, numPlayers=1):
         super(StateFoot,self).__init__(state)
         self.key = (id_team,id_player)
         self.numPlayers = numPlayers
@@ -449,6 +449,26 @@ def nearest_defender(stateFoot, liste, distRef):
     for j in liste:
         dist_j = stateFoot.distance_ball(j.position)
         if dist_j < dist_min and (j.position.distance(og) < dog or dist_j < 3.):
+            oppDef = j
+            dist_dmin = dist_j
+    return oppDef
+
+def nearest_defender_ok(stateFoot, liste, distRef):
+    """
+    Renvoie le defenseur adverse le plus proche dans un
+    rayon de distRef en direction de la cage opposee,
+    i.e. le joueur qui lui bloque la voie vers la cage
+    """
+    oppDef = None
+    og = stateFoot.opp_goal
+    dog = stateFoot.distance_ball(og)
+    dist_min = distRef + 30.
+    for j in liste:
+        dist_j = stateFoot.distance_ball(j.position)
+        if dist_j < dist_min and (j.position.distance(og) < dog or dist_j < 3.):
+            vect = state.ball_pos - j.position
+            if dist_j > distRef and cos(get_oriented_angle(j.vitesse,vect)) < 0.88:
+                continue
             oppDef = j
             dist_dmin = dist_j
     return oppDef
