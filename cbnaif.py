@@ -8,9 +8,9 @@ import module2
 import module3
 import module4
 
-#left = module.get_team(4)
+left = module.get_team(4)
 #left = module2.get_team(4)
-left = module3.get_team(4)
+#left = module3.get_team(4)
 #left = module4.get_team(4)
 #right = module3.get_team(4)
 right = ia.get_team(4)

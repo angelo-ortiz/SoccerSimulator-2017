@@ -394,10 +394,11 @@ class CBNaif4v4Strategy(Strategy):
         if me.is_nearest_ball():
             return tryInterception(me, self.dico)
         if must_intercept(me, self.dico['rayInter']) and me.distance_ball(me.my_goal) < self.dico['distMontee']-20:
+            return goToBall(me)
             return tryInterception(me, self.dico)
         if opponent_approaches_my_goal(me, self.dico['distSortie']):
             return cutDownAngle(me, 20., 10.)
-        return cutDownAngle_gk(me, self.dico['distMontee']-30.)
+        return cutDownAngle_gk(me, self.dico['distMontee']-25.)
 
 
 
