@@ -119,7 +119,7 @@ class Attaquant2v2Strategy(Strategy):
         if is_kick_off(me):
             if has_ball_control(me):
                 count = both_must_kick(me)
-                if count == 0:
+                if count == 2:
                     return shoot(me,6.)
                 if count == 1:
                     return kickAt(me, Vector2D(me.opp_goal.x, 100.),6.)
@@ -170,7 +170,7 @@ class Gardien2v2Strategy(Strategy):
                 return cutDownAngle_gk(me, self.dico['distMontee'])
             if has_ball_control(me):
                 count = both_must_kick(me)
-                if count == 0:
+                if count >= 1:
                     return shoot(me,6.)
                 return cutDownAngle_gk(me, self.dico['distMontee'])
             return goToBall(me)
@@ -291,7 +291,12 @@ class Attaquant4v4Strategy(Strategy):
         me = StateFoot(state,id_team,id_player, 4)
         if is_kick_off(me):
             if has_ball_control(me):
-                return kickAt(me, Vector2D(me.opp_goal.x, 100.),6.)
+                count = both_must_kick(me)
+                if count >= 2:
+                    return shoot(me,6.)
+                if count == 1:
+                    return kickAt(me, Vector2D(me.opp_goal.x, 100.),6.)
+                return goForwardsMF_mod(me, *self.args_control_dribble_pass())
             return goToBall(me)
         if has_ball_control(me):
             self.dico['n'] = self.dico['tempsI'] - 1
@@ -392,7 +397,7 @@ class CBNaif4v4Strategy(Strategy):
             return tryInterception(me, self.dico)
         if opponent_approaches_my_goal(me, self.dico['distSortie']):
             return cutDownAngle(me, 20., 10.)
-        return cutDownAngle_gk(me, self.dico['distMontee']-20.)
+        return cutDownAngle_gk(me, self.dico['distMontee']-30.)
 
 
 

@@ -206,6 +206,6 @@ def both_must_kick(stateFoot):
     """
     state = 0
     for opp in stateFoot.opponents:
-        if stateFoot.distance_ball(opp.position) > 10.:
+        if stateFoot.distance_ball(opp.position) < 5.:
             state += 1
     return state
