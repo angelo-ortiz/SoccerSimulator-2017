@@ -22,12 +22,17 @@ def is_close_goal(stateFoot, distGoal=27.):
     return is_in_radius_action(stateFoot, stateFoot.opp_goal, distGoal) or \
         distance_horizontale(stateFoot.opp_goal, stateFoot.my_pos) < (distGoal-5.)
 
-def is_kick_off(stateFoot):
+def is_kick_off(strat, stateFoot):
     """
     Renvoie vrai ssi la balle est dans le
     centre du terrain
     """
-    #return stateFoot.center_spot == stateFoot.ball_pos
+    if stateFoot.center_spot == stateFoot.ball_pos:
+        strat.kickoff = 0
+        return True
+    if strat.kickoff < 20:
+        return True
+    return False
     return stateFoot.distance_ball(stateFoot.center_spot) < 10.
 
 def has_ball_control(stateFoot):
@@ -106,7 +111,8 @@ def is_defensive_zone(stateFoot, distDefZone=20.):
     a distDefZone, i.e. il doit arreter de
     suivre l'adversaire et se demarquer
     """
-    return distance_horizontale(stateFoot.my_pos, stateFoot.my_goal) < distDefZone
+    return stateFoot.distance_ball(stateFoot.my_goal) < distDefZone
+    #return distance_horizontale(stateFoot.my_pos, stateFoot.my_goal) < distDefZone
 
 def empty_goal(strat, stateFoot, opp, angle):
     """
@@ -131,7 +137,7 @@ def free_teammate(stateFoot, angleInter):
     marquage
     """
     tm_best = None
-    dist_best = 0.
+    dist_best = 10.
     for tm in stateFoot.offensive_teammates:
         if tm.position.distance(stateFoot.my_goal) < 35. or \
            distance_horizontale(tm.position, stateFoot.my_goal) < 25.:
