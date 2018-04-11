@@ -183,7 +183,7 @@ def passiveSituationSolo(state, dico, decalX, decalY, rayReprise, angleReprise, 
         return tryInterception(state, dico)
     return cutDownAngle_gk(state, 20.) #modif
 
-def passiveSituation(state, dico, decalX, decalY, rayRecept, angleRecept, rayReprise, angleReprise, distMontee, coeffPushUp, distDefZone, rayPressing, distAttaque):
+def passiveSituation(state, dico, decalX, decalY, rayRecept, angleRecept, rayReprise, angleReprise, distMontee, coeffPushUp, distDefZone, rayPressing, distAttaque, distDemar):
     """
     Quand le joueur n'a pas le controle sur
     la balle:
@@ -216,11 +216,11 @@ def passiveSituation(state, dico, decalX, decalY, rayRecept, angleRecept, rayRep
             return mark(state, opp, 20.)#rayPressing)
     control = state.team_controls_ball()
     if state.numPlayers == 2:
-        opp = free_opponent(state, 60., rayPressing)
+        opp = free_opponent(state, distDefZone, rayPressing)
         if opp is not None and not is_close_ball(state, opp.position):
             return mark(state, opp, 20.)
-        if is_defensive_zone(state, distDefZone+30.) and control == True:
-            return loseMark(state, 25., 45.)
+        if is_defensive_zone(state, distDefZone) and control == True:
+            return loseMark(state, rayPressing, distDemar)
     #return tryInterception(state, dico)
     if control == False:
         return tryInterception(state, dico)

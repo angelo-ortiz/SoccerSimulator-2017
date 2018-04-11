@@ -107,7 +107,7 @@ class Attaquant2v2Strategy(Strategy):
         return (self.dico['decalX'], self.dico['decalY'], self.dico['rayRecept'], \
                 self.dico['angleRecept'], self.dico['rayReprise'], self.dico['angleReprise'], \
                 self.dico['distMontee'], self.dico['coeffPushUp'], self.dico['distDefZone'], \
-                self.dico['rayPressing'], self.dico['distAttaque'])
+                self.dico['rayPressing'], self.dico['distAttaque'], self.dico['distDemar'])
     def args_control_dribble_pass(self, coeffDef):
         return (self.dico['angleDribble'], coeffDef*self.dico['powerDribble'], \
                 self.dico['rayDribble'], self.dico['coeffAD'], self.dico['controleMT'], \
@@ -184,12 +184,12 @@ class Gardien2v2Strategy(Strategy):
             return tryInterception(me, self.dico)
         if must_advance(me, self.dico['distMontee']):
             return pushUp(me, self.dico['coeffPushUp'])
-        if is_defensive_zone(me, self.dico['distDefZone']+30.) and me.team_controls_ball():
-            return loseMark(me, 25., 45.)
+        if is_defensive_zone(me, self.dico['distDefZone']) and me.team_controls_ball():
+            return loseMark(me, self.dico['rayPressing'], self.dico['distDemar'])
         if me.distance_ball(me.my_pos) < self.dico['rayRecept'] and me.is_nearest_ball_my_team():
             return tryInterception(me, self.dico)
         # opp = free_opponent(me, self.dico['distAttaque'], self.dico['rayPressing'])
-        opp = free_opponent(me, 60., self.dico['rayPressing'])
+        opp = free_opponent(me, self.dico['distDefZone'], self.dico['rayPressing'])
         if opp is not None:
             return mark(me, opp, 20.)
         if opponent_approaches_my_goal(me, self.dico['distSortie']):

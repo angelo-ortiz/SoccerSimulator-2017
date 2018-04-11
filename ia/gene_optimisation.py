@@ -117,7 +117,7 @@ class dictParams(object):
                 'decalY': (20.,45.), 'distAttaque': (50.,75.), 'controleAttaque': (1.04, 1.1), \
                 'distMontee': (40.,70.), 'distDefZone': (20.,45.), 'powerDeg': (2.,5.), \
                 'tempsContr': (8,15), 'powerPasse': (1.5,4.), 'thetaPasse': (0.,0.6), \
-                'distDemar': (15.,50.), 'rayPressing': (5.,30.), 'rayRecept': (15., 35.), \
+                'distDemar': (30.,50.), 'rayPressing': (5.,30.), 'rayRecept': (15., 35.), \
                 'angleRecept': (0.7,1.), 'rayReprise': (8., 15.), 'angleReprise': (-1, -0.5), \
                 'coeffPushUp': (6., 12.), 'distPasse': (45., 60.), 'angleInter': (PI/8.,PI/3.), \
                 'coeffDef': (1.5,2.7)}
