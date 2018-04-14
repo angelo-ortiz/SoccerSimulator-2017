@@ -110,7 +110,7 @@ class Attaquant2v2Strategy(Strategy):
                 self.dico['rayPressing'], self.dico['distAttaque'])
     def args_control_dribble_pass(self, coeffDef):
         return (self.dico['angleDribble'], coeffDef*self.dico['powerDribble'], \
-                self.dico['rayDribble'], self.dico['coeffAD'], self.dico['controleMT'], \
+                1.5*self.dico['rayDribble'], self.dico['coeffAD'], self.dico['controleMT'], \
                 coeffDef*self.dico['powerPasse'], self.dico['thetaPasse'], \
                 self.dico['rayPressing'], self.dico['distPasse'], self.dico['angleInter'], \
                 self.dico['coeffPushUp'])
@@ -394,10 +394,9 @@ class CBNaif4v4Strategy(Strategy):
         if me.is_nearest_ball():
             return tryInterception(me, self.dico)
         if must_intercept(me, self.dico['rayInter']) and me.distance_ball(me.my_goal) < self.dico['distMontee']-20:
-            return goToBall(me)
             return tryInterception(me, self.dico)
         if opponent_approaches_my_goal(me, self.dico['distSortie']):
-            return cutDownAngle(me, 20., 10.)
+            return cutDownAngle(me, 20, 10.)
         return cutDownAngle_gk(me, self.dico['distMontee']-25.)
 
 
