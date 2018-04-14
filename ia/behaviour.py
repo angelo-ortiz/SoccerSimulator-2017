@@ -5,7 +5,7 @@ from soccersimulator.settings import GAME_WIDTH, GAME_HEIGHT, maxPlayerShoot, ma
     ballBrakeConstant, playerBrackConstant
 from .tools import Wrapper, StateFoot, normalise_diff, coeff_friction, is_upside, nearest_defender, \
     nearest_ball, get_empty_strategy, shootPower, passPower, get_oriented_angle, distance_horizontale, \
-    nearest_state, delete_teammate, distance_verticale
+    nearest_state, delete_teammate, distance_verticale, nearest_defender_ok
 from .conditions import empty_goal, is_close_goal, free_teammate, must_advance, is_defensive_zone, \
     must_pass_ball, had_ball_control, must_assist, free_opponent, is_close_ball
 from math import acos, exp, atan2, sin, cos, atan
@@ -139,7 +139,7 @@ def dribble(state, opp, angleDribble, powerDribble, coeffAD):
             angleDribble = -angleDribble
     else: # bon angle (vers la cage adverse)
         if theta > 0.:
-            angleDribble = -angleDribble
+            False
     angle += angleDribble
     destDribble.x = cos(angle)
     destDribble.y = sin(angle)
@@ -208,19 +208,23 @@ def passiveSituation(state, dico, decalX, decalY, rayRecept, angleRecept, rayRep
         return tryInterception(state, dico)
     if must_advance(state, distMontee):#40 distMontee
         return pushUp(state, coeffPushUp)
-    if state.is_nearest_ball_my_team() and state.distance_ball(state.my_goal) < distMontee:
+    if state.is_nearest_ball_my_team() and state.distance(state.ball_pos) < rayRecept:
         return tryInterception(state, dico)
     if state.numPlayers == 4:
         opp = free_opponent(state, distDefZone, rayPressing)
         if is_defensive_zone(state, distDefZone+10.) and opp is not None:
             return mark(state, opp, 20.)#rayPressing)
-    # if state.numPlayers == 2:
-    #     opp = free_opponent(state, 60., rayPressing)
-    #     if opp is not None:
-    #         return mark(state, opp, 20.)
-    # if is_defensive_zone(state, distDefZone-20):
-    #     return loseMark(state, rayPressing, 45.)
-    return cutDownAngle(state, 40., 20.) #modif
+    control = state.team_controls_ball()
+    if state.numPlayers == 2:
+        opp = free_opponent(state, 60., rayPressing)
+        if opp is not None and not is_close_ball(state, opp.position):
+            return mark(state, opp, 20.)
+        if is_defensive_zone(state, distDefZone+30.) and control == True:
+            return loseMark(state, 25., 45.)
+    #return tryInterception(state, dico)
+    if control == False:
+        return tryInterception(state, dico)
+    return cutDownAngle(state, 60., 20.) #modif
 
 def loseMark(state, rayPressing, distDemar):
     """
@@ -330,7 +334,7 @@ def goForwardsDef_mod(state, angleDribble, powerDribble, rayDribble, coeffAD, po
     avec la balle et dribble lorsqu'il y a
     un adversaire en face
     """
-    oppDef = nearest_defender(state, state.opponents, rayDribble)
+    oppDef = nearest_defender_ok(state, state.opponents, rayDribble)
     if oppDef is not None:
         return clear_gk(state, angleClear=1.2)
     return parallelControl(state, powerControl)
@@ -399,14 +403,16 @@ def shiftAside(state, decalX, decalY):
     Se decale lateralement pour avoir
     une meilleure reception de la balle
     """
-    decalY = 20.
-    opp = nearest_ball(state, state.opponents)
-    ecart_y = decalY
-    if is_upside(opp,state.center_spot):  ecart_y = -ecart_y
-    ecart_x = decalX
-    if state.is_team_left(): ecart_x = -ecart_x
-    dec = Vector2D(ecart_x,ecart_y)
-    return goTo(state, dec + state.center_spot)
+    tm = state.teammates[0]
+    if tm.position.y > 45.:
+        ecart_y = tm.position.y - 40.
+    else:
+        ecart_y = tm.position.y + 40.
+    # ecart_y = decalY
+    # if is_upside(opp,state.center_spot):  ecart_y = -ecart_y
+    decalX = state.attacking_vector.copy() * decalX
+    decalY = Vector2D(0,ecart_y)
+    return goTo(state, tm.position + decalX + decalY)
 
 def pushUp(state, coeffPushUp):
     """

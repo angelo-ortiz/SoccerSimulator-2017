@@ -1,7 +1,8 @@
 from .strategies import RandomStrategy, GardienStrategy, AttaquantStrategy
 from .strategies import Fonceur1v1Strategy, FonceurChallenge1Strategy
 from .strategies import Attaquant2v2Strategy, Gardien2v2Strategy, CBNaif2v2Strategy
-from .strategies import Attaquant4v4Strategy, Gardien4v4Strategy, CBNaif4v4Strategy
+from .strategies import Attaquant4v4Strategy, Gardien4v4Strategy, CBNaif4v4Strategy, CBInt4v4Strategy
+from .strategies import *
 from soccersimulator import SoccerTeam
 
 def get_team(nb_players):
@@ -15,7 +16,10 @@ def get_team(nb_players):
         myteam.add("  1_Goal", Gardien2v2Strategy(fn_gk="gk_dico_0407_3.pkl", fn_st="st_dico_0407_3.pkl"))
     if nb_players == 4:
         myteam.add("  3_CBNaif",CBNaif4v4Strategy(fn_gk="gk_dico_0325_p5_short.pkl",fn_st="st_dico_0325_p5_short.pkl"))
-        myteam.add("  1_Goal", Gardien4v4Strategy(fn_gk="gk_dico_0325_p5_short.pkl",fn_st="st_dico_0325_p5_short.pkl"))
+        #myteam.add("  1_CBNaif",CBInt4v4Strategy(fn_gk="gk_dico_0325_p5_short.pkl",fn_st="st_dico_0325_p5_short.pkl"))
+        #myteam.add("  11_Attaquant", Attaquant4v4Strategy(fn_gk="gk_dico_0325_p5_short.pkl", fn_st="st_dico_0325_p5_short.pkl"))
+        #myteam.add("  1_Goal", Gardien4v4Strategy(fn_gk="gk_dico_0325_p5_short.pkl",fn_st="st_dico_0325_p5_short.pkl"))
+        myteam.add("  5_Pepe", PepeStrategy(fn_gk="gk_dico_0325_p5_short.pkl", fn_st="st_dico_0325_p5_short.pkl"))
         myteam.add("  7_Attaquant", Attaquant4v4Strategy(fn_gk="gk_dico_0325_p5_short.pkl", fn_st="st_dico_0325_p5_short.pkl"))
         myteam.add("  9_Attaquant", Attaquant4v4Strategy(fn_gk="gk_dico_0325_p5_short.pkl", fn_st="st_dico_0325_p5_short.pkl"))
     return myteam

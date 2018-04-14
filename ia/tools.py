@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from soccersimulator  import SoccerAction, Vector2D
 from soccersimulator.settings import GAME_HEIGHT, GAME_WIDTH, GAME_GOAL_HEIGHT, maxPlayerShoot
-from math import acos, exp, asin, sin
+from math import acos, exp, asin, sin, cos
 
 ## Classe enveloppe de notre super-etat du jeu
 class Wrapper(object):
@@ -462,12 +462,13 @@ def nearest_defender_ok(stateFoot, liste, distRef):
     oppDef = None
     og = stateFoot.opp_goal
     dog = stateFoot.distance_ball(og)
-    dist_min = distRef + 30.
+    dist_min = distRef + 20.
     for j in liste:
         dist_j = stateFoot.distance_ball(j.position)
-        if dist_j < dist_min and (j.position.distance(og) < dog or dist_j < 3.):
-            vect = state.ball_pos - j.position
-            if dist_j > distRef and cos(get_oriented_angle(j.vitesse,vect)) < 0.88:
+        if dist_j < dist_min and (j.position.distance(og) < dog or dist_j < 5.):
+            vect = (stateFoot.ball_pos - j.position).normalize()
+            vitesse = j.vitesse.copy().normalize()
+            if dist_j > distRef and cos(get_oriented_angle(vitesse,vect)) < 0.88:
                 continue
             oppDef = j
             dist_dmin = dist_j
