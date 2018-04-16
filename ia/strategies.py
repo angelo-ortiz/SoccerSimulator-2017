@@ -90,10 +90,10 @@ class Attaquant2v2Strategy(Strategy):
                 self.dico = pickle.load(f)
             with open(loadPath(fn_gk),"rb") as f:
                 self.dico.update(pickle.load(f))
-            # self.dico['angleInter'] = 0.81
-            # self.dico['distDefZone'] = 40.
-            # self.dico['distAttaque'] = 60.
-            # self.dico['coeffDef'] = 2.5
+            self.dico['angleInter'] = 0.81
+            self.dico['distDefZone'] = 40.
+            self.dico['distAttaque'] = 60.
+            self.dico['coeffDef'] = 2.5
         else:
             self.dico = dict()
         self.dico['n'] = -1
@@ -110,7 +110,7 @@ class Attaquant2v2Strategy(Strategy):
                 self.dico['rayPressing'], self.dico['distAttaque'], self.dico['distDemar'])
     def args_control_dribble_pass(self, coeffDef):
         return (self.dico['angleDribble'], coeffDef*self.dico['powerDribble'], \
-                self.dico['rayDribble'], self.dico['coeffAD'], self.dico['controleMT'], \
+                1.5*self.dico['rayDribble'], self.dico['coeffAD'], self.dico['controleMT'], \
                 coeffDef*self.dico['powerPasse'], self.dico['thetaPasse'], \
                 self.dico['rayPressing'], self.dico['distPasse'], self.dico['angleInter'], \
                 self.dico['coeffPushUp'])
@@ -142,10 +142,10 @@ class Gardien2v2Strategy(Strategy):
                 self.dico = pickle.load(f)
             with open(loadPath(fn_st),"rb") as f:
                 self.dico.update(pickle.load(f))
-            # self.dico['angleInter'] = 0.81
-            # self.dico['distAttaque'] = 60.
-            # self.dico['distDefZone'] = 40.
-            # self.dico['coeffDef'] = 2.5
+            self.dico['angleInter'] = 0.81
+            self.dico['distAttaque'] = 60.
+            self.dico['distDefZone'] = 40.
+            self.dico['coeffDef'] = 2.5
         else:
             self.dico = dict()
         self.dico['n'] = -1
@@ -388,11 +388,10 @@ class CBNaif4v4Strategy(Strategy):
             return clear_gk(me) + goToMyGoal(me)
         if me.is_nearest_ball():
             return tryInterception(me, self.dico)
-        if must_intercept(me, self.dico['rayInter']+10.):# and me.distance_ball(me.my_goal) < self.dico['distMontee']-20:
+        if must_intercept(me, self.dico['rayInter']) and me.distance_ball(me.my_goal) < self.dico['distMontee']-20:
             return tryInterception(me, self.dico)
         if opponent_approaches_my_goal(me, self.dico['distSortie']):
-            #return cutDownAngle(me, 20., 10.)
-            return tryInterception(me, self.dico)
+            return cutDownAngle(me, 20, 10.)
         return cutDownAngle_gk(me, self.dico['distMontee']-25.)
 
 

@@ -163,7 +163,7 @@ def free_opponent(stateFoot, distDefZone, rayPressing):
         tm = nearest_state(opp.position, my_team)
         if stateFoot.distance_ball(opp.position) > rayPressing and tm.position == stateFoot.my_pos:
             oppAtt = opp
-            break;
+            break
     return oppAtt
 
 def must_defend(stateFoot):
