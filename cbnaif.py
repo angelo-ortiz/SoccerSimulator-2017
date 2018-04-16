@@ -7,6 +7,7 @@ import module
 import module2
 import module3
 import module4
+import module8
 
 left = module.get_team(4)
 #left = module2.get_team(4)
