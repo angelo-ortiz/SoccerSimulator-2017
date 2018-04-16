@@ -90,10 +90,10 @@ class Attaquant2v2Strategy(Strategy):
                 self.dico = pickle.load(f)
             with open(loadPath(fn_gk),"rb") as f:
                 self.dico.update(pickle.load(f))
-            # self.dico['angleInter'] = 0.81
-            # self.dico['distDefZone'] = 40.
-            # self.dico['distAttaque'] = 60.
-            # self.dico['coeffDef'] = 2.5
+            self.dico['angleInter'] = 0.81
+            self.dico['distDefZone'] = 40.
+            self.dico['distAttaque'] = 60.
+            self.dico['coeffDef'] = 2.5
         else:
             self.dico = dict()
         self.dico['n'] = -1
@@ -142,10 +142,10 @@ class Gardien2v2Strategy(Strategy):
                 self.dico = pickle.load(f)
             with open(loadPath(fn_st),"rb") as f:
                 self.dico.update(pickle.load(f))
-            # self.dico['angleInter'] = 0.81
-            # self.dico['distAttaque'] = 60.
-            # self.dico['distDefZone'] = 40.
-            # self.dico['coeffDef'] = 2.5
+            self.dico['angleInter'] = 0.81
+            self.dico['distAttaque'] = 60.
+            self.dico['distDefZone'] = 40.
+            self.dico['coeffDef'] = 2.5
         else:
             self.dico = dict()
         self.dico['n'] = -1

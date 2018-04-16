@@ -1,291 +1,232 @@
 # coding: utf-8
 from __future__ import print_function, division
-from soccersimulator import SoccerTeam
-from ia.strategies import AttaquantStrategy, GardienStrategy
-from ia.strategies import Gardien2v2Strategy, Attaquant2v2Strategy, Fonceur1v1Strategy
+from soccersimulator import SoccerTeam, Simulation, Vector2D, show_simu
+from ia.strategies import loadPath
+from ia.strategies_machlearning import Attaquant2v2Strategy, Defenseur2v2Strategy
+from ia.tools import StateFoot, nearest
 from ia.gene_optimisation import savePath
-from ia.strategies_machlearning import LearningStrategy
-from math import pi as PI, sqrt
+import numpy as np
 import random
 import pickle
 
+class LearningState(object):
+
+    difference = 5.
+
+    def __init__(self, stateFoot):
+        stateFoot = stateFoot
+        self.distances = dict()
+        self.distances['JB'] = stateFoot.distance(stateFoot.ball_pos)
+        #self.distances['JmG'] = stateFoot.distance(stateFoot.my_goal)
+        self.distances['JoG'] = stateFoot.distance(stateFoot.opp_goal)
+        #self.distances['BmG'] = stateFoot.distance_ball(stateFoot.my_goal)
+        self.distances['BoG'] = stateFoot.distance_ball(stateFoot.opp_goal)
+        nearestOpp = stateFoot.nearest_opp.position
+        self.distances['JnO'] = stateFoot.distance(nearestOpp)
+        #self.distances['nOoG'] = nearestOpp.distance(stateFoot.opp_goal)
+        nearestTm = nearest(stateFoot.my_pos, stateFoot.teammates)
+        nearestOppTm = nearest(nearestTm, stateFoot.opponents)
+        self.distances['TmnO'] = nearestTm.distance(nearestOppTm)
+        self.distances['nTmoG'] = nearestTm.distance(stateFoot.opp_goal)
+        #self.distances['nOnTmoG'] = nearestOppTm.distance(stateFoot.opp_goal)
+        self.distances['nJnT'] = stateFoot.distance(nearestTm)
+        self.ballDir = stateFoot.attacking_vector.dot(stateFoot.ball_speed.copy().normalize())
+
+    def __eq__(self, other):
+        if not isinstance(other, LearningState): return False
+        if self.ballDir * other.ballDir == 0. and self.ballDir + other.ballDir != 0.:
+            return False
+        if self.ballDir * other.ballDir < 0.: return False
+        for k, dist in self.distances.items():
+            if abs(dist - other.distances[k]) >= self.difference:
+                return False
+        return True
+
+    def __hash__(self):
+        return hash(str(self.distances) + str(self.ballDir))
+
+    def __str__(self):
+        return f"LearningState(distances={self.distances}, ballDir={self.ballDir})"
+
 class LearningTeam(object):
-    def __init__(self, Qmatrix=None):
+
+    actionsDict = {'Attaquant2v2': 30, 'Defenseur2v2': 30}
+
+    def __init__(self, numPlayers=2, playerStrats=[None]*4, alpha=0.4, gamma=0.8, eps=0.2, oppList=[],
+                 numIter=10, numMatches=3, graphical=False):
         self.name = "LearningTeam"
-        self.team = So
-        super(LearningTeam, self).__init__(name="LearningTeam")
-        self.Qmatrix = Qmatrix
-        self.add("Student1", LearningStrategy(self.Qmatrix))
-        self.add("Student2", LearningStrategy(self.Qmatrix))
-        
-    def compute_rewards():
+        self.team = None
+        self.numPlayers = numPlayers
+        self.playerStrats = playerStrats
+        self.playerQTables = []
+        self.alpha = alpha
+        self.gamma = gamma
+        self.eps = eps
+        self.oppList = oppList
+        self.numIter = numIter
+        self.numMatches = numMatches
+        self.graphical = graphical
+        self.currMatch = [0,0,True,0] # iter, opp, left_side, match
+        self.simu = None
+        self.prevState = None
+        self.currState = None
+        self.idTeam = 0
+        self.count = [0, 0]
+
+    def initialize(self, filenames=None):
         """
         """
-        return None
+        if filenames is not None:
+            for fn in filenames:
+                if fn is not None:
+                    with open(loadPath(fn), "rb") as f:
+                        self.playerQTables.append(pickle.load(f))
+        else:
+            for i in range(self.numPlayers):
+                self.playerQTables.append(dict())
 
-
-
-
-    def getTeam(self, i):
+    def getTeam(self):
         """
         Renvoie l'equipe composee des strategies contenues
-        dans l'instance avec l'i-ieme vecteur de parametres,
-        i.e. une SoccerTeam
+        dans l'instance avec les Q-Tables associees
         """
         self.team = SoccerTeam(self.name)
-        params = self.vectors[i].params
-        for i in range(len(self.playerStrats)):
-            if self.playerStrats[i] is None: continue
-            for p in self.playerParams[i]:
-                self.playerStrats[i].dico[p] = params[p]
+        for i in range(self.numPlayers):
+            self.playerStrats[i].qTable = self.playerQTables[i]
             self.team.add(self.playerStrats[i].name, self.playerStrats[i])
         return self.team
 
-    def getBestTeam(self):
+    def q(self, idPlayer, state, action=None):
         """
-        Renvoie l'equipe qui a mieux reussi les matches
         """
-        self.sortVectors()
-        return self.getTeam(0)
+        if state not in self.playerQTables[idPlayer]:
+            self.count[idPlayer] += 1
+            self.playerQTables[idPlayer][state] = np.zeros(self.actionsDict[self.playerStrats[idPlayer].name])
+        if action is None:
+            return self.playerQTables[idPlayer][state]
+        return self.playerQTables[idPlayer][state][action]
 
-    def getVector(self, i):
+    def chooseAction(self, idPlayer, state):
         """
-        Renvoie l'i-ieme vecteur de parametres, ie un dictParams
         """
-        return self.vectors[i]
+        if random.uniform(0, 1) < self.eps:
+            return random.choice(list(range(self.actionsDict[self.playerStrats[idPlayer].name])))
+        return np.argmax(self.q(idPlayer, state))
 
-    def sortVectors(self):
+    def computeReward(self):
         """
-        Trie les vecteurs de parametres dans l'ordre decroissant
-        selon les points obtenuss
         """
-        self.vectors.sort(reverse=True)
+        control = StateFoot(self.prevState, self.idTeam, 0, self.numPlayers).team_controls_ball()
+        if control:
+            rew = 1
+        elif control == False:
+            rew = -1
+        else:
+            rew = 0
+        if self.prevState.goal == self.idTeam:
+            rew += 100
+        elif self.prevState.goal != 0:
+            rew -= 100
+        return rew
 
-    def crossover(self, i, j, k):
+    def updateAction(self, idPlayer, action):
         """
-        Fait un croisement entre les vecteurs i- et j-ieme et
-        le met dans le k-ieme vecteur
         """
-        vi = self.vectors[i]
-        vj = self.vectors[j]
-        vk = dictParams()
-        pList = self.paramsList()
-        index = random.randrange(0, len(pList))
-        for l in range(index):
-            vk.params[pList[l]] = vi.params[pList[l]]
-        for l in range(index,len(pList)):
-            vk.params[pList[l]] = vj.params[pList[l]]
-        self.vectors[k] = vk
+        prevState = LearningState(StateFoot(self.prevState, self.idTeam, idPlayer, self.numPlayers))
+        currState = LearningState(StateFoot(self.currState, self.idTeam, idPlayer, self.numPlayers))
+        if action is not None:
+            prevQ = self.q(idPlayer, prevState, action)
+            rew = self.computeReward()
+            self.q(idPlayer, prevState)[action] = \
+                    prevQ + self.alpha * (self.computeReward() + self.gamma * np.max(self.q(idPlayer, currState)) - prevQ)
+        self.playerStrats[idPlayer].action = self.chooseAction(idPlayer, currState)
 
-    def addNoise(self, i, p):
+    def updateAll(self):
         """
-        Ajoute du bruit au parametre p de l'i-ieme vecteur
-        de parametres
         """
-        val = self.vectors[i].params[p]
-        while True:
-            valNoise = val * random.uniform(0.9,1.1)
-            if valNoise == val: continue
-            self.vectors[i].params[p] = valNoise
-            if self.vectors[i].isValid(p):
-                break
+        for idPlayer in range(self.numPlayers):
+            self.updateAction(idPlayer, self.playerStrats[idPlayer].action)
 
-    def mutation(self, i, j, k):
+    def start(self):
         """
-        Fait une mutation entre les vecteurs i- et j-ieme dans
-        le vecteur k-ieme, ie un croisement avec du bruit sur
-        l'un des parametres
         """
-        self.crossover(i, j, k)
-        pList = self.paramsList()
-        pl = random.randrange(0, len(pList))
-        self.addNoise(k, pList[pl])
+        right, left = self.getTeam(), self.oppList[self.currMatch[1]]
+        self.idTeam = 2
+        if self.currMatch[2]:
+            left, right = right, left
+            self.idTeam = 1
+        self.simu = Simulation(left, right)
+        self.simu.listeners += self
+        if self.graphical:
+            show_simu(self.simu)
+        else:
+            self.simu.start()
 
-    def update(self):
+    def update_round(self, left, right, state):
         """
-        Garde les meilleurs resultats, qui representent le
-        keep*100% superieur, et modifie le reste avec une
-        mutation, un croisement des meilleurs scores ou
-        des valeurs aleatoires (deux vecteurs)
         """
-        self.sortVectors()
-        size = len(self.vectors)
-        nKeep = int(size * self.keep)
-        for k in range(nKeep, size-2):
-            while True:
-                i, j = getDistinctTuple(high=nKeep)
-                r = random.random()
-                if r < self.mProb:
-                    self.mutation(i, j, k)
-                    break
-                elif r < self.coProb:
-                    self.crossover(i, j, k)
-                    break
-        pList = self.paramsList()
-        for k in range(size-2, size):
-            self.vectors[k] = dictParams()
-        for k in range(size-2, size):
-            self.vectors[k].random(pList)
+        self.prevState = self.currState
+        self.currState = state
+        if self.prevState is not None:
+            self.updateAll()
 
-
-    def printVectors(self, nVect):
+    def end_match(self, left, right, state):
         """
-        Affiche les nVect premiers vecteurs de parametres
+        """
+        if self.currMatch[3] < self.numMatches - 1:
+            self.currMatch[3] += 1
+        elif self.currMatch[2]:
+            self.currMatch[3] = 0
+            self.currMatch[2] = False
+            # print("Fin aller")
+        elif self.currMatch[1] < len(self.oppList) - 1:
+            self.currMatch[3] = 0
+            self.currMatch[2] = True
+            self.currMatch[1] += 1
+            # print("Fin retour")
+        elif self.currMatch[0] < self.numIter - 1:
+            self.currMatch[3] = 0
+            self.currMatch[2] = True
+            self.currMatch[1] = 0
+            self.currMatch[0] += 1
+            # print("Fin iteration", self.currMatch[0])
+        else:
+            # print("Fin iteration", self.currMatch[0]+1)
+            return
+        self.start()
+
+    def printQTable(self, i):
+        """
+        """
+        print(self.playerStrats[i].name)
+        for state, actions in self.playerQTables[i].items():
+            print(state, actions)
+
+    def printQTableDebug(self, i):
+        """
+        """
+        print(self.count)
+        print(self.playerStrats[i].name, len(self.playerQTables[i].values()))
+        for state, actions in self.playerQTables[i].items():
+            if np.max(actions) > 1.:
+                print(state, actions)
+            elif np.min(actions) < -1.:
+                print(state, actions)
+
+    def printAllQTables(self):
+        """
         """
         print(self.name)
-        pList = self.paramsList()
-        for i in range(nVect):
-            print(i+1, "/ ", end='')
-            self.vectors[i].printParams(pList)
-            print()
-
-    def printAllVectors(self):
-        """
-        Affiche tous les vecteurs de parametres
-        """
-        self.printVectors(len(self.vectors))
-        print("==================================================")
-
-    def playerDict(self, i):
-        """
-        Renvoie le sous-dictionnaire du meilleur vecteur de
-        parametres compose uniquement de ceux concernant
-        le i-ieme joueur
-        Hypothese : sortVectors() doit avoir ete appele
-        auparavant
-        """
-        if self.playerParams[i] is None:
-            return None
-        play_dict = self.vectors[0].params
-        return {k:play_dict[k] for k in self.playerParams[i] if k in play_dict}
+        for i in range(self.numPlayers):
+            self.printQTable(i)
+            print("===========================================")
 
     def save(self, filenames=[None]*4):
         """
-        Sauvegarde le dictionnaire de parametres de chaque joueur
+        Sauvegarde la table Q(S,A) d'apprentissage de chaque joueur
         dans des fichiers dans le repertoire 'parameters'
         """
-        self.sortVectors()
         for i in range(len(filenames)):
             if filenames[i] is None: continue
-            play_dict = self.playerDict(i)
-            if play_dict is None: continue
-            with open(savePath(filenames[i]),"wb") as f:
-                pickle.dump(play_dict,f,protocol=pickle.HIGHEST_PROTOCOL)
-
-
-
-class GKStrikerTeam(GeneTeam):
-    def __init__(self, size=20, keep=0.5, coProb=0.7, mProb=0.01):
-        super(GKStrikerTeam, self).__init__(name="GKStrikerTeam", \
-            playerStrats=[Gardien2v2Strategy(), Attaquant2v2Strategy(), None, None], \
-            playerParams=[GKStrikerTeam.gk_params(), GKStrikerTeam.st_params(), [], []], \
-            size=size, keep=keep, coProb=coProb, mProb=mProb)
-
-    @classmethod
-    def gk_params(cls):
-        return ['tempsI', 'rayInter', 'distSortie', 'raySortie', \
-                'profDeg', 'amplDeg', 'powerDeg', 'tempsContr']
-
-    @classmethod
-    def st_params(cls):
-        return ['alphaShoot', 'betaShoot', 'angleDribble', 'powerDribble', \
-                'distShoot', 'rayDribble', 'angleGardien', 'coeffAD', \
-                'controleMT', 'decalX', 'decalY', 'distAttaque', \
-                'controleAttaque', 'distDefZone', 'powerPasse', 'thetaPasse',\
-                'distDemar', 'rayPressing', 'rayRecept', 'angleRecept', \
-                'rayReprise', 'angleReprise', 'coeffPushUp', 'distPasse', \
-                'distMontee', 'angleInter', 'coeffDef']
-
-    def gkDict(self):
-        """
-        Renvoie le sous-dictionnaire du meilleur vecteur de
-        parametres compose uniquement de ceux concernant
-        le gardien
-        Hypothese : sortVectors() doit avoir ete appele
-        auparavant
-        """
-        return super(GKStrikerTeam, self).playerDict(0)
-
-    def stDict(self):
-        """
-        Renvoie le sous-dictionnaire du meilleur vecteur de
-        parametres compose uniquement de ceux concernant
-        l'attaquant
-        Hypothese : sortVectors() doit avoir ete appele
-        auparavant
-        """
-        return super(GKStrikerTeam, self).playerDict(1)
-
-    def save(self, fn_gk="gk_dico.pkl", fn_st="st_dico.pkl"):
-        """
-        Sauvegarde le dictionnaire de parametres du gardien
-        et de l'attaquant dans des fichiers dans le repertoire
-        'parameters'
-        """
-        return super(GKStrikerTeam, self).save([fn_gk, fn_st, None, None])
-
-
-
-class GKStrikerMixTeam(GKStrikerTeam):
-    def __init__(self, size=20, keep=0.5, coProb=0.7, mProb=0.01):
-        super(GKStrikerMixTeam, self).__init__(size=size, keep=keep, \
-            coProb=coProb, mProb=mProb)
-
-    def getTeam(self, i):
-        """
-        Renvoie l'equipe composee des strategies contenues
-        dans l'instance avec l'i-ieme vecteur de parametres
-        applique a toutes les deux i.e. une SoccerTeam dont
-        les deux joueurs ont les meme parametres
-        """
-        self.team = SoccerTeam(self.name)
-        params = self.vectors[i].params
-        for i in range(2):
-            for p in self.playerParams[i]:
-                self.playerStrats[0].dico[p] = params[p] # params du gk
-                self.playerStrats[1].dico[p] = params[p] # params du st
-        self.team.add(self.playerStrats[0].name, self.playerStrats[0])
-        self.team.add(self.playerStrats[1].name, self.playerStrats[1])
-        return self.team
-
-
-
-class STTeam(GeneTeam):
-    def __init__(self, size=20, keep=0.5, coProb=0.7, mProb=0.01):
-        super(STTeam, self).__init__(name="STTeam", \
-            playerStrats=[Fonceur1v1Strategy(), None, None, None], \
-            playerParams=[GKStrikerTeam.gk_params(), GKStrikerTeam.st_params(), [], []], \
-            size=size, keep=keep, coProb=coProb, mProb=mProb)
-
-    def stDict(self):
-        """
-        Renvoie le sous-dictionnaire du meilleur vecteur de
-        parametres compose uniquement de ceux concernant
-        l'attaquant
-        Hypothese : sortVectors() doit avoir ete appele
-        auparavant
-        """
-        return super(STTeam, self).playerDict(0)
-
-    def getTeam(self, i):
-        """
-        Renvoie l'equipe composee de la strategie contenue
-        dans l'instance avec l'i-ieme vecteur de parametres
-        i.e. une SoccerTeam d'un joueur ayant les deux types
-        de parametres
-        """
-        self.team = SoccerTeam(self.name)
-        params = self.vectors[i].params
-        for i in range(2):
-            for p in self.playerParams[i]:
-                self.playerStrats[0].dico[p] = params[p] # params du st
-        self.team.add(self.playerStrats[0].name, self.playerStrats[0])
-        return self.team
-
-    def save(self, fn_gk="fonceur_gk_dico.pkl", fn_st="fonceur_st_dico.pkl"):
-        """
-        Sauvegarde les deux dictionnaires de parametres utilises
-        par le fonceur dans des fichiers dans le repertoire
-        'parameters'
-        """
-        return super(STTeam, self).save([fn_gk, fn_st, None, None])
+            with open(savePath(filenames[i]), "wb") as f:
+                pickle.dump(self.playerQTables[i], f, protocol=pickle.HIGHEST_PROTOCOL)
