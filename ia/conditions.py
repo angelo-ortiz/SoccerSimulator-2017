@@ -11,7 +11,7 @@ def is_close_ball(stateFoot, player):
     balle d'une telle maniere qu'il pourrait
     frapper
     """
-    return stateFoot.distance_ball(player) <= PLAYER_RADIUS + BALL_RADIUS
+    return is_in_radius_action(stateFoot, player, PLAYER_RADIUS + BALL_RADIUS)
 
 def is_close_goal(stateFoot, distGoal=27.):
     """
@@ -20,7 +20,7 @@ def is_close_goal(stateFoot, distGoal=27.):
     cage adverse
     """
     return is_in_radius_action(stateFoot, stateFoot.opp_goal, distGoal) or \
-        distance_horizontale(stateFoot.opp_goal, stateFoot.my_pos) < (distGoal-5.)
+        distance_horizontale(stateFoot.opp_goal, stateFoot.ball_pos) < distGoal-10.#5.
 
 def is_kick_off(stateFoot):
     """
@@ -63,7 +63,7 @@ def ball_advances(stateFoot):
     Renvoie vrai ssi la balle se deplace en
     direction de la cage adverse
     """
-    return stateFoot.ball_speed.dot(stateFoot.attacking_vector) > 0.
+    return stateFoot.ball_speed.dot(stateFoot.attacking_vector) >= 0.
 
 def must_advance(stateFoot, distMontee):
     """
@@ -106,7 +106,8 @@ def is_defensive_zone(stateFoot, distDefZone=20.):
     a distDefZone, i.e. il doit arreter de
     suivre l'adversaire et se demarquer
     """
-    return distance_horizontale(stateFoot.my_pos, stateFoot.my_goal) < distDefZone
+    return stateFoot.distance(stateFoot.my_goal) < distDefZone \
+        or distance_horizontale(stateFoot.my_pos, stateFoot.my_goal) < distDefZone-10.
 
 def empty_goal(strat, stateFoot, opp, angle):
     """
@@ -173,6 +174,7 @@ def must_defend(stateFoot):
     proche de sa cage
     """
     opp = stateFoot.nearest_opp
+    pass
     return None
 
 def must_pass_ball(stateFoot, tm, distPasse, angleInter):
@@ -206,6 +208,6 @@ def both_must_kick(stateFoot):
     """
     state = 0
     for opp in stateFoot.opponents:
-        if stateFoot.distance_ball(opp.position) < 5.:
+        if stateFoot.distance_ball(opp.position) < 25.:
             state += 1
     return state
