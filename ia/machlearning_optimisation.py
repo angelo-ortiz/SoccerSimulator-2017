@@ -111,6 +111,7 @@ class LearningTeam(object):
         """
         if random.uniform(0, 1) < self.eps:
             return random.choice(list(range(self.actionsDict[self.playerStrats[idPlayer].name])))
+        # return np.argmax(self.q(idPlayer, state))
         qT = self.q(idPlayer, state)
         indices = np.argwhere(qT == np.amax(qT)).flatten().tolist()
         return random.choice(indices)
