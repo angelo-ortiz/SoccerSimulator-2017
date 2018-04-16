@@ -2,6 +2,7 @@
 from __future__ import print_function, division
 from soccersimulator import SoccerTeam, Simulation, Vector2D, show_simu
 from ia.strategies import loadPath
+from ia.behaviour_machlearning import attDict, defDict
 from ia.strategies_machlearning import Attaquant2v2Strategy, Defenseur2v2Strategy
 from ia.tools import StateFoot, nearest
 from ia.gene_optimisation import savePath
@@ -11,7 +12,7 @@ import pickle
 
 class LearningState(object):
 
-    difference = 5.
+    difference = 10.
 
     def __init__(self, stateFoot):
         stateFoot = stateFoot
@@ -20,14 +21,14 @@ class LearningState(object):
         #self.distances['JmG'] = stateFoot.distance(stateFoot.my_goal)
         self.distances['JoG'] = stateFoot.distance(stateFoot.opp_goal)
         #self.distances['BmG'] = stateFoot.distance_ball(stateFoot.my_goal)
-        self.distances['BoG'] = stateFoot.distance_ball(stateFoot.opp_goal)
+        #self.distances['BoG'] = stateFoot.distance_ball(stateFoot.opp_goal)
         nearestOpp = stateFoot.nearest_opp.position
         self.distances['JnO'] = stateFoot.distance(nearestOpp)
         #self.distances['nOoG'] = nearestOpp.distance(stateFoot.opp_goal)
         nearestTm = nearest(stateFoot.my_pos, stateFoot.teammates)
         nearestOppTm = nearest(nearestTm, stateFoot.opponents)
         self.distances['TmnO'] = nearestTm.distance(nearestOppTm)
-        self.distances['nTmoG'] = nearestTm.distance(stateFoot.opp_goal)
+        #self.distances['nTmoG'] = nearestTm.distance(stateFoot.opp_goal)
         #self.distances['nOnTmoG'] = nearestOppTm.distance(stateFoot.opp_goal)
         self.distances['nJnT'] = stateFoot.distance(nearestTm)
         self.ballDir = stateFoot.attacking_vector.dot(stateFoot.ball_speed.copy().normalize())
@@ -46,13 +47,13 @@ class LearningState(object):
         return hash(str(self.distances) + str(self.ballDir))
 
     def __str__(self):
-        return f"LearningState(distances={self.distances}, ballDir={self.ballDir})"
+        return "LearningState(distances={}, ballDir={})".format(self.distances, self.ballDir)
 
 class LearningTeam(object):
 
-    actionsDict = {'Attaquant2v2': 30, 'Defenseur2v2': 30}
+    actionsDict = {'Attaquant2v2': len(attDict), 'Defenseur2v2': len(defDict)}
 
-    def __init__(self, numPlayers=2, playerStrats=[None]*4, alpha=0.1, gamma=0.8, eps=0.2, oppList=[],
+    def __init__(self, numPlayers=2, playerStrats=[None]*4, alpha=0.6, gamma=0.8, eps=0.2, oppList=[],
                  numIter=10, numMatches=3, graphical=False):
         self.name = "LearningTeam"
         self.team = None
@@ -71,7 +72,7 @@ class LearningTeam(object):
         self.prevState = None
         self.currState = None
         self.idTeam = 0
-        self.count = [0, 0]
+        self.count = [0] * self.numPlayers
 
     def initialize(self, filenames=None):
         """
@@ -120,7 +121,7 @@ class LearningTeam(object):
         """
         """
         control = StateFoot(self.prevState, self.idTeam, 0, self.numPlayers).team_controls_ball()
-        if control:
+        if control == True:
             rew = 1
         elif control == False:
             rew = -1
@@ -209,11 +210,11 @@ class LearningTeam(object):
         """
         """
         print(self.count)
-        print(self.playerStrats[i].name, len(self.playerQTables[i].values()))
+        print(self.playerStrats[i].name, len(self.playerQTables[i]))
         for state, actions in self.playerQTables[i].items():
-            if np.max(actions) > 1.:
+            if np.amax(actions) > 1.:
                 print(state, actions)
-            elif np.min(actions) < -1.:
+            elif np.amin(actions) < -1.:
                 print(state, actions)
 
     def printAllQTables(self):
