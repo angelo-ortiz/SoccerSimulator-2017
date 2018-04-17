@@ -54,9 +54,7 @@ def must_intercept(stateFoot, rayInter=GAME_WIDTH/6.):
     inferieure ou egale a distInter de la balle et
     en est le joueur le plus proche
     """
-    if not is_in_radius_action(stateFoot, stateFoot.my_pos, rayInter):
-        return False
-    return stateFoot.is_nearest_ball()
+    return is_in_radius_action(stateFoot, stateFoot.my_pos, rayInter)
 
 def ball_advances(stateFoot):
     """
@@ -202,7 +200,7 @@ def must_assist(stateFoot, tm, distPasse, angleInter, coeffPushUp):
     meVect = (stateFoot.my_pos - stateFoot.opp_goal).normalize()
     tmVect = (tm.position + coeffPushUp*tm.vitesse- stateFoot.opp_goal).normalize()
     ref = (stateFoot.my_goal - stateFoot.opp_goal).normalize()
-    return ref.dot(meVect) < 0.7 and ref.dot(tmVect) >= 0.7
+    return ref.dot(meVect) < 0.65 and ref.dot(tmVect) >= 0.7
 
 def both_must_kick(stateFoot):
     """

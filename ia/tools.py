@@ -292,6 +292,8 @@ class StateFoot(Wrapper):
         """
         vect = (dest - self.ball_pos).normalize()
         for opp in self.opponents:
+            if dest.distance(opp.position) > self.distance_ball(dest):
+                continue
             diff = opp.position-self.ball_pos
             angle = get_oriented_angle(vect, diff.normalize())
             if self.is_team_left(): angle = -angle

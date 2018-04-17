@@ -8,7 +8,7 @@ from .tools import Wrapper, StateFoot, normalise_diff, coeff_friction, is_upside
     nearest_state, delete_teammate, distance_verticale, is_in_radius_action, nearest_defender_def
 from .conditions import empty_goal, is_close_goal, free_teammate, must_advance, is_defensive_zone, \
     must_pass_ball, had_ball_control, must_assist, free_opponent, is_close_ball, ball_advances, \
-    is_under_pressure, has_ball_control, both_must_kick
+    is_under_pressure, has_ball_control, both_must_kick, must_intercept
 from math import acos, exp, atan2, sin, cos, atan
 import random
 
@@ -178,7 +178,7 @@ def passiveSituationSolo(state, dico, decalX, decalY, rayReprise, angleReprise, 
         return tryInterception(state, dico)
     if is_close_goal(state, distAttaque) and ball_advances(state):
         return tryInterception(state, dico)
-    if is_in_radius_action(state, state.my_pos, rayReprise):
+    if must_intercept(state, rayReprise):
         return tryInterception(state, dico)
     return cutDownAngle(state, distAttaque, rayReprise)
 
@@ -198,17 +198,17 @@ def passiveSituation(state, dico):
     """
     vectBall = (state.my_pos - state.ball_pos).normalize()
     vectSpeed = state.ball_speed.copy().normalize()
-    if is_in_radius_action(state, state.my_pos, dico['rayRecept']) and \
-       vectSpeed.dot(vectBall) >= dico['angleRecept']:
+    if must_intercept(state, dico['rayRecept']) and vectSpeed.dot(vectBall) >= dico['angleRecept']:
         return tryInterception(state, dico)
-    if state.is_nearest_ball() or had_ball_control(state, dico['rayReprise'], dico['angleReprise']):
+    if state.is_nearest_ball() or \
+    (had_ball_control(state, dico['rayReprise'], dico['angleReprise']) and state.is_nearest_ball_my_team()):
         return tryInterception(state, dico)
     if is_close_goal(state, dico['distAttaque']) and ball_advances(state) \
        and state.is_nearest_ball_my_team():
         return tryInterception(state, dico)
     if must_advance(state, dico['distMontee']):
         return pushUp(state, dico['coeffPushUp'])
-    if state.is_nearest_ball_my_team() and is_in_radius_action(state, state.my_pos, dico['rayInter']):
+    if state.is_nearest_ball_my_team() and must_intercept(state, dico['rayInter']):
         return tryInterception(state, dico)
     if state.numPlayers == 4:
         opp = free_opponent(state, dico['distDefZone'], dico['rayPressing'])
@@ -312,7 +312,7 @@ def goForwardsPA_mod(state, dico):
     if oppDef is not None:
         if tm is not None:
             if is_close_goal(state, dico['distShoot']) and \
-               must_assist(state, tm, dico['distPasse'], dico['angleInter'], dico['coeffPushUp']):
+               must_assist(state, tm, dico['distPasse'], dico['angleInter'], dico['coeffPushUp']/2.):
                 return passBall(state,tm,dico['powerPasse'],dico['thetaPasse'],dico['coeffPushUp']/2.)+\
                     pushUp(state, dico['coeffPushUp'])
             if must_pass_ball(state, tm, dico['distPasse'], dico['angleInter']):
