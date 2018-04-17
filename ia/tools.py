@@ -165,7 +165,7 @@ class StateFoot(Wrapper):
         """
         team = self.teammates
         try:
-            delete_teammate(self.player_state(state.my_team, 0), team)
+            delete_teammate(self.player_state(self.my_team, 0), team)
         except:
             pass
         return team
@@ -290,9 +290,9 @@ class StateFoot(Wrapper):
         dans un angle angleInter a partir du vecteur
         allant vers dest
         """
-        vect = (dest - self.my_pos).normalize()
+        vect = (dest - self.ball_pos).normalize()
         for opp in self.opponents:
-            diff = opp.position-self.my_pos
+            diff = opp.position-self.ball_pos
             angle = get_oriented_angle(vect, diff.normalize())
             if self.is_team_left(): angle = -angle
             if angle >= 0. and angle < angleInter:
@@ -391,7 +391,7 @@ def shootPower(stateFoot, alphaShoot, betaShoot):
     u = stateFoot.opp_goal - stateFoot.my_pos
     dist = u.norm
     theta = acos(abs(vect.dot(u))/u.norm)/acos(0.)
-    return max(1.,maxPlayerShoot*(1.-exp(-(alphaShoot*dist)))*exp(-betaShoot*theta))
+    return max(0.5,maxPlayerShoot*(1.-exp(-(alphaShoot*dist)))*exp(-betaShoot*theta))
 
 def passPower(stateFoot, dest, maxPower, thetaPass):
     """.
@@ -453,7 +453,7 @@ def nearest_defender(stateFoot, liste, distRef):
             dist_dmin = dist_j
     return oppDef
 
-def nearest_defender_ok(stateFoot, liste, distRef):
+def nearest_defender_def(stateFoot, liste, distRef):
     """
     Renvoie le defenseur adverse le plus proche dans un
     rayon de distRef en direction de la cage opposee,
@@ -465,10 +465,10 @@ def nearest_defender_ok(stateFoot, liste, distRef):
     dist_min = distRef + 20.
     for j in liste:
         dist_j = stateFoot.distance_ball(j.position)
-        if dist_j < dist_min and (j.position.distance(og) < dog or dist_j < 5.):
+        if dist_j < dist_min and (j.position.distance(og) < dog or dist_j < 3.):
             vect = (stateFoot.ball_pos - j.position).normalize()
-            vitesse = j.vitesse.copy().normalize()
-            if dist_j > distRef and cos(get_oriented_angle(vitesse,vect)) < 0.88:
+            speed = j.vitesse.copy().normalize()
+            if dist_j > distRef and cos(get_oriented_angle(speed,vect)) < 0.88:
                 continue
             oppDef = j
             dist_dmin = dist_j
