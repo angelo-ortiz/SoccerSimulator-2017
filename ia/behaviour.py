@@ -8,7 +8,7 @@ from .tools import Wrapper, StateFoot, normalise_diff, coeff_friction, is_upside
     nearest_state, delete_teammate, distance_verticale, is_in_radius_action, nearest_defender_def
 from .conditions import empty_goal, is_close_goal, free_teammate, must_advance, is_defensive_zone, \
     must_pass_ball, had_ball_control, must_assist, free_opponent, is_close_ball, ball_advances, \
-    is_under_pressure
+    is_under_pressure, has_ball_control, both_must_kick
 from math import acos, exp, atan2, sin, cos, atan
 import random
 
@@ -143,7 +143,7 @@ def dribble(state, opp, angleDribble, powerDribble, coeffAD):
             angleDribble = -angleDribble
     else: # bon angle (vers la cage adverse)
         if theta > 0.:
-            False
+            angleDribble = -angleDribble
     angle += angleDribble
     destDribble = Vector2D(angle=angle, norm=1.)
     return kickAt(state, state.ball_pos + destDribble, powerDribble)
@@ -348,16 +348,38 @@ def goForwardsDef_mod(state, dico):
     un adversaire en face
     """
     angleInter = 5.*dico['angleInter']/4.
+    #angleInter = dico['angleInter']
     oppDef = nearest_defender_def(state, state.opponents, dico['rayDribble'])
     if oppDef is not None:
         tm = free_teammate(state, angleInter)
         if tm is not None and must_pass_ball(state, tm, dico['distPasse'], angleInter) \
-           and not is_under_pressure(state, state, dico['rayPressing']):
-            print("pass")
+           and not is_under_pressure(state, tm, dico['rayPressing']):
             return passBall(state, tm, dico['powerPasse'], dico['thetaPasse'], dico['coeffPushUp'])+\
                 pushUp(state, dico['coeffPushUp'])
         return clear_gk(state, angleClear=1.2)
     return control(state, dico['controleMT'])
+
+def st_kickOff(state, dico):
+    """
+    """
+    count = both_must_kick(state)
+    if count > 1:
+        return cutDownAngle_gk(state, 40.)
+    if has_ball_control(state):
+        if count == 1:
+            return shoot(state, maxPlayerShoot)
+        return control(state, dico['controleMT'])
+    return goToBall(state)
+
+def gk_kickOff(state, dico):
+    """
+    """
+    count = both_must_kick(state)
+    if count != 1:
+        return cutDownAngle_gk(state, 40.)
+    if has_ball_control(state):
+        return kickAt(state, Vector2D(state.opp_goal.x, 100.), maxPlayerShoot)
+    return goToBall(state)
 
 def clearSolo(state):
     """

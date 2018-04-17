@@ -27,7 +27,8 @@ def is_kick_off(stateFoot):
     Renvoie vrai ssi la balle est dans le
     centre du terrain
     """
-    return stateFoot.ball_pos == stateFoot.center_spot
+    return stateFoot.center_spot == stateFoot.ball_pos
+    #return stateFoot.distance_ball(stateFoot.center_spot) < 10.
 
 def has_ball_control(stateFoot):
     """
@@ -88,8 +89,7 @@ def opponent_approaches_my_goal(stateFoot, distSortie):
     moyennement loin, i.e. le gardien doit sortir
     couvrir plus d'angle face a l'attaquant
     """
-    return stateFoot.team_controls_ball() == False and \
-        is_in_radius_action(stateFoot, stateFoot.my_goal, distSortie)
+    return is_in_radius_action(stateFoot, stateFoot.my_goal, distSortie)
 
 def is_under_pressure(stateFoot, joueur, rayPressing):
     """
@@ -132,11 +132,12 @@ def free_teammate(stateFoot, angleInter):
     marquage
     """
     tm_best = None
-    dist_best = 10.
-    for tm in stateFoot.offensive_teammates:
-        if tm.position.distance(stateFoot.my_goal) < 35. or \
-           distance_horizontale(tm.position, stateFoot.my_goal) < 25.:
-            continue
+    dist_best = 0.
+    if stateFoot.numPlayers == 4:
+        tmL = stateFoot.offensive_teammates
+    else:
+        tmL = stateFoot.teammates
+    for tm in tmL:
         if stateFoot.free_pass_trajectory(tm, angleInter):
             opp = nearest(tm.position, stateFoot.opponents)
             dist = tm.position.distance(opp)
