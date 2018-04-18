@@ -160,7 +160,7 @@ def passBall(state, dest, powerPasse, thetaPasse, coeffPushUp):
     destp += coeffPushUp*vitesse
     return kickAt(state, destp, passPower(state, destp, powerPasse, thetaPasse))
 
-def passiveSituationSolo(state, dico, decalX, decalY, rayReprise, angleReprise, distMontee, distDefZone, distAttaque):
+def passiveSituationSolo(state, dico):
     """
     Quand le joueur n'a pas le controle sur
     la balle:
@@ -174,13 +174,13 @@ def passiveSituationSolo(state, dico, decalX, decalY, rayReprise, angleReprise, 
     pour lui proposer des solutions
     - sinon il se decale lateralement
     """
-    if state.is_nearest_ball() or had_ball_control(state, rayReprise, angleReprise):
+    if state.is_nearest_ball() or had_ball_control(state, dico['rayReprise'], dico['angleReprise']):
         return tryInterception(state, dico)
-    if is_close_goal(state, distAttaque) and ball_advances(state):
+    if is_close_goal(state, dico['distAttaque']) and ball_advances(state):
         return tryInterception(state, dico)
-    if must_intercept(state, rayReprise):
+    if must_intercept(state, dico['rayInter']):
         return tryInterception(state, dico)
-    return cutDownAngle(state, distAttaque, rayReprise)
+    return cutDownAngle(state, dico['raySortie'], dico['rayInter'])
 
 def passiveSituation(state, dico):
     """
@@ -272,32 +272,33 @@ def shiftAsideMark(state, opp, distDemar):
             break
     return goTo(state, dest)
 
-def goForwardsMF(state, angleDribble, powerDribble, rayDribble, coeffAD, powerControl):
+def goForwardsMFSolo(state, dico):
     """
     Essaye d'avance sur le milieu de terrain
     avec la balle et dribble lorsqu'il y a
     un adversaire en face
     """
-    oppDef = nearest_defender(state, state.opponents, rayDribble)
+    oppDef = nearest_defender(state, state.opponents, dico['rayDribble'])
     if oppDef is None:
-        return control(state, powerControl)
-    return dribble(state, oppDef, angleDribble, powerDribble, coeffAD)
+        return control(state, dico['controleMT'])
+    return dribble(state, oppDef, dico['angleDribble'], dico['powerDribble'], dico['coeffAD'])
 
-def goForwardsPA(strat, state, alpha, beta, angleDribble, powerDribble, rayDribble, angleGardien, coeffAD, powerControl, distShoot, angleInter):
+def goForwardsPASolo(state, dico):
     """
     Dans la zone d'attaque, essaye de se
     rapprocher davantage de la surface de
     reparation pour frapper et dribble
     l'adversaire en face de lui
     """
-    oppDef = nearest_defender(state, state.opponents, rayDribble)
+    oppDef = nearest_defender(state, state.opponents, dico['rayDribble'])
     if oppDef is None:
-        if is_close_goal(state, distShoot) and state.free_trajectory(state.opp_goal, angleInter):
-            return shoot(state, shootPower(state, alpha, beta))
-        return control(state, powerControl)
-    return dribble(state, oppDef, angleDribble, powerDribble, coeffAD)
+        if is_close_goal(state, dico['distShoot']) and \
+           state.free_trajectory(state.opp_goal, dico['angleInter']):
+            return shoot(state, shootPower(state, dico['alphaShoot'], dico['betaShoot']))
+        return control(state, dico['controleAttaque'])
+    return dribble(state, oppDef, dico['angleDribble'], dico['powerDribble'], dico['coeffAD'])
 
-def goForwardsPA_mod(state, dico):
+def goForwardsPA(state, dico):
     """
     Dans la zone d'attaque, essaye de se
     rapprocher davantage de la surface de
@@ -326,7 +327,7 @@ def goForwardsPA_mod(state, dico):
     #         return goalControl(state, powerControl)
     return control(state, dico['controleAttaque'])
 
-def goForwardsMF_mod(state, dico):
+def goForwardsMF(state, dico):
     """
     Essaye d'avance sur le milieu de terrain
     avec la balle et dribble lorsqu'il y a
@@ -341,7 +342,7 @@ def goForwardsMF_mod(state, dico):
         return dribble(state, oppDef, dico['angleDribble'], dico['powerDribble'], dico['coeffAD'])
     return control(state, dico['controleMT'])
 
-def goForwardsDef_mod(state, dico):
+def goForwardsDef(state, dico):
     """
     Essaye d'avance sur la zone defensive
     avec la balle et dribble lorsqu'il y a

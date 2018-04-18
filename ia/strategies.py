@@ -5,10 +5,10 @@ from .conditions import must_intercept, has_ball_control, is_defensive_zone, \
     is_close_goal, is_close_ball, opponent_approaches_my_goal, must_advance, \
     free_teammate, had_ball_control, is_kick_off, must_pass_ball, distance_horizontale, \
     both_must_kick, free_opponent, ball_advances, is_under_pressure
-from .behaviour import beh_fonceur, mark, goForwardsDef_mod, cutDownAngle_def, \
+from .behaviour import beh_fonceur, mark, goForwardsDef, cutDownAngle_def, \
     shoot, shiftAside, clear, clearSolo, goToBall, goToMyGoal, \
     tryInterception, interceptBall, goForwardsPA, goForwardsMF, \
-    cutDownAngle, pushUp, passBall, goForwardsPA_mod, goForwardsMF_mod, \
+    cutDownAngle, pushUp, passBall, goForwardsPASolo, goForwardsMFSolo, \
     passiveSituation, kickAt, cutDownAngle_gk, dribble, clear_gk, passiveSituationSolo, \
     st_kickOff, gk_kickOff
 import pickle
@@ -50,32 +50,21 @@ class Fonceur1v1Strategy(Strategy):
         else:
             self.dico = dict()
         self.dico['n'] = -1
-    def args_dribble_pass_shoot(self):
-        return (self.dico['alphaShoot'], self.dico['betaShoot'], self.dico['angleDribble'], \
-                self.dico['powerDribble'], self.dico['rayDribble'], self.dico['angleGardien'], \
-                self.dico['coeffAD'], self.dico['controleAttaque'], self.dico['distShoot'], \
-                self.dico['angleInter'])
-    def args_control_dribble_pass(self):
-        return (self.dico['angleDribble'], self.dico['powerDribble'], self.dico['rayDribble'], \
-                self.dico['coeffAD'], self.dico['controleMT'])
-    def args_receivePass_loseMark(self):
-        return (self.dico['decalX'], self.dico['decalY'], self.dico['rayReprise'], \
-                self.dico['angleReprise'], self.dico['distMontee'], self.dico['distDefZone'], \
-                self.dico['distAttaque'])
+        self.dico['distDefZone'] = 35.
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player,1)
         if is_kick_off(me):
             if has_ball_control(me):
                 if both_must_kick(me) == 0:
-                    return goForwardsMF(me, *self.args_control_dribble_pass())
+                    return goForwardsMF(me, self.dico)
                 return shoot(me, 6.)
             return goToBall(me)
         if has_ball_control(me):
             self.dico['n'] = self.dico['tempsI']
             if is_close_goal(me, self.dico['distAttaque']):
-                return goForwardsPA(self, me, *self.args_dribble_pass_shoot())
-            return goForwardsMF(me, *self.args_control_dribble_pass())
-        return passiveSituationSolo(me, self.dico, *self.args_receivePass_loseMark())
+                return goForwardsPASolo(me, self.dico)
+            return goForwardsMFSolo(me, self.dico)
+        return passiveSituationSolo(me, self.dico)
 
 
 
@@ -105,10 +94,10 @@ class Attaquant2v2Strategy(Strategy):
         if has_ball_control(me):
             self.dico['n'] = self.dico['tempsI']
             if is_defensive_zone(me, self.dico['distDefZone']):
-                return goForwardsDef_mod(me, self.dico)
+                return goForwardsDef(me, self.dico)
             if is_close_goal(me, self.dico['distAttaque']):
-                return goForwardsPA_mod(me, self.dico)
-            return goForwardsMF_mod(me, self.dico)
+                return goForwardsPA(me, self.dico)
+            return goForwardsMF(me, self.dico)
         return passiveSituation(me, self.dico)
 
 
@@ -135,10 +124,10 @@ class Gardien2v2Strategy(Strategy):
         if has_ball_control(me):
             self.dico['n'] = self.dico['tempsI']
             if is_defensive_zone(me, self.dico['distDefZone']):
-                return goForwardsDef_mod(me, self.dico)
+                return goForwardsDef(me, self.dico)
             if is_close_goal(me, self.dico['distAttaque']):
-                return goForwardsPA_mod(me, self.dico)
-            return goForwardsMF_mod(me, self.dico)
+                return goForwardsPA(me, self.dico)
+            return goForwardsMF(me, self.dico)
         if me.is_nearest_ball() or \
         (had_ball_control(me, self.dico['rayReprise'], self.dico['angleReprise']) and me.is_nearest_ball_my_team()):
             return tryInterception(me, self.dico)
@@ -222,6 +211,7 @@ class Attaquant4v4Strategy(Strategy):
         self.dico['distDefZone'] = 75.
         self.dico['distShoot'] = 40.
         self.dico['rayPressing'] = 18.
+        self.dico['angleInter'] = 0.54
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player, 4)
         if is_kick_off(me):
@@ -231,13 +221,13 @@ class Attaquant4v4Strategy(Strategy):
                     return shoot(me,6.)
                 if count == 1:
                     return kickAt(me, Vector2D(me.opp_goal.x, 100.),6.)
-                return goForwardsMF_mod(me, *self.args_control_dribble_pass())
+                return goForwardsMF(me, self.dico)
             return goToBall(me)
         if has_ball_control(me):
             self.dico['n'] = self.dico['tempsI']
             if is_close_goal(me, self.dico['distAttaque']):
-                return goForwardsPA_mod(me, self.dico)
-            return goForwardsMF_mod(me, self.dico)
+                return goForwardsPA(me, self.dico)
+            return goForwardsMF(me, self.dico)
         return passiveSituation(me, self.dico)
 
 
@@ -260,6 +250,7 @@ class Gardien4v4Strategy(Strategy):
         self.dico['controleAttaque'] = self.dico['controleMT']
         self.dico['distShoot'] = 40.
         self.dico['rayPressing'] = 18.
+        self.dico['angleInter'] = 0.54
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player, 4)
         if is_kick_off(me):
@@ -269,8 +260,8 @@ class Gardien4v4Strategy(Strategy):
         if has_ball_control(me):
             self.dico['n'] = self.dico['tempsI']
             if is_close_goal(me, self.dico['distAttaque']):
-                return goForwardsPA_mod(me, self.dico)
-            return goForwardsMF_mod(me, self.dico)
+                return goForwardsPA(me, self.dico)
+            return goForwardsMF(me, self.dico)
         if me.is_nearest_ball() or \
         (had_ball_control(me, self.dico['rayReprise'], self.dico['angleReprise']) and me.is_nearest_ball_my_team()):
             return tryInterception(me, self.dico)
@@ -305,11 +296,6 @@ class CBNaif4v4Strategy(Strategy):
         self.dico['controleAttaque'] = self.dico['controleMT']
         self.dico['rayPressing'] = 18.
         self.dico['distSortie'] = 50.
-    def args_control_dribble_pass(self):
-        return (self.dico['angleDribble'], self.dico['powerDribble'], self.dico['rayDribble'], \
-                self.dico['coeffAD'], self.dico['controleMT'], self.dico['powerPasse'], \
-                self.dico['thetaPasse'], self.dico['rayPressing'], self.dico['distPasse'], \
-                self.dico['angleInter'], self.dico['coeffPushUp'])
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player,4)
         if has_ball_control(me):
@@ -350,21 +336,14 @@ class AttaquantStrategy(Strategy):
         else:
             self.dico = dict()
         self.dico['distShoot'] = 36.
-    def args_dribble_pass_shoot(self):
-        return (self.dico['alphaShoot'], self.dico['betaShoot'], self.dico['angleDribble'], \
-                self.dico['powerDribble'], self.dico['rayDribble'], self.dico['angleGardien'], \
-                self.dico['coeffAD'], self.dico['controleAttaque'], self.dico['distShoot'])
-    def args_control_dribble_pass(self):
-        return (self.dico['angleDribble'], self.dico['powerDribble'], self.dico['rayDribble'], \
-                self.dico['coeffAD'], self.dico['controleMT'])
     def args_defense_loseMark(self):
         return (self.dico['decalX'], self.dico['decalY'])
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player, 2)
         if has_ball_control(me):
             if is_close_goal(me, self.dico['distAttaque']):
-                return goForwardsPA(self, me, *self.args_dribble_pass_shoot())
-            return goForwardsMF(me, *self.args_control_dribble_pass())
+                return goForwardsPASolo(me, self.dico)
+            return goForwardsMFSolo(me, self.dico)
         if is_defensive_zone(me, self.dico['distDefZone']):
             return shiftAside(me, *self.args_defense_loseMark())
         return goToBall(me)
