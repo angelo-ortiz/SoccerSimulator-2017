@@ -119,7 +119,7 @@ class dictParams(object):
                 'tempsContr': (8,15), 'powerPasse': (1.5,4.), 'thetaPasse': (0.,0.6), \
                 'distDemar': (30.,50.), 'rayPressing': (5.,30.), 'rayRecept': (15., 35.), \
                 'angleRecept': (0.7,1.), 'rayReprise': (8., 15.), 'angleReprise': (-1, -0.5), \
-                'coeffPushUp': (6., 12.), 'distPasse': (45., 60.), 'angleInter': (PI/8.,PI/3.), \
+                'coeffPushUp': (6., 12.), 'distPasse': (45., 60.), 'angleInter': (PI/6.,PI/3.), \
                 'coeffDef': (1.5,2.7)}
 
     def random(self, parameters):

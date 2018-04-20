@@ -401,7 +401,7 @@ def passPower(stateFoot, dest, maxPower, thetaPass):
     va faire une passer selon la distance
     de entre la balle et le recepteur
     """
-    dist = dest.distance(stateFoot.ball_pos)
+    dist = stateFoot.distance_ball(dest)
     return maxPower*(1.-exp(-(thetaPass*dist)))
 
 def nearest(ref, liste):

@@ -80,13 +80,14 @@ class Attaquant2v2Strategy(Strategy):
                 self.dico = pickle.load(f)
             with open(loadPath(fn_gk),"rb") as f:
                 self.dico.update(pickle.load(f))
-            # self.dico['angleInter'] = 0.52
+            # self.dico['angleInter'] = 0.81
             # self.dico['distDefZone'] = 45.
             # self.dico['distAttaque'] = 60.
             # self.dico['coeffDef'] = 2.5
         else:
             self.dico = dict()
         self.dico['n'] = -1
+        print(self.dico['angleInter'])
     def compute_strategy(self,state,id_team,id_player):
         me = StateFoot(state,id_team,id_player, 2)
         if is_kick_off(me):
@@ -110,7 +111,7 @@ class Gardien2v2Strategy(Strategy):
                 self.dico = pickle.load(f)
             with open(loadPath(fn_st),"rb") as f:
                 self.dico.update(pickle.load(f))
-            # self.dico['angleInter'] = 0.52
+            # self.dico['angleInter'] = 0.81
             # self.dico['distAttaque'] = 60.
             # self.dico['distDefZone'] = 45.
             # self.dico['coeffDef'] = 2.5
@@ -306,7 +307,7 @@ class CBNaif4v4Strategy(Strategy):
             return clear_gk(me) + goToMyGoal(me)
         if me.is_nearest_ball():
             return tryInterception(me, self.dico)
-        if must_intercept(me, self.dico['rayInter']) and is_in_radius_action(me, me.my_goal, self.dico['distSortie']):
+        if must_intercept(me, self.dico['rayInter']) and is_in_radius_action(me, me.my_goal, self.dico['distSortie']) and me.is_nearest_ball_my_team():
             return tryInterception(me, self.dico)
         if me.distance_ball(me.my_goal) < self.dico['distDefZone']:
             return tryInterception(me, self.dico)
