@@ -1,0 +1,86 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[pdftex]{graphicx}
+\usepackage{comment}
+\usepackage{siunitx}
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\author{Angelo Ortiz}
+\title{Rapport du Projet}
+
+\begin{document}
+\begin{titlepage}
+  \centering
+  \includegraphics[width=0.30\textwidth]{logo.jpg}\par\vspace{1cm}
+  {\scshape\LARGE Sorbonne Universit\'e\par}
+  \vspace{1cm}
+  {\scshape\Large 2I013 : Projet (application)\par}
+  \vspace{1.5cm}
+  {\Large \bfseries Sujet :\par}
+  {\huge\bfseries IA Football\par}
+  \vspace{2cm}
+  {\Large\itshape Fangzhou YE\par}
+  {\Large\itshape Angelo Ortiz\par}
+  \vfill
+  
+  % Bottom of the page
+  {\large Licence d'Informatique\par}
+  {\large Ann\'ee 2017/2018\par}
+\end{titlepage}
+ 
+%\newpage
+\tableofcontents
+  
+\newpage
+  
+\part*{Introduction}
+\section*{Pr\'esentation}
+Le projet mini projet consiste en la r\'esolution du probl\`eme du robot 
+trieur...
+L’objectif de ce travail est de sensibiliser les étudiants au choix de la structure de données la plus adéquate dans le cadre d’un projet défini, ici, la gestion efficace d’un conteneur de données, au travers des mesures de temps de calcul et de la mémoire utilisée pour une telle mise en place.
+\section*{Aper\c{c}u}
+...
+\section*{L'organisation du code}
+Le r\'epertoire correspondant \`a ce projet comporte plusieurs 
+sous-r\'epertoires que l'on expliquera en d\'etail ci-dessous.
+\subsubsection*{bin}
+Ce dossier contient les fichiers ex\'ecutables des test des fonctions 
+impl\'ement\'ees.
+\addcontentsline{toc}{part}{Introduction}
+\newpage
+
+\part{Algorithme au plus proche}
+Dans cette premi\`ere partie, on vous pr\'esente l'analyse faite pour chacune 
+des versions impl\'ement\'ees de l'algorithme au plus proche, \`a savoir les 
+versions na\"ive, circulaire, par couleur et par AVL.
+
+\section{Version na\"ive}
+\subsection*{Plus court chemin}
+Soient les deux cases $(i,j)$ et $(k,l)$ dans une grille \`a $m$ 
+lignes et $n$ colonnes. 
+Soit la fonction \texttt{dist}$((i,j),(k,l))=|k-i|+|l-j|$. Soit la 
+propri\'et\'e 
+suivante $P(r), r \geq 0$:
+\begin{itemize}
+\item Le chemin $VH$ qui consiste \`a se d\'eplacer de $|k-i|$ cases 
+verticalement vers $(k,j)$, puis de $|l-j|$ cases horizontalement vers $(k,l)$, 
+et
+\item le chemin $HV$ qui consiste \`a se d\'eplacer de $|l-j|$ cases 
+horizontalement vers $(i,l)$, puis de $|k-i|$ cases verticalement vers $(k,l)$,
+\end{itemize}
+sont des plus courts chemins, o\`u $r=$ \texttt{dist}$((i,j),(k,l)) \geq 0$.
+
+Montrons cette propri\'et\'e par r\'ecurrence faible sur $r \geq 0$.
+
+\newpage
+
+\part*{Conclusion}
+...
+\addcontentsline{toc}{part}{Conclusion}
+
+\end{document}
