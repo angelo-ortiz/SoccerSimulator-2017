@@ -15,6 +15,6 @@ left = module.get_team(4)
 #right = module3.get_team(4)
 right = ia.get_team(4)
 
-simu = Simulation(right, left)
-#simu = Simulation(left,right)
+#simu = Simulation(right, left)
+simu = Simulation(left,right)
 show_simu(simu)

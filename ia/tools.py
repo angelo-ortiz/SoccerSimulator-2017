@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from soccersimulator  import SoccerAction, Vector2D
-from soccersimulator.settings import GAME_HEIGHT, GAME_WIDTH, GAME_GOAL_HEIGHT, maxPlayerShoot
-from math import acos, exp, asin, sin, cos
+from soccersimulator.settings import GAME_HEIGHT, GAME_WIDTH, GAME_GOAL_HEIGHT, \
+    PLAYER_RADIUS, BALL_RADIUS, maxPlayerShoot
+from math import acos, exp, asin, cos
 
 ## Classe enveloppe de notre super-etat du jeu
 class Wrapper(object):
-    def __init__(self,state):
+    def __init__(self, state):
         self._obj = state
-    def __getattr__(self,attr):
+    def __getattr__(self, attr):
         return getattr(self._obj,attr)
 
 
@@ -17,22 +18,22 @@ class Wrapper(object):
 #### de la configuration courante du terrain
 #### depuis la perspective d'un joueur
 class StateFoot(Wrapper):
-    def __init__(self,state,id_team,id_player, numPlayers=1):
-        super(StateFoot,self).__init__(state)
-        self.key = (id_team,id_player)
+    def __init__(self, state, id_team, id_player, numPlayers=1):
+        super(StateFoot, self).__init__(state)
+        self.key = (id_team, id_player)
         self.numPlayers = numPlayers
 
     @property
     def my_team(self):
         """
-        Son equipe
+        L'identifiant de son equipe
         """
         return self.key[0]
 
     @property
     def opp_team(self):
         """
-        L'equipe adverse
+        L'identifiant de l'equipe adverse
         """
         return 3 - self.my_team
 
@@ -46,35 +47,35 @@ class StateFoot(Wrapper):
     @property
     def my_state(self):
         """
-        Son etat
+        Son etat, i.e. sa position et vitesse
         """
         return self.player_state(*self.key)
 
     @property
     def my_pos(self):
         """
-        Sa position courante
+        Sa position instantanee
         """
-        return self.player_state(*self.key).position
+        return self.my_state.position
 
     @property
     def my_speed(self):
         """
-        Sa vitesse courante
+        Sa vitesse instantanee
         """
-        return self.player_state(*self.key).vitesse
+        return self.my_state.vitesse
 
     @property
     def ball_pos(self):
         """
-        La position courante de la balle
+        La position instantanee de la balle
         """
         return self.ball.position
 
     @property
     def ball_speed(self):
         """
-        La vitesse courante de la balle
+        La vitesse instantanee de la balle
         """
         return self.ball.vitesse
 
@@ -83,14 +84,14 @@ class StateFoot(Wrapper):
         """
         La position du centre de sa cage
         """
-        return Vector2D((self.my_team - 1) * self.width,self.goal_height)
+        return Vector2D((self.my_team - 1) * self.width, self.goal_height)
 
     @property
     def opp_goal(self):
         """
         La position du centre de la cage adverse
         """
-        return Vector2D((self.opp_team - 1) * self.width,self.goal_height)
+        return Vector2D((self.opp_team - 1) * self.width, self.goal_height)
 
     @property
     def height(self):
@@ -148,19 +149,27 @@ class StateFoot(Wrapper):
         return (self.opp_goal - self.my_goal).normalize()
 
     @property
+    def shoot_radius(self):
+        """
+        La distance maximum autorisee entre un joueur et la balle
+        pour qu'il puisse la frapper
+        """
+        return PLAYER_RADIUS + BALL_RADIUS
+
+    @property
     def teammates(self):
         """
         Ses coequipiers
         """
         team = self.my_team
         liste = [self.player_state(team,i) for i in range(self.nb_players(team))]
-        liste.remove(self.player_state(*self.key))
+        liste.remove(self.my_state)
         return liste
 
     @property
     def offensive_teammates(self):
         """
-        Ses coequipiers offensives
+        Ses coequipiers offensives (pour le 4v4)
         Hypothese : le CB est le premier joueur
         """
         team = self.teammates
@@ -178,37 +187,33 @@ class StateFoot(Wrapper):
         team = self.opp_team
         return [self.player_state(team,i) for i in range(self.nb_players(team))]
 
+    def nearest_ball(self, liste):
+        """
+        Renvoie la position du joueur le plus proche de
+        la balle parmi <liste>
+        """
+        return nearest_state(self.ball_pos, liste)
+
     @property
-    def nearest_opp(self):
+    def opponent_nearest_ball(self):
         """
         L'adversaire le plus proche de la balle
         """
-        liste = self.opponents
-        opp = liste[0]
-        dist = self.distance_ball(opp.position)
-        for p in liste[1:]:
-            if self.distance_ball(p.position) < dist:
-                opp = p
-        return opp
+        return self.nearest_ball(self.opponents)
 
     def nearest_opponent(self, rayPressing):
         """
         L'adversaire le plus proche du joueur
-        dans un rayon rayPressing
+        dans un rayon <rayPressing>
         """
-        liste = self.opponents
-        distMin = rayPressing
-        opp = None
-        for p in liste:
-            dist = self.distance(p.position)
-            if self.distance(p.position) < distMin:
-                distMin = dist
-                opp = p
-        return opp
+        opp = nearest_state(self.my_pos, self.opponents)
+        if self.distance(opp.position) < rayPressing:
+            return opp
+        return None
 
     def opponent_1v1(self):
         """
-        Son adversaire lorsque c'est un match 1v1
+        Son unique adversaire lorsqu'il s'agit d'un match 1v1
         """
         return self.player_state(self.opp_team,0)
 
@@ -232,29 +237,30 @@ class StateFoot(Wrapper):
         """
         return ref.distance(self.my_pos)
 
+    def is_nearest_ball_aux(self, playersList):
+        """
+        Renvoie vrai ssi il est plus proche de 
+        la balle que quiconque dans <playersList>
+        """
+        dist_ball_joueur = self.distance(self.ball_pos)
+        for opp in playersList:
+            if dist_ball_joueur >= self.distance_ball(opp.position):
+                return False
+        return True
+
     def is_nearest_ball(self):
         """
         Renvoie vrai ssi il est le joueur le plus proche
         de la balle
         """
-        liste_opp = self.opponents + self.teammates
-        dist_ball_joueur = self.distance(self.ball_pos)
-        for opp in liste_opp:
-            if dist_ball_joueur >= self.distance_ball(opp.position):
-                return False
-        return True
+        return self.is_nearest_ball_aux(self.opponents + self.teammates)
 
     def is_nearest_ball_my_team(self):
         """
         Renvoie vrai ssi il est le joueur de son equipe
         le plus proche de la balle
         """
-        liste_opp = self.teammates
-        dist_ball_joueur = self.distance(self.ball_pos)
-        for opp in liste_opp:
-            if dist_ball_joueur >= self.distance_ball(opp.position):
-                return False
-        return True
+        return self.is_nearest_ball_aux(self.teammates)
 
     def is_valid_position(self, pos):
         """
@@ -267,36 +273,32 @@ class StateFoot(Wrapper):
     def team_controls_ball(self):
         """
         Recherche d'abord le joueur le plus proche
-        de la balle dans un rayon de 20 m ;
+        de la balle dans un rayon de 20 unites ;
         renvoie vrai si le joueur appartient a son
         equipe, faux s'il joue pour l'equipe adverse,
         et None s'il n'y en a pas
         """
-        liste = [self.my_state] + self.teammates + self.opponents
-        p = None
-        distMin = 20.
-        for o in liste:
-            dist = self.distance_ball(o.position)
-            if dist < distMin:
-                p = o
-                distMin = dist
-        if p is not None:
-            return not p in self.opponents
+        controler = self.nearest_ball([self.my_state] + self.teammates + self.opponents)
+        if self.distance_ball(controler.position) < 20.:
+            return not controler in self.opponents
         return None
 
     def free_trajectory(self, dest, angleInter):
         """
         Renvoie vrai ssi il n'y a pas d'adversaire
-        dans un angle angleInter a partir du vecteur
-        allant vers dest
+        dans un angle <angleInter> a partir du vecteur
+        allant de la balle vers <dest>
         """
         vect = (dest - self.ball_pos).normalize()
         for opp in self.opponents:
             if dest.distance(opp.position) > self.distance_ball(dest):
                 continue
             diff = opp.position-self.ball_pos
-            angle = get_oriented_angle(vect, diff.normalize())
-            if self.is_team_left(): angle = -angle
+            if self.is_team_left():
+                angle = get_oriented_angle(vect, diff.normalize())
+            else:
+                angle = get_oriented_angle(diff.normalize(), vect)
+            if vect.y > 0.: angle = -angle
             if angle >= 0. and angle < angleInter:
                 return False
         return True
@@ -305,7 +307,7 @@ class StateFoot(Wrapper):
         """
         Renvoie vrai ssi aucun adversaire n'est
         susceptible d'intercepter la trajectoire d'une
-        passe vers tm
+        passe vers <tm>
         """
         return self.free_trajectory(tm.position, angleInter)
 
@@ -332,15 +334,15 @@ def get_empty_strategy():
 
 def normalise_diff(src, dst, norme):
     """
-    Renvoie le vecteur allant de src vers dst avec
-    comme norme maximale norme
+    Renvoie le vecteur allant de <src> vers <dst> avec
+    comme norme maximale <norme>
     """
     return (dst-src).norm_max(norme)
 
 def get_oriented_angle(ref, other):
     """
-    Renvoie l'angle oriente du vecteur ref vers
-    le vecteur other, pourvu que les vecteurs
+    Renvoie l'angle oriente du vecteur <ref> vers
+    le vecteur <other>, pourvu que les vecteurs
     soient unitaires
     """
     return asin(ref.x*other.y-ref.y*other.x)
@@ -349,14 +351,14 @@ def coeff_friction(n,fc):
     """
     Renvoie le coefficient d'une grandeur physique
     dont le taux de changement sur le temps varie
-    de forme proportionnelle a fc
+    de forme proportionnelle a <fc>
     """
     return (1.-fc)*(1.-(1.-fc)**n)/fc
 
-def is_in_radius_action(stateFoot,ref,distLimite):
+def is_in_radius_action(stateFoot, ref, distLimite):
     """
-    Renvoie vrai ssi le point de reference se trouve
-    dans le cercle de rayon distLimite centre en la
+    Renvoie vrai ssi le point <ref> se trouve
+    dans le cercle de rayon <distLimite> centre en la
     position de la balle
     """
     return ref.distance(stateFoot.ball_pos) <= distLimite
@@ -370,15 +372,15 @@ def distance_horizontale(v1, v2):
 
 def distance_verticale(v1, v2):
     """
-    Renvoie la distance entre les abscisses de deux
+    Renvoie la distance entre les ordonnees de deux
     points
     """
     return abs(v1.y-v2.y)
 
-def is_upside(ref,other):
+def is_upside(ref, other):
     """
-    Renvoie vrai ssi la reference est au-dessus de
-    l'autre point
+    Renvoie vrai ssi <ref> est au-dessus de
+    <other>
     """
     return ref.y > other.y
 
@@ -396,32 +398,28 @@ def shootPower(stateFoot, alphaShoot, betaShoot):
     return max(0.5,maxPlayerShoot*(1.-exp(-(alphaShoot*dist)))*exp(-betaShoot*theta))
 
 def passPower(stateFoot, dest, maxPower, thetaPass):
-    """.
+    """
     Renvoie la force avec laquelle on
     va faire une passer selon la distance
-    de entre la balle et le recepteur
+    entre la balle et le recepteur
     """
     dist = stateFoot.distance_ball(dest)
     return maxPower*(1.-exp(-(thetaPass*dist)))
 
 def nearest(ref, liste):
     """
-    Renvoie la position du joueur le plus proche de la
-    reference parmi une liste passee en parametre
+    Renvoie la position du joueur le plus proche de
+    <ref> parmi <liste>
     """
-    p = None
-    distMin = 1024.
-    for o in liste:
-        dist = ref.distance(o.position)
-        if dist < distMin:
-            p = o
-            distMin = dist
-    return p.position
+    p = nearest_state(ref, liste)
+    if p is not None:
+        return p.position
+    return None
 
 def nearest_state(ref, liste):
     """
-    Renvoie la position du joueur le plus proche de la
-    reference parmi une liste passee en parametre
+    Renvoie l'etat du joueur le plus proche de
+    <ref> parmi <liste>
     """
     p = None
     distMin = 1024.
@@ -432,16 +430,10 @@ def nearest_state(ref, liste):
             distMin = dist
     return p
 
-def nearest_ball(stateFoot, liste):
-    """
-    Renvoie la position du joueur le plus proche de la balle
-    """
-    return nearest(stateFoot.ball_pos, liste)
-
 def nearest_defender(stateFoot, liste, distRef):
     """
     Renvoie le defenseur adverse le plus proche dans un
-    rayon de distRef en direction de la cage opposee,
+    rayon de <distRef> en direction de la cage opposee,
     i.e. le joueur qui lui bloque la voie vers la cage
     """
     oppDef = None
@@ -458,7 +450,7 @@ def nearest_defender(stateFoot, liste, distRef):
 def nearest_defender_def(stateFoot, liste, distRef):
     """
     Renvoie le defenseur adverse le plus proche dans un
-    rayon de distRef en direction de la cage opposee,
+    rayon de <distRef + 20.> en direction de la cage opposee,
     i.e. le joueur qui lui bloque la voie vers la cage
     """
     oppDef = None
@@ -478,7 +470,7 @@ def nearest_defender_def(stateFoot, liste, distRef):
 
 def delete_teammate(tm, liste):
     """
-    Supprime un joueur d'un liste
+    Supprime <tm> de <liste>
     """
     index = -1
     for i in range(len(liste)):
