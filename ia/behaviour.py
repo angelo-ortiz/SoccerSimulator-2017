@@ -5,12 +5,11 @@ from .conditions import must_intercept, has_ball_control, is_defensive_zone, \
     is_close_goal, is_close_ball, opponent_approaches_my_goal, must_advance, \
     free_teammate, had_ball_control, is_kick_off, must_pass_ball, distance_horizontale, \
     both_must_kick, free_opponent, ball_advances, is_under_pressure
-from .actions import beh_fonceur, mark, goForwardsDef, cutDownAngle_def, \
-    shoot, shiftAside, clear, clearSolo, goToBall, goToMyGoal, \
-    tryInterception, interceptBall, goForwardsPA, goForwardsMF, \
-    cutDownAngle, pushUp, passBall, goForwardsPASolo, goForwardsMFSolo, \
-    passiveSituation, kickAt, cutDownAngle_gk, dribble, passiveSituationSolo, \
-    loseMark
+from .actions import goToBall, goToMyGoal, kickAt, shoot, control, dribble, passBall, \
+    goForwardsDef, goForwardsPA, goForwardsMF, goForwardsPASolo, goForwardsMFSolo, \
+    mark, loseMark, clear, cutDownAngle, cutDownAngle_def, cutDownAngle_gk, \
+    pushUp, tryInterception
+    
 
 def st_kickOffSolo(state, dico):
     """
@@ -152,12 +151,6 @@ def WithoutBallControl_GK_2v2(state, dico):
         return tryInterception(state, dico)
     return cutDownAngle_def(state, dico['raySortie'], dico['rayInter'])
 
-def WithBallControl_CBnaif_2v2(state, dico):
-    tm = free_teammate(state, dico['angleInter'])
-    if tm is not None and must_pass_ball(state, tm, dico['angleInter']):
-        return passBall(state, tm, 2.*dico['powerPasse'], dico['thetaPasse'], dico['coeffPushUp'])
-    return clear(state)
-
 def WithoutBallControl_CBnaif_2v2(state, dico):
     if state.is_nearest_ball():
         return tryInterception(state, dico)
@@ -183,7 +176,7 @@ def WithoutBallControl_GK_4v4(state, dico):
         return tryInterception(state, dico)
     return cutDownAngle_def(state, dico['distSortie'], dico['rayInter'])
 
-def WithBallControl_CBnaif_4v4(state, dico):
+def WithBallControl_CBnaif(state, dico):
     tm = free_teammate(state, dico['angleInter'])
     if tm is not None and must_pass_ball(state, tm, dico['angleInter']) \
        and not is_under_pressure(state, tm, dico['rayPressing']):

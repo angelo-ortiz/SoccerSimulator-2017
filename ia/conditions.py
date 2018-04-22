@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from .tools import is_in_radius_action, distance_horizontale, \
-    nearest, nearest_state
+from .tools import is_in_radius_action, distance_horizontale, nearest, nearest_state
 
 def is_close_ball(stateFoot, player):
     """
