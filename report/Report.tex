@@ -40,15 +40,53 @@
   
 \part*{Introduction}
 \section*{Pr\'esentation}
-Le projet consiste en ...
-L’objectif de ce travail est de sensibiliser les étudiants au choix de la structure de données la plus adéquate dans le cadre d’un projet défini, ici, la gestion efficace d’un conteneur de données, au travers des mesures de temps de calcul et de la mémoire utilisée pour une telle mise en place.
+Le projet a consist\'e en le d\'eveloppement d'intelligences artificielles de 
+joueurs de football. Le simulateur du jeu \'etant d\'ej\`a fourni, notre 
+travail a \'et\'e d'impl\'ementer des strat\'egies de jeu pour mieux r\'eussir 
+les matches.
+L’objectif de ce travail a \'et\'e d'apprendre \`a bien mener un projet 
+collaboratif long sur un nouvel environnement de d\'eveloppement, \`a savoir 
+Python.
 \section*{Aper\c{c}u}
+Voici un aper\c{c}u du jeu...
 ...
 \section*{Arborescence}
-Le r\'epertoire du projet comporte plusieurs parties que l'on expliquera en 
-d\'etail ci-dessous.
+Le projet a \'et\'e organis\'e en un module {\bfseries ia} dirigeant le 
+comportement de nos joueurs et en divers fichiers de test.
 \subsubsection*{ia/tools}
-c.f. README
+Ce fichier contient une classe repr\'esentant l'\'etat du jeu qui comporte des 
+m\'ethodes nous facilitant l'acc\`es aux diverses carat\'eristiques de cet 
+\'etat, ainsi que plusieurs fonctions utilitaires.
+
+\subsubsection*{ia/conditions}
+Comme le nom l'indique, ce fichier a \'et\'e d\'edi\'e aux diverses conditions 
+qui d\'eclenchent les diff\'erents types de comportement.
+
+\subsubsection*{ia/actions}
+Ce fichier comporte les actions de base que l'on peut r\'ealiser \`a chaque 
+instant du jeu.
+
+\subsubsection*{ia/behaviour}
+En ce qui concerne ce fichier, ici se trouvent les actions complexes, i.e.\ 
+compos\'ees de plusieurs actions de base. En effet, pour une certaine phase de 
+jeu, un joueur peut prendre diff\'erentes d\'ecisions.
+
+\subsubsection*{ia/strategies}
+C'est dans ce fichier que les strat\'egies ont \'et\'e r\'eunies. Ces 
+strat\'egies dirigent le comportement des joueurs tout au long d'un 
+match.
+
+\subsubsection*{ia/gene\_optimisation}
+Ce fichier contient les classes n\'ecessaires pour la mise en \oe uvre d'une 
+impl\'ementation des algorithmes g\'en\'etiques.
+
+\subsubsection*{ia/gs\_optimisation}
+On retrouve ici le code utilis\'e pour suivre la m\'ethode de recherche en 
+grille.
+
+\subsubsection*{ia/}
+init ? ML\_strats ? DT\_strats ? 
+\todo{Il reste encore des fichiers}
 
 \addcontentsline{toc}{part}{Introduction}
 \newpage
@@ -60,7 +98,30 @@ concernant l'architecture logicielle.
 \newpage
 
 \part{Strat\'egies}
-Dans cette deuxi\`eme partie ....
+Dans cette deuxi\`eme partie, on vous d\'etaille le comportement de nos 
+diff\'erents joueurs.
+
+Compte tenu de la taille du terrain de jeu, le nombre maximum de joueurs par 
+\'equipe est limit\'e \`a quatre. Ainsi, il y a trois cat\'egories de matches 
+selon le nombre de joueurs par \'equipe : un, deux ou quatre.
+
+\section*{Un joueur}
+Pour l'\'equipe compos\'ee uniquement d'un joueur, on a d\'evelopp\'e un seul 
+joueur que l'on appelle {\itshape Fonceur}. Au tout d\'ebut du 
+projet, il faisait tout au maximum : il doit 
+s'approcher de la balle \`a toute vitesse lorsqu'il ne la contr\^ole pas et il 
+frappe avec toute sa puissance dans l'autre cas. On a d\'ecid\'e de garder le 
+m\^eme nom, m\^eme si son comportement diff\`ere. En effet, \`a pr\'esent il 
+avance avec la balle de petites distances et lorsqu'un adversaire lui fait 
+opposition il essaie de le dribbler ; il frappe vers la cage adverse s'il se 
+trouve dans la surface de r\'eparation. 
+
+\section*{Deux joueurs}
+Cette cat\'egorie a \'et\'e celle sur laquelle on a consacr\'e la plupart du 
+projet. On compte trois joueurs fonctionnels que l'on appelle {\itshape 
+  Attaquant}, {\itshape Gardien} et {\itshape D\'efenseur}. Les deux premiers 
+pr\'esentent le m\^eme comportement lorsqu'ils se trouvent en situation 
+d'attaque : \todo{reprendre ICI}
 
 \newpage
 

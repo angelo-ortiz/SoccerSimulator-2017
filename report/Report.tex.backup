@@ -40,60 +40,99 @@
   
 \part*{Introduction}
 \section*{Pr\'esentation}
-Le projet mini projet consiste en la r\'esolution du probl\`eme du robot 
-trieur...
-L’objectif de ce travail est de sensibiliser les étudiants au choix de la structure de données la plus adéquate dans le cadre d’un projet défini, ici, la gestion efficace d’un conteneur de données, au travers des mesures de temps de calcul et de la mémoire utilisée pour une telle mise en place.
+Le projet a consist\'e en le d\'eveloppement d'intelligences artificielles de 
+joueurs de football. Le simulateur du jeu \'etant d\'ej\`a fourni, notre 
+travail a \'et\'e d'impl\'ementer des strat\'egies de jeu pour mieux r\'eussir 
+les matches.
+L’objectif de ce travail a \'et\'e d'apprendre \`a bien mener un projet 
+collaboratif long sur un nouvel environnement de d\'eveloppement, \`a savoir 
+Python.
 \section*{Aper\c{c}u}
+Voici un aper\c{c}u du jeu...
 ...
-\section*{L'organisation du code}
-Le r\'epertoire correspondant \`a ce projet comporte plusieurs 
-sous-r\'epertoires que l'on expliquera en d\'etail ci-dessous.
-\subsubsection*{bin}
-Ce dossier contient les fichiers ex\'ecutables des test des fonctions 
-impl\'ement\'ees.
+\section*{Arborescence}
+Le projet a \'et\'e organis\'e en un module {\bfseries ia} dirigeant le 
+comportement de nos joueurs et en divers fichiers de test.
+\subsubsection*{ia/tools}
+Ce fichier contient une classe repr\'esentant l'\'etat du jeu qui comporte des 
+m\'ethodes nous facilitant l'acc\`es aux diverses carat\'eristiques de cet 
+\'etat, ainsi que plusieurs fonctions utilitaires.
+
+\subsubsection*{ia/conditions}
+Comme le nom l'indique, ce fichier a \'et\'e d\'edi\'e aux diverses conditions 
+qui d\'eclenchent les diff\'erents types de comportement.
+
+\subsubsection*{ia/actions}
+Ce fichier comporte les actions de base que l'on peut r\'ealiser \`a chaque 
+instant du jeu.
+
+\subsubsection*{ia/behaviour}
+En ce qui concerne ce fichier, ici se trouvent les actions complexes, i.e.\ 
+compos\'ees de plusieurs actions de base. En effet, pour une certaine phase de 
+jeu, un joueur peut prendre diff\'erentes d\'ecisions.
+
+\subsubsection*{ia/strategies}
+C'est dans ce fichier que les strat\'egies ont \'et\'e r\'eunies. Ces 
+strat\'egies dirigent le comportement des joueurs tout au long d'un 
+match.
+
+\subsubsection*{ia/gene\_optimisation}
+Ce fichier contient les classes n\'ecessaires pour la mise en \oe uvre d'une 
+impl\'ementation des algorithmes g\'en\'etiques.
+
+\subsubsection*{ia/gs\_optimisation}
+On retrouve ici le code utilis\'e pour suivre la m\'ethode de recherche en 
+grille.
+
+\subsubsection*{ia/}
+init ? ML\_strats ? DT\_strats ? 
+\todo{Il reste encore des fichiers}
+
 \addcontentsline{toc}{part}{Introduction}
 \newpage
 
-\part{Architecture logicielle}
+\part{Architecture logicielle} %et demarche
 Dans cette premi\`ere partie, on vous expliquera les choix faits 
 concernant l'architecture logicielle.
 
-\section{Version na\"ive}
-\subsection*{Plus court chemin}
-Soient les deux cases $(i,j)$ et $(k,l)$ dans une grille \`a $m$ 
-lignes et $n$ colonnes. 
-Soit la fonction \texttt{dist}$((i,j),(k,l))=|k-i|+|l-j|$. Soit la 
-propri\'et\'e 
-suivante $P(r), r \geq 0$:
-\begin{itemize}
-\item Le chemin $VH$ qui consiste \`a se d\'eplacer de $|k-i|$ cases 
-verticalement vers $(k,j)$, puis de $|l-j|$ cases horizontalement vers $(k,l)$, 
-et
-\item le chemin $HV$ qui consiste \`a se d\'eplacer de $|l-j|$ cases 
-horizontalement vers $(i,l)$, puis de $|k-i|$ cases verticalement vers $(k,l)$,
-\end{itemize}
-sont des plus courts chemins, o\`u $r=$ \texttt{dist}$((i,j),(k,l)) \geq 0$.
+\newpage
 
-Montrons cette propri\'et\'e par r\'ecurrence faible sur $r \geq 0$.
+\part{Strat\'egies}
+Dans cette deuxi\`eme partie, on vous d\'etaille le comportement de nos 
+diff\'erents joueurs.
+
+Compte tenu de la taille du terrain de jeu, le nombre maximum de joueurs par 
+\'equipe est limit\'e \`a quatre. Ainsi, il y a trois cat\'egories de matches 
+selon le nombre de joueurs par \'equipe : un, deux ou quatre.
+
+\section*{Un joueur}
+Pour l'\'equipe compos\'ee uniquement d'un joueur, on a d\'evelopp\'e un seul 
+joueur que l'on appelle {\itshape Fonceur}. Au tout d\'ebut du 
+projet, il faisait tout au maximum : il doit 
+s'approcher de la balle \`a toute vitesse lorsqu'il ne la contr\^ole pas et il 
+frappe avec toute sa puissance dans l'autre cas. On a d\'ecid\'e de garder le 
+nom
 
 \newpage
 
 \part{M\'ethodes d'optimisation}
-Dans cette deuxi\`eme partie, on vous d\'etaille les diff\'erents algorithmes 
+Dans cette troisi\`eme partie, on vous d\'etaille les diff\'erents algorithmes 
 appris tout au long du semestre pour l'am\'elioration des strat\'egies 
 initialement propos\'ees.
 
-\section{La recherche en grille}
+\section{Recherche en grille}
 ...
 
-\section{Les algorithmes g\'en\'etiques}
+\section{Algorithmes g\'en\'etiques}
 
-\section{Les arbres de d\'ecision}
+\section{Arbres de d\'ecision}
 
-\section{L'apprentissage automatique}
+\section{Apprentissage automatique}
 Dans la derni\`ere partie du semestre, on s'est concentr\'e sur l'apprentissage 
 automatique. On nous a pr\'esent\'e les deux grandes classes 
-d'algorithmes d'apprentissage : supervis\'es et non super
+d'algorithmes d'apprentissage : supervis\'es et non supervis\'es, ainsi que 
+l'apprentissage par renforcement. En effet, ce dernier type d'apprentissage 
+impl\'ement\'e par l'algorithme de \texttt{Q-learning} a \'et\'e mise en place.
 
 \newpage
 
