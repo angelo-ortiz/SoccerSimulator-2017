@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.3.31)  24 APR 2018 01:02
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.3.31)  24 APR 2018 12:11
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1333,38 +1333,58 @@ Package pdftex.def Info: logo.jpg used on input line 19.
 \openout5 = `Report.toc'.
 
  [1] [2] [3]
-[4]
-Overfull \hbox (4.92381pt too wide) in paragraph at lines 124--124
-[][][][]\T1/cmr/m/n/6 reprendre 
+[4] [5]
+Overfull \hbox (19.60356pt too wide) in paragraph at lines 166--166
+[][][][]\T1/cmr/m/n/6 Apparemment 
  []
 
 
-Overfull \hbox (4.92381pt too wide) in paragraph at lines 124--124
-[][][][]\T1/cmr/m/n/6 reprendre 
+Overfull \hbox (19.60356pt too wide) in paragraph at lines 166--166
+[][][][]\T1/cmr/m/n/6 Apparemment 
  []
 
 
-Overfull \hbox (4.92381pt too wide) in paragraph at lines 124--124
-[][][][]\T1/cmr/m/n/6 reprendre 
+Overfull \hbox (19.60356pt too wide) in paragraph at lines 166--166
+[][][][]\T1/cmr/m/n/6 Apparemment 
  []
 
 
-Overfull \hbox (4.92381pt too wide) in paragraph at lines 124--124
-[][][][]\T1/cmr/m/n/6 reprendre 
+Overfull \hbox (19.60356pt too wide) in paragraph at lines 166--166
+[][][][]\T1/cmr/m/n/6 Apparemment 
  []
 
-[5]
-LaTeX Font Info:    Try loading font information for T1+cmtt on input line 145.
+
+Overfull \hbox (7.47878pt too wide) in paragraph at lines 177--177
+\T1/cmr/m/n/6 controle ?)  
+ []
+
+
+Overfull \hbox (7.47878pt too wide) in paragraph at lines 177--177
+\T1/cmr/m/n/6 controle ?)  
+ []
+
+
+Overfull \hbox (7.47878pt too wide) in paragraph at lines 177--177
+\T1/cmr/m/n/6 controle ?)  
+ []
+
+
+Overfull \hbox (7.47878pt too wide) in paragraph at lines 177--177
+\T1/cmr/m/n/6 controle ?)  
+ []
+
+[6]
+LaTeX Font Info:    Try loading font information for T1+cmtt on input line 229.
 
  (/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 2014/09/29 v2.5h Standard LaTeX font definitions
-) [6] [7]
+) [7] [8]
 (./Report.aux) ) 
 Here is how much of TeX's memory you used:
- 24379 strings out of 493029
- 493475 string characters out of 6136234
- 489627 words of memory out of 5000000
- 27539 multiletter control sequences out of 15000+600000
+ 24395 strings out of 493029
+ 493845 string characters out of 6136234
+ 494918 words of memory out of 5000000
+ 27555 multiletter control sequences out of 15000+600000
  20347 words of font info for 53 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  62i,9n,76p,10428b,715s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1378,10 +1398,10 @@ ype1/public/cm-super/sfcc2074.pfb></usr/share/texmf/fonts/type1/public/cm-super
 share/texmf/fonts/type1/public/cm-super/sfrm1440.pfb></usr/share/texmf/fonts/ty
 pe1/public/cm-super/sfti1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/
 sfti1728.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1200.pfb>
-Output written on Report.pdf (8 pages, 1300250 bytes).
+Output written on Report.pdf (9 pages, 1311907 bytes).
 PDF statistics:
- 84 PDF objects out of 1000 (max. 8388607)
- 60 compressed objects within 1 object stream
+ 87 PDF objects out of 1000 (max. 8388607)
+ 62 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  18 words of extra memory for PDF output out of 10000 (max. 10000000)
 

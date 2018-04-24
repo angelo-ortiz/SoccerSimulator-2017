@@ -111,7 +111,76 @@ joueur que l'on appelle {\itshape Fonceur}. Au tout d\'ebut du
 projet, il faisait tout au maximum : il doit 
 s'approcher de la balle \`a toute vitesse lorsqu'il ne la contr\^ole pas et il 
 frappe avec toute sa puissance dans l'autre cas. On a d\'ecid\'e de garder le 
-nom
+m\^eme nom, m\^eme si son comportement diff\`ere. En effet, \`a pr\'esent il 
+avance avec la balle de petites distances et lorsqu'un adversaire lui fait 
+opposition il essaie de le dribbler ; il frappe vers la cage adverse s'il se 
+trouve dans la surface de r\'eparation. 
+
+\section*{Deux joueurs}
+Cette cat\'egorie a \'et\'e celle sur laquelle on a consacr\'e la plupart du 
+projet. On compte trois joueurs fonctionnels que l'on appelle 
+{\itshape Attaquant}, {\itshape Gardien} et {\itshape D\'efenseur}. 
+
+\subsubsection*{Attaquant}
+Il a une vocation plut\^ot offensive. Il se comporte diff\'eremment selon 
+s'il contr\^ole la balle ou pas. Dans la premi\`ere situation, il essaie 
+syst\'ematiquement d'avancer sur le terrain avec la balle et de faire un tir 
+vers la cage d\`es qu'il se trouve dans la surface de r\'eparation adverse. 
+Cependant, s'il rencontre un adversaire lui bloquant le chemin, il essaie de 
+faire une passe vers son co\'equipier s'il est sans marquage, il dribble le 
+joueur sinon. Lorsqu'il se trouve sans le contr\^ole de la balle ...
+
+\subsubsection*{Gardien}
+Ce joueur se comporte exactement pareil que l'attaquant lorsqu'il s'agit 
+d'attaquer. En revanche, en situation d\'efensive, il reste \`a une 
+distance de sa cage lorsque l'\'equipe adverse contr\^ole la balle et essaie 
+d'intercepter la balle lorsque le porteur du ballon se trouve dans sa surface 
+de r\'eparation. S'il voit que son co\'equipier va bient\^ot contr\^oler la 
+balle ou il en a d\'ej\`a le contr\^ole, il monte dans le terrain pour lui 
+proposer une possibilit\'e de passe.
+
+\subsection*{D\'efenseur}
+Le d\'efenseur n'a par contre qu'une vocation d\'efensive. En effet, s'il a la 
+balle, il s'en d\'efait le plus rapidement possible soit \`a l'aide d'une passe 
+vers son co\'equipier si d\'emarqu\'e, soit via un d\'egagement le moins 
+risqu\'e possible. Quant \`a son effort d\'efensif, il demeure \`a une certaine 
+distance radial \`a partir de sa cage et s'approche de la balle en vu d'une 
+interception s'il en suffisamment proche.
+
+\section*{Quatre joueurs}
+Il s'agit de la cat\'egorie que l'on a trouv\'e la plus int\'eressante en 
+raison de la difficult\'e de la gestion des espaces et la r\'epartition des 
+fonctions. Tout comme pour la cat\'egorie pr\'ecedente, on compte trois 
+joueurs fonctionnels que l'on rep\`ere d'ailleurs par les m\^emes noms. 
+
+\subsubsection*{Attaquant}
+Il y a deux diff\'erences en son comportement par rapport \`a son pair 
+de la cat\'egorie ci-dessus et celles-ci concernent toutes les deux la 
+situation o\`u il se trouve dans sa surface de r\'eparation. La premi\`ere fait 
+r\'ef\'erence \`a la r\'ecup\'eration de la balle : il ne se 
+pr\'ecipite plus et se comporte tel qu'il le fait dans le milieu du terrain. La 
+deuxi\`eme correspond \`a l'effort de marquer les adversaires sans 
+marquage.
+
+\subsubsection*{Gardien}
+\todo{Apparemment c'est le m\^eme gardien qu'en 2v2}
+Ce joueur se comporte exactement pareil que l'attaquant lorsqu'il s'agit 
+d'attaquer. En revanche, en situation d\'efensive, il reste \`a une 
+distance de sa cage lorsque l'\'equipe adverse contr\^ole la balle et essaie 
+d'intercepter la balle lorsque le porteur du ballon se trouve dans sa surface 
+de r\'eparation. S'il voit que son co\'equipier va bient\^ot contr\^oler la 
+balle ou il en a d\'ej\`a le contr\^ole, il monte dans le terrain pour lui 
+proposer une possibilit\'e de passe.
+
+\subsection*{D\'efenseur}
+\todo{plus d'interception s'il y a un co\'equipier plus proche de la balle que 
+lui (sans la balle) (quid de la sit ou il la controle ?)}
+Le d\'efenseur n'a par contre qu'une vocation d\'efensive. En effet, s'il a la 
+balle, il s'en d\'efait le plus rapidement possible soit \`a l'aide d'une passe 
+vers son co\'equipier si d\'emarqu\'e, soit via un d\'egagement le moins 
+risqu\'e possible. Quant \`a son effort d\'efensif, il demeure \`a une certaine 
+distance radial \`a partir de sa cage et s'approche de la balle en vu d'une 
+interception s'il en suffisamment proche.
 
 \newpage
 
@@ -121,7 +190,30 @@ appris tout au long du semestre pour l'am\'elioration des strat\'egies
 initialement propos\'ees.
 
 \section{Recherche en grille}
-...
+La premi\`ere m\'ethode d'optimisation pre\'esent\'ee en cours a \'et\'e la 
+recherche en grille. Celle-ci est utilis\'ee pour l'optimisation d'une 
+action.
+
+Tout d'abord, on doit d\'efinir l'action \`a optimiser et le crit\`ere 
+d'optimalit\'e, et rep\'erer les param\`etres associ\'es. Puis on 
+obtient un ensemble de valeurs pour chaque param\`etre. 
+Pour les param\`etres discrets, il suffit de prendre toutes les valeurs 
+possibles, alors que pour les param\`etres continus il faudra faire en amont 
+une discr\'etisation, i.e.\ on divise l'intervalle d\'elimit\'e par des bornes 
+d\'efinies selon un pas de pr\'ecision. On compte ainsi des vecteurs dont les 
+coordonn\'ees correspondent chacune \`a un param\`etre. On fait ensuite une 
+recherche exhaustive sur tous les vecteurs obtenus : on teste chaque vecteur 
+sous diff\'erents conditions environnementales et on moyenne les \'evaluations 
+ du crit\`ere dans lesdites conditions. Finalement, on prend la valeur optimale 
+et son vecteur associ\'e.
+
+Il est important de remarquer que la plupart de nos param\`etres sont continus. 
+Pour obtenir des valeurs plus pr\'ecises et un meilleur comportement, on a 
+besoin d'un pas de discr\'etisation tr\`es petit. Ainsi, on r\'ealise qu'\`a 
+partir d'un ensemble de param\`etres \`a optimiser en nombre de trois le 
+temps d'ex\'ecution explose tr\`es rapidement le temps pour obtenir les 
+r\'esultats chech\'es.
+
 
 \section{Algorithmes g\'en\'etiques}
 
