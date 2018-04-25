@@ -7,7 +7,6 @@
 \usepackage{amssymb}
 \usepackage[pdftex]{graphicx}
 \usepackage{comment}
-\usepackage{siunitx}
 \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
 \usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
 \author{Angelo Ortiz}
@@ -110,7 +109,7 @@ Pour l'\'equipe compos\'ee uniquement d'un joueur, on a d\'evelopp\'e un seul
 joueur que l'on appelle {\itshape Fonceur}. Au tout d\'ebut du 
 projet, il faisait tout au maximum : il doit 
 s'approcher de la balle \`a toute vitesse lorsqu'il ne la contr\^ole pas et il 
-frappe avec toute sa puissance dans l'autre cas. On a d\'ecid\'e de garder le 
+frappe avec toute sa puissance dans le cas contraire. On a d\'ecid\'e de garder le 
 m\^eme nom, m\^eme si son comportement diff\`ere. En effet, \`a pr\'esent il 
 avance avec la balle de petites distances et lorsqu'un adversaire lui fait 
 opposition il essaie de le dribbler ; il frappe vers la cage adverse s'il se 
@@ -121,7 +120,7 @@ Cette cat\'egorie a \'et\'e celle sur laquelle on a consacr\'e la plupart du
 projet. On compte trois joueurs fonctionnels que l'on appelle 
 {\itshape Attaquant}, {\itshape Gardien} et {\itshape D\'efenseur}. 
 
-\subsubsection*{Attaquant}
+\subsection*{Attaquant}
 Il a une vocation plut\^ot offensive. Il se comporte diff\'eremment selon 
 s'il contr\^ole la balle ou pas. Dans la premi\`ere situation, il essaie 
 syst\'ematiquement d'avancer sur le terrain avec la balle et de faire un tir 
@@ -130,7 +129,7 @@ Cependant, s'il rencontre un adversaire lui bloquant le chemin, il essaie de
 faire une passe vers son co\'equipier s'il est sans marquage, il dribble le 
 joueur sinon. Lorsqu'il se trouve sans le contr\^ole de la balle ...
 
-\subsubsection*{Gardien}
+\subsection*{Gardien}
 Ce joueur se comporte exactement pareil que l'attaquant lorsqu'il s'agit 
 d'attaquer. En revanche, en situation d\'efensive, il reste \`a une 
 distance de sa cage lorsque l'\'equipe adverse contr\^ole la balle et essaie 
@@ -142,7 +141,7 @@ proposer une possibilit\'e de passe.
 \subsection*{D\'efenseur}
 Le d\'efenseur n'a par contre qu'une vocation d\'efensive. En effet, s'il a la 
 balle, il s'en d\'efait le plus rapidement possible soit \`a l'aide d'une passe 
-vers son co\'equipier si d\'emarqu\'e, soit via un d\'egagement le moins 
+vers son co\'equipier si d\'emarqu\'e, soit via le d\'egagement le moins 
 risqu\'e possible. Quant \`a son effort d\'efensif, il demeure \`a une certaine 
 distance radial \`a partir de sa cage et s'approche de la balle en vu d'une 
 interception s'il en suffisamment proche.
@@ -153,7 +152,7 @@ raison de la difficult\'e de la gestion des espaces et la r\'epartition des
 fonctions. Tout comme pour la cat\'egorie pr\'ecedente, on compte trois 
 joueurs fonctionnels que l'on rep\`ere d'ailleurs par les m\^emes noms. 
 
-\subsubsection*{Attaquant}
+\subsection*{Attaquant}
 Il y a deux diff\'erences en son comportement par rapport \`a son pair 
 de la cat\'egorie ci-dessus et celles-ci concernent toutes les deux la 
 situation o\`u il se trouve dans sa surface de r\'eparation. La premi\`ere fait 
@@ -162,25 +161,11 @@ pr\'ecipite plus et se comporte tel qu'il le fait dans le milieu du terrain. La
 deuxi\`eme correspond \`a l'effort de marquer les adversaires sans 
 marquage.
 
-\subsubsection*{Gardien}
-\todo{Apparemment c'est le m\^eme gardien qu'en 2v2}
-Ce joueur se comporte exactement pareil que l'attaquant lorsqu'il s'agit 
-d'attaquer. En revanche, en situation d\'efensive, il reste \`a une 
-distance de sa cage lorsque l'\'equipe adverse contr\^ole la balle et essaie 
-d'intercepter la balle lorsque le porteur du ballon se trouve dans sa surface 
-de r\'eparation. S'il voit que son co\'equipier va bient\^ot contr\^oler la 
-balle ou il en a d\'ej\`a le contr\^ole, il monte dans le terrain pour lui 
-proposer une possibilit\'e de passe.
+\subsection*{Gardien}
+Ce joueur combine le comportement de son pair de la cat\'egorie ci-dessus et de l'attaquant de cette cat\'egorie. En effet, il suit les m\^emes indications que l'attaquant lorsqu'il contr\^ole et r\'ealise les m\^emes mouvements sans ballon que le d\'efenseur de l'\'equipe \`a deux joueurs.
 
 \subsection*{D\'efenseur}
-\todo{plus d'interception s'il y a un co\'equipier plus proche de la balle que 
-lui (sans la balle) (quid de la sit ou il la controle ?)}
-Le d\'efenseur n'a par contre qu'une vocation d\'efensive. En effet, s'il a la 
-balle, il s'en d\'efait le plus rapidement possible soit \`a l'aide d'une passe 
-vers son co\'equipier si d\'emarqu\'e, soit via un d\'egagement le moins 
-risqu\'e possible. Quant \`a son effort d\'efensif, il demeure \`a une certaine 
-distance radial \`a partir de sa cage et s'approche de la balle en vu d'une 
-interception s'il en suffisamment proche.
+Ce d\'efenseur prend les m\^emes d\'ecisions que celui de l'\'equipe \`a deux joueurs, \`a l'exception de sa prise de risque lors d'une interception. Effectivement, si un co\'equipier se trouve dans une meilleure position pour intercepter la balle, i.e.\ il en est plus proche que le d\'efenseur, celui-ci continue de positionner radialement \`a une certaine distance de sa cage.
 
 \newpage
 
