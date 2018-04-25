@@ -47,8 +47,14 @@ L’objectif de ce travail a \'et\'e d'apprendre \`a bien mener un projet
 collaboratif long sur un nouvel environnement de d\'eveloppement, \`a savoir 
 Python.
 \section*{Aper\c{c}u}
-Voici un aper\c{c}u du jeu...
-...
+Voici un aper\c{c}u du simulateur de football lors d'une partie de notre 
+\'equipe {\itshape ChPerFusion} en rouge face \`a l'\'equipe d'un de nos 
+camarades de classe.
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{apercu.png}\par%\vspace{1cm}
+\end{center}
+
 \section*{Arborescence}
 Le projet a \'et\'e organis\'e en un module {\bfseries ia} dirigeant le 
 comportement de nos joueurs et en divers fichiers de test.
@@ -104,7 +110,7 @@ Compte tenu de la taille du terrain de jeu, le nombre maximum de joueurs par
 \'equipe est limit\'e \`a quatre. Ainsi, il y a trois cat\'egories de matches 
 selon le nombre de joueurs par \'equipe : un, deux ou quatre.
 
-\section*{Un joueur}
+\section{Un joueur}
 Pour l'\'equipe compos\'ee uniquement d'un joueur, on a d\'evelopp\'e un seul 
 joueur que l'on appelle {\itshape Fonceur}. Au tout d\'ebut du 
 projet, il faisait tout au maximum : il doit 
@@ -115,7 +121,7 @@ avance avec la balle de petites distances et lorsqu'un adversaire lui fait
 opposition il essaie de le dribbler ; il frappe vers la cage adverse s'il se 
 trouve dans la surface de r\'eparation. 
 
-\section*{Deux joueurs}
+\section{Deux joueurs}
 Cette cat\'egorie a \'et\'e celle sur laquelle on a consacr\'e la plupart du 
 projet. On compte trois joueurs fonctionnels que l'on appelle 
 {\itshape Attaquant}, {\itshape Gardien} et {\itshape D\'efenseur}. 
@@ -146,7 +152,7 @@ risqu\'e possible. Quant \`a son effort d\'efensif, il demeure \`a une certaine
 distance radial \`a partir de sa cage et s'approche de la balle en vu d'une 
 interception s'il en suffisamment proche.
 
-\section*{Quatre joueurs}
+\section{Quatre joueurs}
 Il s'agit de la cat\'egorie que l'on a trouv\'e la plus int\'eressante en 
 raison de la difficult\'e de la gestion des espaces et la r\'epartition des 
 fonctions. Tout comme pour la cat\'egorie pr\'ecedente, on compte trois 
@@ -162,10 +168,17 @@ deuxi\`eme correspond \`a l'effort de marquer les adversaires sans
 marquage.
 
 \subsection*{Gardien}
-Ce joueur combine le comportement de son pair de la cat\'egorie ci-dessus et de l'attaquant de cette cat\'egorie. En effet, il suit les m\^emes indications que l'attaquant lorsqu'il contr\^ole et r\'ealise les m\^emes mouvements sans ballon que le d\'efenseur de l'\'equipe \`a deux joueurs.
+Ce joueur combine le comportement de son pair de la cat\'egorie ci-dessus et de 
+l'attaquant de cette cat\'egorie. En effet, il suit les m\^emes indications que 
+l'attaquant lorsqu'il contr\^ole et r\'ealise les m\^emes mouvements sans ballon 
+que le d\'efenseur de l'\'equipe \`a deux joueurs.
 
 \subsection*{D\'efenseur}
-Ce d\'efenseur prend les m\^emes d\'ecisions que celui de l'\'equipe \`a deux joueurs, \`a l'exception de sa prise de risque lors d'une interception. Effectivement, si un co\'equipier se trouve dans une meilleure position pour intercepter la balle, i.e.\ il en est plus proche que le d\'efenseur, celui-ci continue de positionner radialement \`a une certaine distance de sa cage.
+Ce d\'efenseur prend les m\^emes d\'ecisions que celui de l'\'equipe \`a 
+deux joueurs, \`a l'exception de sa prise de risque lors d'une interception. 
+Effectivement, si un co\'equipier se trouve dans une meilleure position pour 
+intercepter la balle, i.e.\ il en est plus proche que le d\'efenseur, celui-ci 
+continue de positionner radialement \`a une certaine distance de sa cage.
 
 \newpage
 
@@ -210,7 +223,7 @@ la notion de s\'election naturelle est le m\'ecanisme permettant de choisir des
 solutions potentielles de plus en plus meilleures.
 
 La toute premi\`ere chose \`a faire est la d\'efinition de la fonction 
-$f(x): \mathbb{R}^n \to \mathbb{E}$ \`a optimiser, o\`u $n$ est le nombre de 
+$f: \mathbb{R}^n \to \mathbb{E}$ \`a optimiser, o\`u $n$ est le nombre de 
 param\`etres concern\'es. Un \'el\'ement $x=(x_1,\dotsc,x_n) \in \mathbb{R}^n$ 
 est appel\'e {\itshape candidat} ou {\itshape chromosome}, et chacune de ses 
 coordonn\'ees $x_i$ avec $i=1,\dotsc,n$, appel\'ee {\itshape propri\'et\'e} 
@@ -271,7 +284,25 @@ lors du projet.
 Il s'agit d'une technique d'apprentissage supervis\'e.
 
 \subsection*{Q-learning}
-C'est un algorithme d'apprentissage par renforcement.
+C'est un algorithme d'apprentissage par renforcement. Le principe est le 
+suivant : on apprend une {\itshape politique} comportementale qui optimise 
+l'esp\'erance des {\itshape r\'ecompenses}. Cette politique est tout simplement 
+une fonction qui associe une action \`a entreprendre \`a un \'etat de jeu 
+donn\'e.
+
+Cet algorithme r\'epose sur un ensemble d'\'etats $S$, un ensemble d'actions 
+$A$, et une fonction $Q: S \times A \to \mathbb{R}$, appel\'ee politique, 
+calculant la valeur d'une paire \'etat-action. Il utilise la notion d'{\itshape 
+\'episode} que l'on associe \`a un match dans le cadre du projet.
+
+La premi\`ere phase consiste \`a initialiser $Q$ \`a une valeur fixe 
+arbitraire, ici $0$. La deuxi\`eme phase concerne un \'episode, ou encore un 
+match, et est r\'ep\'et\'ee autant de fois qu'il y a d'\'episodes. On commence 
+par choisir un \'etat initial $s_0$, sauf qu'il est toujours le m\^eme pour un 
+match de football : ceci correspond au coup d'envoi. Puis on choisit une action 
+$a_t$ selon la politique $Q$ et observe la r\'ecompense associ\'ee \`a cette 
+paire. Cette action g\'en\`ere un nouvel \'etat $s_{t+1}$.
+\todo{Formule de Q}
 
 \newpage
 
