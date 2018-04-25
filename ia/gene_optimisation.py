@@ -160,7 +160,7 @@ class dictParams(object):
         for p in parameters:
             print(p, ":", self.params[p])
         print("------------------------")
-        print("bilan :", self.res)
+        print("summary :", self.res)
         print("points : ", self.pts)
         print("fg : ", self.fg)
         print("ag : ", self.ag)
