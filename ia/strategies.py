@@ -216,6 +216,7 @@ class CBNaif4v4Strategy(Strategy):
         self.dico['controleAttaque'] = self.dico['controleMT']
         self.dico['rayPressing'] = 18.
         self.dico['distSortie'] = 50.
+        self.dico['raySortie'] = 35.
     def compute_strategy(self, state, id_team, id_player):
         me = StateFoot(state, id_team, id_player, 4)
         if has_ball_control(me):
