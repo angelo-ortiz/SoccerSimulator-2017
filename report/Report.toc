@@ -1,0 +1,9 @@
+\select@language {french}
+\contentsline {part}{Introduction}{3}
+\contentsline {part}{I\hspace {1em}Architecture logicielle}{4}
+\contentsline {part}{II\hspace {1em}Strat\'egies}{5}
+\contentsline {part}{III\hspace {1em}M\'ethodes d'optimisation}{7}
+\contentsline {section}{\numberline {1}Recherche en grille}{7}
+\contentsline {section}{\numberline {2}Algorithmes g\'en\'etiques}{7}
+\contentsline {section}{\numberline {3}Apprentissage automatique}{8}
+\contentsline {part}{Conclusion}{9}

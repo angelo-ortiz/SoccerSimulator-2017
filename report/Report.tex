@@ -1,0 +1,297 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[pdftex]{graphicx}
+\usepackage{comment}
+\usepackage{siunitx}
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\author{Angelo Ortiz}
+\title{Rapport du Projet}
+
+\begin{document}
+\begin{titlepage}
+  \centering
+  \includegraphics[width=0.30\textwidth]{logo.jpg}\par\vspace{1cm}
+  {\scshape\LARGE Sorbonne Universit\'e\par}
+  \vspace{1cm}
+  {\scshape\Large 2I013 : Projet (application)\par}
+  \vspace{1.5cm}
+  {\Large \bfseries Sujet :\par}
+  {\huge\bfseries IA Football\par}
+  \vspace{2cm}
+  {\Large\itshape Fangzhou Ye\par}
+  {\Large\itshape Angelo Ortiz\par}
+  \vfill
+  
+  % Bottom of the page
+  {\large Licence d'Informatique\par}
+  {\large Ann\'ee 2017/2018\par}
+\end{titlepage}
+ 
+%\newpage
+\tableofcontents
+  
+\newpage
+  
+\part*{Introduction}
+\section*{Pr\'esentation}
+Le projet a consist\'e en le d\'eveloppement d'intelligences artificielles de 
+joueurs de football. Le simulateur du jeu \'etant d\'ej\`a fourni, notre 
+travail a \'et\'e d'impl\'ementer des strat\'egies de jeu pour mieux r\'eussir 
+les matches.
+L’objectif de ce travail a \'et\'e d'apprendre \`a bien mener un projet 
+collaboratif long sur un nouvel environnement de d\'eveloppement, \`a savoir 
+Python.
+\section*{Aper\c{c}u}
+Voici un aper\c{c}u du jeu...
+...
+\section*{Arborescence}
+Le projet a \'et\'e organis\'e en un module {\bfseries ia} dirigeant le 
+comportement de nos joueurs et en divers fichiers de test.
+\subsubsection*{ia/tools}
+Ce fichier contient une classe repr\'esentant l'\'etat du jeu qui comporte des 
+m\'ethodes nous facilitant l'acc\`es aux diverses carat\'eristiques de cet 
+\'etat, ainsi que plusieurs fonctions utilitaires.
+
+\subsubsection*{ia/conditions}
+Comme le nom l'indique, ce fichier a \'et\'e d\'edi\'e aux diverses conditions 
+qui d\'eclenchent les diff\'erents types de comportement.
+
+\subsubsection*{ia/actions}
+Ce fichier comporte les actions de base que l'on peut r\'ealiser \`a chaque 
+instant du jeu.
+
+\subsubsection*{ia/behaviour}
+En ce qui concerne ce fichier, ici se trouvent les actions complexes, i.e.\ 
+compos\'ees de plusieurs actions de base. En effet, pour une certaine phase de 
+jeu, un joueur peut prendre diff\'erentes d\'ecisions.
+
+\subsubsection*{ia/strategies}
+C'est dans ce fichier que les strat\'egies ont \'et\'e r\'eunies. Ces 
+strat\'egies dirigent le comportement des joueurs tout au long d'un 
+match.
+
+\subsubsection*{ia/gene\_optimisation}
+Ce fichier contient les classes n\'ecessaires pour la mise en \oe uvre d'une 
+impl\'ementation des algorithmes g\'en\'etiques.
+
+\subsubsection*{ia/gs\_optimisation}
+On retrouve ici le code utilis\'e pour suivre la m\'ethode de recherche en 
+grille.
+
+\subsubsection*{ia/}
+init ? ML\_strats ? DT\_strats ? 
+\todo{Il reste encore des fichiers}
+
+\addcontentsline{toc}{part}{Introduction}
+\newpage
+
+\part{Architecture logicielle} %et demarche
+Dans cette premi\`ere partie, on vous expliquera les choix faits 
+concernant l'architecture logicielle.
+
+\newpage
+
+\part{Strat\'egies}
+Dans cette deuxi\`eme partie, on vous d\'etaille le comportement de nos 
+diff\'erents joueurs.
+
+Compte tenu de la taille du terrain de jeu, le nombre maximum de joueurs par 
+\'equipe est limit\'e \`a quatre. Ainsi, il y a trois cat\'egories de matches 
+selon le nombre de joueurs par \'equipe : un, deux ou quatre.
+
+\section*{Un joueur}
+Pour l'\'equipe compos\'ee uniquement d'un joueur, on a d\'evelopp\'e un seul 
+joueur que l'on appelle {\itshape Fonceur}. Au tout d\'ebut du 
+projet, il faisait tout au maximum : il doit 
+s'approcher de la balle \`a toute vitesse lorsqu'il ne la contr\^ole pas et il 
+frappe avec toute sa puissance dans l'autre cas. On a d\'ecid\'e de garder le 
+m\^eme nom, m\^eme si son comportement diff\`ere. En effet, \`a pr\'esent il 
+avance avec la balle de petites distances et lorsqu'un adversaire lui fait 
+opposition il essaie de le dribbler ; il frappe vers la cage adverse s'il se 
+trouve dans la surface de r\'eparation. 
+
+\section*{Deux joueurs}
+Cette cat\'egorie a \'et\'e celle sur laquelle on a consacr\'e la plupart du 
+projet. On compte trois joueurs fonctionnels que l'on appelle 
+{\itshape Attaquant}, {\itshape Gardien} et {\itshape D\'efenseur}. 
+
+\subsubsection*{Attaquant}
+Il a une vocation plut\^ot offensive. Il se comporte diff\'eremment selon 
+s'il contr\^ole la balle ou pas. Dans la premi\`ere situation, il essaie 
+syst\'ematiquement d'avancer sur le terrain avec la balle et de faire un tir 
+vers la cage d\`es qu'il se trouve dans la surface de r\'eparation adverse. 
+Cependant, s'il rencontre un adversaire lui bloquant le chemin, il essaie de 
+faire une passe vers son co\'equipier s'il est sans marquage, il dribble le 
+joueur sinon. Lorsqu'il se trouve sans le contr\^ole de la balle ...
+
+\subsubsection*{Gardien}
+Ce joueur se comporte exactement pareil que l'attaquant lorsqu'il s'agit 
+d'attaquer. En revanche, en situation d\'efensive, il reste \`a une 
+distance de sa cage lorsque l'\'equipe adverse contr\^ole la balle et essaie 
+d'intercepter la balle lorsque le porteur du ballon se trouve dans sa surface 
+de r\'eparation. S'il voit que son co\'equipier va bient\^ot contr\^oler la 
+balle ou il en a d\'ej\`a le contr\^ole, il monte dans le terrain pour lui 
+proposer une possibilit\'e de passe.
+
+\subsection*{D\'efenseur}
+Le d\'efenseur n'a par contre qu'une vocation d\'efensive. En effet, s'il a la 
+balle, il s'en d\'efait le plus rapidement possible soit \`a l'aide d'une passe 
+vers son co\'equipier si d\'emarqu\'e, soit via un d\'egagement le moins 
+risqu\'e possible. Quant \`a son effort d\'efensif, il demeure \`a une certaine 
+distance radial \`a partir de sa cage et s'approche de la balle en vu d'une 
+interception s'il en suffisamment proche.
+
+\section*{Quatre joueurs}
+Il s'agit de la cat\'egorie que l'on a trouv\'e la plus int\'eressante en 
+raison de la difficult\'e de la gestion des espaces et la r\'epartition des 
+fonctions. Tout comme pour la cat\'egorie pr\'ecedente, on compte trois 
+joueurs fonctionnels que l'on rep\`ere d'ailleurs par les m\^emes noms. 
+
+\subsubsection*{Attaquant}
+Il y a deux diff\'erences en son comportement par rapport \`a son pair 
+de la cat\'egorie ci-dessus et celles-ci concernent toutes les deux la 
+situation o\`u il se trouve dans sa surface de r\'eparation. La premi\`ere fait 
+r\'ef\'erence \`a la r\'ecup\'eration de la balle : il ne se 
+pr\'ecipite plus et se comporte tel qu'il le fait dans le milieu du terrain. La 
+deuxi\`eme correspond \`a l'effort de marquer les adversaires sans 
+marquage.
+
+\subsubsection*{Gardien}
+\todo{Apparemment c'est le m\^eme gardien qu'en 2v2}
+Ce joueur se comporte exactement pareil que l'attaquant lorsqu'il s'agit 
+d'attaquer. En revanche, en situation d\'efensive, il reste \`a une 
+distance de sa cage lorsque l'\'equipe adverse contr\^ole la balle et essaie 
+d'intercepter la balle lorsque le porteur du ballon se trouve dans sa surface 
+de r\'eparation. S'il voit que son co\'equipier va bient\^ot contr\^oler la 
+balle ou il en a d\'ej\`a le contr\^ole, il monte dans le terrain pour lui 
+proposer une possibilit\'e de passe.
+
+\subsection*{D\'efenseur}
+\todo{plus d'interception s'il y a un co\'equipier plus proche de la balle que 
+lui (sans la balle) (quid de la sit ou il la controle ?)}
+Le d\'efenseur n'a par contre qu'une vocation d\'efensive. En effet, s'il a la 
+balle, il s'en d\'efait le plus rapidement possible soit \`a l'aide d'une passe 
+vers son co\'equipier si d\'emarqu\'e, soit via un d\'egagement le moins 
+risqu\'e possible. Quant \`a son effort d\'efensif, il demeure \`a une certaine 
+distance radial \`a partir de sa cage et s'approche de la balle en vu d'une 
+interception s'il en suffisamment proche.
+
+\newpage
+
+\part{M\'ethodes d'optimisation}
+Dans cette troisi\`eme partie, on vous d\'etaille les diff\'erents algorithmes 
+appris tout au long du semestre pour l'am\'elioration des strat\'egies 
+initialement propos\'ees.
+
+\section{Recherche en grille}
+La premi\`ere m\'ethode d'optimisation pre\'esent\'ee en cours a \'et\'e la 
+recherche en grille. Celle-ci est utilis\'ee pour l'optimisation d'une 
+action.
+
+Tout d'abord, on doit d\'efinir l'action \`a optimiser et le crit\`ere 
+d'optimalit\'e, et rep\'erer les param\`etres associ\'es. Puis on 
+obtient un ensemble de valeurs pour chaque param\`etre. 
+Pour les param\`etres discrets, il suffit de prendre toutes les valeurs 
+possibles, alors que pour les param\`etres continus il faudra faire en amont 
+une discr\'etisation, i.e.\ on divise l'intervalle d\'elimit\'e par des bornes 
+d\'efinies selon un pas de pr\'ecision. On compte ainsi des vecteurs dont les 
+coordonn\'ees correspondent chacune \`a un param\`etre. On fait ensuite une 
+recherche exhaustive sur tous les vecteurs obtenus : on teste chaque vecteur 
+sous diff\'erents conditions environnementales et on moyenne les \'evaluations 
+ du crit\`ere dans lesdites conditions. Finalement, on prend la valeur optimale 
+et son vecteur associ\'e.
+
+Il est important de remarquer que la plupart de nos param\`etres sont continus. 
+Pour obtenir des valeurs plus pr\'ecises et un meilleur comportement, on a 
+besoin d'un pas de discr\'etisation tr\`es petit. Ainsi, on r\'ealise qu'une 
+augmentation du nombre de param\`etres \`a optimiser a une tr\`es forte 
+influence sur le temps d'ex\'ecution de l'algorithme mis en place. On en 
+d\'eduit que le minuscule gain relatif nombre de param\`etres--temps 
+d'ex\'ecution ne convient pas au moyen terme.
+
+\section{Algorithmes g\'en\'etiques}
+Dans un deuxi\`eme temps, on est pass\'es aux algorithmes g\'en\'etiques. On en 
+a mis en place une impl\'ementation pour optimiser les \'equipes compos\'ees 
+d'un ou deux joueurs.
+
+Cette classe d'algorithmes se base sur la th\'eorie de l'\'evolution. En effet, 
+la notion de s\'election naturelle est le m\'ecanisme permettant de choisir des 
+solutions potentielles de plus en plus meilleures.
+
+La toute premi\`ere chose \`a faire est la d\'efinition de la fonction 
+$f(x): \mathbb{R}^n \to \mathbb{E}$ \`a optimiser, o\`u $n$ est le nombre de 
+param\`etres concern\'es. Un \'el\'ement $x=(x_1,\dotsc,x_n) \in \mathbb{R}^n$ 
+est appel\'e {\itshape candidat} ou {\itshape chromosome}, et chacune de ses 
+coordonn\'ees $x_i$ avec $i=1,\dotsc,n$, appel\'ee {\itshape propri\'et\'e} 
+ou encore {\itshape g\`ene}, correspond \`a un param\`etre \`a optimiser. Elles 
+forment le {\itshape g\'enotype}.
+Autrement dit, un candidat correspond \`a une \'equipe d\'efinie par les valeurs
+de ses propri\'et\'es.
+
+Dans le cadre du projet, on a d\'efini $f(x)=(V,N,D,P,C)$ comme le 
+bilan apr\`es avoir disput\'e plusieurs matches avec les m\^emes valeurs des 
+param\`etres donn\'ees par $x$, i.e.\ le tuple compos\'e du 
+nombre de 
+victoires, matches nuls, d\'efaites, buts marqu\'es et buts encaiss\'es. La 
+relation d'ordre suit les r\`egles du classement d'un tournoi de football.
+
+Cette classe d'algorithmes comportent quatre \'etapes.
+
+\begin{enumerate}
+\item \underline{Initialisation :} Tout d'abord, il faut g\'en\'erer un 
+ensemble de candidats $\{x_1,\dotsc,x_m\}$. Le but est d'obtenir une population 
+initiale la plus diverse possible de sorte \`a pouvoir atteindre le plus de 
+maxima relatifs. C'est pourquoi cette premi\`ere g\'en\'eration est obtenue de 
+mani\`ere al\'eatoire.
+\item \underline{\'Evaluation :} Ensuite, on \'evalue la fonction en 
+chacun des candidats, i.e.\ on calcule $\{f(x_1),\dotsc,f(x_m)\}$.
+\item \underline{S\'election :} Suivant la notion de s\'election 
+naturelle, on ne conserve que les candidats avec les meilleurs r\'esultats. 
+Autrement dit, on dresse un classement des \'equipes associ\'ees aux candidats 
+et n'en garde qu'une partie.
+\item \underline{Reproduction :} Finalement, on attribue les places 
+libres aux candidats n\'es du brassage g\'en\'etique des candidats les 
+plus performants. Pour ce faire, on compte sur deux m\'ethodes, \`a savoir le 
+croisement et la mutation. \'Etant donn\'e deux parents, on commence par les 
+cloner en deux enfants. Puis on choisit une ligne de coupe divisant le 
+g\'enotype en deux parties. Ensuite, les enfants s'\'echangent une partie de 
+leur g\'enotype. Le croisement s'arr\^ete \`a ce stade-l\`a, tandis que la 
+mutation ajoute du bruit al\'eatoirement dans un g\`ene pour chacun 
+des nouveaux chromosomes. On a d\'ecid\'e de faire une petite modification \`a 
+cette \'etape-l\`a lors de l'impl\'ementation pour avoir plus de 
+diversification : une minorit\'e des places libres est attrribu\'ee \`a des 
+candidats g\'en\'er\'es al\'eatoirement.
+\end{enumerate}
+
+Cet algorithme \'etant it\'eratif, on recommence \`a la deuxi\`eme phase avec 
+la nouvelle g\'en\'eration. Au bout d'un nombre raisonnable d'it\'erations, on 
+se retrouve avec une g\'en\'eration compos\'ee de chromosomes tr\`es 
+proches des maxima relatifs. On finit donc l'algorthme par prendre le candidat 
+optimal de la derni\`ere population.  
+
+\section{Apprentissage automatique}
+Dans la derni\`ere partie du semestre, on s'est concentr\'e sur l'apprentissage 
+automatique. On nous a pr\'esent\'e les deux grandes familles 
+d'algorithmes d'apprentissage : supervis\'es et non supervis\'es, ainsi que 
+l'apprentissage par renforcement. Deux m\'ethodes ont \'et\'e impl\'ement\'ees 
+lors du projet.
+
+\subsection*{Arbres de d\'ecision}
+Il s'agit d'une technique d'apprentissage supervis\'e.
+
+\subsection*{Q-learning}
+C'est un algorithme d'apprentissage par renforcement.
+
+\newpage
+
+\part*{Conclusion}
+...
+\addcontentsline{toc}{part}{Conclusion}
+
+\end{document}
