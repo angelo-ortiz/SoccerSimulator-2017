@@ -209,22 +209,81 @@ et son vecteur associ\'e.
 
 Il est important de remarquer que la plupart de nos param\`etres sont continus. 
 Pour obtenir des valeurs plus pr\'ecises et un meilleur comportement, on a 
-besoin d'un pas de discr\'etisation tr\`es petit. Ainsi, on r\'ealise qu'\`a 
-partir d'un ensemble de param\`etres \`a optimiser en nombre de trois le 
-temps d'ex\'ecution explose tr\`es rapidement le temps pour obtenir les 
-r\'esultats chech\'es.
-
+besoin d'un pas de discr\'etisation tr\`es petit. Ainsi, on r\'ealise qu'une 
+augmentation du nombre de param\`etres \`a optimiser a une tr\`es forte 
+influence sur le temps d'ex\'ecution de l'algorithme mis en place. On en 
+d\'eduit que le minuscule gain relatif nombre de param\`etres--temps 
+d'ex\'ecution ne convient pas au moyen terme.
 
 \section{Algorithmes g\'en\'etiques}
+Dans un deuxi\`eme temps, on est pass\'es aux algorithmes g\'en\'etiques. On en 
+a mis en place une impl\'ementation pour optimiser les \'equipes compos\'ees 
+d'un ou deux joueurs.
 
-\section{Arbres de d\'ecision}
+Cette classe d'algorithmes se base sur la th\'eorie de l'\'evolution. En effet, 
+la notion de s\'election naturelle est le m\'ecanisme permettant de choisir des 
+solutions potentielles de plus en plus meilleures.
+
+La toute premi\`ere chose \`a faire est la d\'efinition de la fonction 
+$f(x): \mathbb{R}^n \to \mathbb{E}$ \`a optimiser, o\`u $n$ est le nombre de 
+param\`etres concern\'es. Un \'el\'ement $x=(x_1,\dotsc,x_n) \in \mathbb{R}^n$ 
+est appel\'e {\itshape candidat} ou {\itshape chromosome}, et chacune de ses 
+coordonn\'ees $x_i$ avec $i=1,\dotsc,n$, appel\'ee {\itshape propri\'et\'e} 
+ou encore {\itshape g\`ene}, correspond \`a un param\`etre \`a optimiser. Elles 
+forment le {\itshape g\'enotype}.
+Autrement dit, un candidat correspond \`a une \'equipe d\'efinie par les valeurs
+de ses propri\'et\'es.
+
+Dans le cadre du projet, on a d\'efini $f(x)=(V,N,D,P,C)$ comme le 
+bilan apr\`es avoir disput\'e plusieurs matches avec les m\^emes valeurs des 
+param\`etres donn\'ees par $x$, i.e.\ le tuple compos\'e du 
+nombre de 
+victoires, matches nuls, d\'efaites, buts marqu\'es et buts encaiss\'es. La 
+relation d'ordre suit les r\`egles du classement d'un tournoi de football.
+
+Cette classe d'algorithmes comportent quatre \'etapes.
+
+\begin{enumerate}
+\item \underline{Initialisation :} Tout d'abord, il faut g\'en\'erer un 
+ensemble de candidats $\{x_1,\dotsc,x_m\}$. Le but est d'obtenir une population 
+initiale la plus diverse possible de sorte \`a pouvoir atteindre le plus de 
+maxima relatifs. C'est pourquoi cette premi\`ere g\'en\'eration est obtenue de 
+mani\`ere al\'eatoire.
+\item \underline{\'Evaluation :} Ensuite, on \'evalue la fonction en 
+chacun des candidats, i.e.\ on calcule $\{f(x_1),\dotsc,f(x_m)\}$.
+\item \underline{S\'election :} Suivant la notion de s\'election 
+naturelle, on ne conserve que les candidats avec les meilleurs r\'esultats. 
+Autrement dit, on dresse un classement des \'equipes associ\'ees aux candidats 
+et n'en garde qu'une partie.
+\item \underline{Reproduction :} Finalement, on attribue les places 
+libres aux candidats n\'es du brassage g\'en\'etique des candidats les 
+plus performants. Pour ce faire, on compte sur deux m\'ethodes, \`a savoir le 
+croisement et la mutation. \'Etant donn\'e deux parents, on commence par les 
+cloner en deux enfants. Puis on choisit une ligne de coupe divisant le 
+g\'enotype en deux parties. Ensuite, les enfants s'\'echangent une partie de 
+leur g\'enotype. Le croisement s'arr\^ete \`a ce stade-l\`a, tandis que la 
+mutation ajoute du bruit al\'eatoirement dans un g\`ene pour chacun 
+des nouveaux chromosomes. On a d\'ecid\'e de faire une petite modification \`a 
+cette \'etape-l\`a lors de l'impl\'ementation pour avoir plus de 
+diversification : une minorit\'e des places libres est attrribu\'ee \`a des 
+candidats g\'en\'er\'es al\'eatoirement.
+\end{enumerate}
+
+Cet algorithme \'etant it\'eratif, on recommence \`a la deuxi\`eme phase avec 
+la nouvelle g\'en\'eration. Au bout d'un nombre raisonnable d'it\'erations, on 
 
 \section{Apprentissage automatique}
 Dans la derni\`ere partie du semestre, on s'est concentr\'e sur l'apprentissage 
-automatique. On nous a pr\'esent\'e les deux grandes classes 
+automatique. On nous a pr\'esent\'e les deux grandes familles 
 d'algorithmes d'apprentissage : supervis\'es et non supervis\'es, ainsi que 
-l'apprentissage par renforcement. En effet, ce dernier type d'apprentissage 
-impl\'ement\'e par l'algorithme de \texttt{Q-learning} a \'et\'e mise en place.
+l'apprentissage par renforcement. Deux m\'ethodes ont \'et\'e impl\'ement\'ees 
+lors du projet.
+
+\subsection*{Arbres de d\'ecision}
+Il s'agit d'une technique d'apprentissage supervis\'e.
+
+\subsection*{Q-learning}
+C'est un algorithme d'apprentissage par renforcement.
 
 \newpage
 
