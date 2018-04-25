@@ -55,23 +55,7 @@ def WithBallControl_1v1(state, dico):
         return goForwardsPASolo(state, dico)
     return goForwardsMFSolo(state, dico)
 
-def WithBallControl_2v2(state, dico):
-    """
-    """
-    if is_defensive_zone(state, dico['distDefZone']):
-        return goForwardsDef(state, dico)
-    if is_close_goal(state, dico['distAttaque']):
-        return goForwardsPA(state, dico)
-    return goForwardsMF(state, dico)
-
-def WithBallControl_4v4(state, dico):
-    """
-    """
-    if is_close_goal(state, dico['distAttaque']):
-        return goForwardsPA(state, dico)
-    return goForwardsMF(state, dico)
-
-def WithoutBallControl_ST_1v1(state, dico):
+def WithoutBallControl_1v1(state, dico):
     """TODO
     Quand le joueur n'a pas le controle sur
     la balle:
@@ -93,6 +77,32 @@ def WithoutBallControl_ST_1v1(state, dico):
     if must_intercept(state, dico['rayInter']):
         return tryInterception(state, dico)
     return cutDownAngle(state, dico['raySortie'], dico['rayInter'])
+
+def WithBallControl_2v2(state, dico):
+    """
+    Le comportement d'un joueur d'une
+    equipe a deux lorsqu'il controle
+    la balle depend fortement de sa
+    position sur le terrain : defense,
+    milieu et attaque.
+    """
+    if is_defensive_zone(state, dico['distDefZone']):
+        return goForwardsDef(state, dico)
+    if is_close_goal(state, dico['distAttaque']):
+        return goForwardsPA(state, dico)
+    return goForwardsMF(state, dico)
+
+def WithBallControl_4v4(state, dico):
+    """
+    Le comportement d'un joueur d'une
+    equipe a quatre lorsqu'il controle
+    la balle depend fortement de sa
+    position sur le terrain : milieu
+    et attaque.
+    """
+    if is_close_goal(state, dico['distAttaque']):
+        return goForwardsPA(state, dico)
+    return goForwardsMF(state, dico)
 
 def WithoutBallControl_ST_2v4(state, dico):
     """TODO
@@ -134,14 +144,12 @@ def WithoutBallControl_ST_2v4(state, dico):
         return loseMark(state, dico['rayPressing'], dico['distDemar'], dico['angleInter'])
     return cutDownAngle(state, dico['distShoot'], dico['rayInter'])
 
-
-
-def WithoutBallControl_GK_2v2(state, dico):
+def WithoutBallControl_GK_2v4(state, dico):
     if state.is_nearest_ball() or \
        (had_ball_control(state, dico['rayReprise'], dico['angleReprise']) and state.is_nearest_ball_my_team()):
         return tryInterception(state, dico)
     if is_close_goal(state, dico['distAttaque']) and \
-    ball_advances(state) and state.is_nearest_ball_my_team():
+       ball_advances(state) and state.is_nearest_ball_my_team():
         return tryInterception(state, dico)
     if must_advance(state, dico['distMontee']):
         return pushUp(state, dico['coeffPushUp'])
@@ -149,8 +157,19 @@ def WithoutBallControl_GK_2v2(state, dico):
         return tryInterception(state, dico)
     if state.distance_ball(state.my_goal) < 30.:
         return tryInterception(state, dico)
-    return cutDownAngle_def(state, dico['raySortie'], dico['rayInter'])
+    if state.numPlayers == 2:
+        raySortie = dico['raySortie']
+    else: # state.numPlayers == 4
+        raySortie = dico['distSortie']
+    return cutDownAngle_def(state, raySortie, dico['rayInter'])
 
+def WithBallControl_CBnaif(state, dico):
+    tm = free_teammate(state, dico['angleInter'])
+    if tm is not None and must_pass_ball(state, tm, dico['angleInter']) \
+       and not is_under_pressure(state, tm, dico['rayPressing']):
+        return passBall(state, tm, 2.*dico['powerPasse'], dico['thetaPasse'], dico['coeffPushUp']) + goToMyGoal(state)
+    return clear(state) + goToMyGoal(state)
+    
 def WithoutBallControl_CBnaif_2v2(state, dico):
     if state.is_nearest_ball():
         return tryInterception(state, dico)
@@ -161,28 +180,6 @@ def WithoutBallControl_CBnaif_2v2(state, dico):
         return tryInterception(state, dico)
     return cutDownAngle_def(state, dico['raySortie'], dico['rayInter'])
 
-def WithoutBallControl_GK_4v4(state, dico):
-    if state.is_nearest_ball() or \
-       (had_ball_control(state, dico['rayReprise'], dico['angleReprise']) and state.is_nearest_ball_my_team()):
-        return tryInterception(state, dico)
-    if is_close_goal(state, dico['distAttaque'])  and \
-       ball_advances(state) and state.is_nearest_ball_my_team():
-        return tryInterception(state, dico)
-    if must_advance(state, dico['distMontee']):
-        return pushUp(state, dico['coeffPushUp'])
-    if must_intercept(state, dico['rayInter']):
-        return tryInterception(state, dico)
-    if state.distance_ball(state.my_goal) < 30.:
-        return tryInterception(state, dico)
-    return cutDownAngle_def(state, dico['distSortie'], dico['rayInter'])
-
-def WithBallControl_CBnaif(state, dico):
-    tm = free_teammate(state, dico['angleInter'])
-    if tm is not None and must_pass_ball(state, tm, dico['angleInter']) \
-       and not is_under_pressure(state, tm, dico['rayPressing']):
-        return passBall(state, tm, 2.*dico['powerPasse'], dico['thetaPasse'], dico['coeffPushUp']) + goToMyGoal(state)
-    return clear(state) + goToMyGoal(state)
-    
 def WithoutBallControl_CBnaif_4v4(state, dico):
     if state.is_nearest_ball():
         return tryInterception(state, dico)
@@ -190,4 +187,5 @@ def WithoutBallControl_CBnaif_4v4(state, dico):
         return tryInterception(state, dico)
     if state.distance_ball(state.my_goal) < dico['distDefZone']:
         return tryInterception(state, dico)
+    # version _gk ???
     return cutDownAngle_def(state, dico['raySortie'], dico['rayInter'])

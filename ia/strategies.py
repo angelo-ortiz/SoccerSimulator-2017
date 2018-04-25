@@ -101,7 +101,7 @@ class Gardien2v2Strategy(Strategy):
         if has_ball_control(me):
             self.dico['n'] = self.dico['tempsI']
             return WithBallControl_2v2(me, self.dico)
-        return WithoutBallControl_GK_2v2(me, self.dico)
+        return WithoutBallControl_GK_2v4(me, self.dico)
 
 
 
@@ -194,7 +194,7 @@ class Gardien4v4Strategy(Strategy):
         if has_ball_control(me):
             self.dico['n'] = self.dico['tempsI']
             return WithBallControl_4v4(me, self.dico)
-        return WithoutBallControl_GK_4v4(me, self.dico)
+        return WithoutBallControl_GK_2v4(me, self.dico)
 
 
 
