@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from soccersimulator import Strategy, Vector2D
+from soccersimulator import Strategy
 from .tools import StateFoot, get_random_strategy
 from .conditions import must_intercept, has_ball_control, is_defensive_zone, \
-    opponent_approaches_my_goal, free_teammate, is_kick_off, must_pass_ball
-from .actions import beh_fonceur, shoot, shiftAside, clearSolo, goToBall, \
-    goToMyGoal, tryInterception, cutDownAngle, passBall
+    opponent_approaches_my_goal, is_kick_off
+from .actions import beh_fonceur, shoot, shiftAside, goToBall, \
+    goToMyGoal, tryInterception, cutDownAngle
 from .behaviour import *
 import pickle
 
@@ -36,7 +36,7 @@ class RandomStrategy(Strategy):
 
 class Fonceur1v1Strategy(Strategy):
     def __init__(self, fn_gk=None, fn_st=None):
-        Strategy.__init__(self, "Fonceur1")
+        Strategy.__init__(self, "Fonceur1v1")
         if fn_st is not None:
             with open(loadPath(fn_st), "rb") as f:
                 self.dico = pickle.load(f)
@@ -69,10 +69,6 @@ class Attaquant2v2Strategy(Strategy):
                 self.dico = pickle.load(f)
             with open(loadPath(fn_gk), "rb") as f:
                 self.dico.update(pickle.load(f))
-            # self.dico['angleInter'] = 0.81
-            # self.dico['distDefZone'] = 45.
-            # self.dico['distAttaque'] = 60.
-            # self.dico['coeffDef'] = 2.5
         else:
             self.dico = dict()
         self.dico['n'] = -1
@@ -95,10 +91,6 @@ class Gardien2v2Strategy(Strategy):
                 self.dico = pickle.load(f)
             with open(loadPath(fn_st), "rb") as f:
                 self.dico.update(pickle.load(f))
-            # self.dico['angleInter'] = 0.81
-            # self.dico['distAttaque'] = 60.
-            # self.dico['distDefZone'] = 45.
-            # self.dico['coeffDef'] = 2.5
         else:
             self.dico = dict()
         self.dico['n'] = -1
@@ -109,13 +101,13 @@ class Gardien2v2Strategy(Strategy):
         if has_ball_control(me):
             self.dico['n'] = self.dico['tempsI']
             return WithBallControl_2v2(me, self.dico)
-        return WithoutBallControl_GK_2v2(me, self.dico)
+        return WithoutBallControl_GK_2v4(me, self.dico)
 
 
 
 class CBNaif2v2Strategy(Strategy):
     def __init__(self, fn_gk=None, fn_st=None):
-        Strategy.__init__(self, "CBNaif")
+        Strategy.__init__(self, "CBNaif2v2")
         if fn_st is not None:
             with open(loadPath(fn_st), "rb") as f:
                 self.dico = pickle.load(f)
@@ -130,19 +122,12 @@ class CBNaif2v2Strategy(Strategy):
             self.dico['distDefZone'] = 30.
         else:
             self.dico = dict()
-    def args_control_dribble_pass(self):
-        return (self.dico['angleDribble'], self.dico['powerDribble'], self.dico['rayDribble'], \
-                self.dico['coeffAD'], self.dico['controleMT'], self.dico['powerPasse'], \
-                self.dico['thetaPasse'], self.dico['rayPressing'], self.dico['distPasse'], \
-                self.dico['angleInter'], self.dico['coeffPushUp'])
     def compute_strategy(self, state, id_team, id_player):
         me = StateFoot(state, id_team, id_player, 2)
         if is_kick_off(me):
-            if has_ball_control(me):
-                return shoot(me, 6.)
-            return goToBall(me)
+            return gk_kickOff(me, self.dico)
         if has_ball_control(me):
-            return WithBallControl_CBnaif_2v2(me, self.dico)
+            return WithBallControl_CBnaif(me, self.dico)
         return WithoutBallControl_CBnaif_2v2(me, self.dico)
 
 
@@ -205,13 +190,11 @@ class Gardien4v4Strategy(Strategy):
     def compute_strategy(self, state, id_team, id_player):
         me = StateFoot(state, id_team, id_player, 4)
         if is_kick_off(me):
-            if has_ball_control(me):
-                return shoot(me, 6.)
-            return goToBall(me)
+            return gk_kickOff(me, self.dico)
         if has_ball_control(me):
             self.dico['n'] = self.dico['tempsI']
             return WithBallControl_4v4(me, self.dico)
-        return WithoutBallControl_GK_4v4(me, self.dico)
+        return WithoutBallControl_GK_2v4(me, self.dico)
 
 
 
@@ -233,10 +216,11 @@ class CBNaif4v4Strategy(Strategy):
         self.dico['controleAttaque'] = self.dico['controleMT']
         self.dico['rayPressing'] = 18.
         self.dico['distSortie'] = 50.
+        self.dico['raySortie'] = 35.
     def compute_strategy(self, state, id_team, id_player):
         me = StateFoot(state, id_team, id_player, 4)
         if has_ball_control(me):
-            return WithBallControl_CBnaif_4v4(me, self.dico)
+            return WithBallControl_CBnaif(me, self.dico)
         return WithoutBallControl_CBnaif_4v4(me, self.dico)
 
 
@@ -262,14 +246,12 @@ class AttaquantStrategy(Strategy):
         else:
             self.dico = dict()
         self.dico['distShoot'] = 36.
-    def args_defense_loseMark(self):
-        return (self.dico['decalX'], self.dico['decalY'])
     def compute_strategy(self, state, id_team, id_player):
         me = StateFoot(state, id_team, id_player, 2)
         if has_ball_control(me):
             return WithBallControl_1v1(me, self.dico)
         if is_defensive_zone(me, self.dico['distDefZone']):
-            return shiftAside(me, *self.args_defense_loseMark())
+            return shiftAside(me, self.dico['distDemar'], self.dico['angleInter'])
         return goToBall(me)
 
 
@@ -290,16 +272,16 @@ class GardienStrategy(Strategy):
                 self.dico = pickle.load(f)
         else:
             self.dico = dict()
-        self.dico['tempsI'] = int(self.dico['tempsI'])
+        self.dico['angleInter'] = 0.8183
+        self.dico['powerPasse'] = 3.43
+        self.dico['thetaPasse'] = 0.0517
+        self.dico['coeffPushUp'] = 12.
         self.dico['n'] = self.dico['tempsI']
     def compute_strategy(self, state, id_team, id_player):
         me = StateFoot(state, id_team, id_player, 2)
         if has_ball_control(me):
             self.dico['n'] = self.dico['tempsI']
-            tm = free_teammate(me, 0.8183)
-            if tm is not None and must_pass_ball(me, tm, 0.8183):
-                return passBall(me, tm, 3.43, 0.0517, 12.)
-            return clearSolo(me)
+            return WithBallControl_CBnaif(me, self.dico)
         if must_intercept(me, self.dico['rayInter']):
             return tryInterception(me, self.dico)
         if opponent_approaches_my_goal(me, self.dico['distSortie']):

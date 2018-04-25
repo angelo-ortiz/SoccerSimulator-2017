@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
 from soccersimulator import SoccerAction, Vector2D
 from soccersimulator.settings import maxPlayerShoot, maxPlayerAcceleration, \
     ballBrakeConstant, playerBrackConstant
@@ -150,68 +149,6 @@ def passBall(state, tm, powerPasse, thetaPasse, coeffPushUp):
         vitesse = (-0.5) * vitesse
     dest += coeffPushUp*vitesse
     return kickAt(state, dest, passPower(state, dest, powerPasse, thetaPasse))
-
-def passiveSituationSolo(state, dico):
-    """TODO
-    Quand le joueur n'a pas le controle sur
-    la balle:
-    - si la balle approche il s'approche pour
-    recevoir la balle
-    - s'il est le joueur le plus proche de la
-    balle ou s'il vient de faire un dribble/controle
-    il se dirige de nouveau vers la balle
-    - si un coequipier a franchi une distance
-    avec la balle, il monte de le terrain
-    pour lui proposer des solutions
-    - sinon il se decale lateralement
-    """
-    if state.is_nearest_ball() or had_ball_control(state, dico['rayReprise'], dico['angleReprise']):
-        return tryInterception(state, dico)
-    if is_close_goal(state, dico['distAttaque']) and ball_advances(state):
-        return tryInterception(state, dico)
-    if must_intercept(state, dico['rayInter']):
-        return tryInterception(state, dico)
-    return cutDownAngle(state, dico['raySortie'], dico['rayInter'])
-
-def passiveSituation(state, dico):
-    """TODO
-    Quand le joueur n'a pas le controle sur
-    la balle:
-    - si la balle approche il s'approche pour
-    recevoir la balle
-    - s'il est le joueur le plus proche de la
-    balle ou s'il vient de faire un dribble/controle
-    il se dirige de nouveau vers la balle
-    - si un coequipier a franchi une distance
-    avec la balle, il monte de le terrain
-    pour lui proposer des solutions
-    - sinon il se decale lateralement
-    """
-    vectBall = (state.my_pos - state.ball_pos).normalize()
-    vectSpeed = state.ball_speed.copy().normalize()
-    if must_intercept(state, dico['rayRecept']) and vectSpeed.dot(vectBall) >= dico['angleRecept']:
-        return tryInterception(state, dico)
-    if state.is_nearest_ball() or \
-    (had_ball_control(state, dico['rayReprise'], dico['angleReprise']) and state.is_nearest_ball_my_team()):
-        return tryInterception(state, dico)
-    if is_close_goal(state, dico['distAttaque']) and ball_advances(state) \
-       and state.is_nearest_ball_my_team():
-        return tryInterception(state, dico)
-    if must_advance(state, dico['distMontee']):
-        return pushUp(state, dico['coeffPushUp'])
-    if state.is_nearest_ball_my_team() and must_intercept(state, dico['rayInter']):
-        return tryInterception(state, dico)
-    if state.numPlayers == 4:
-        opp = free_opponent(state, dico['distDefZone'], dico['rayPressing'])
-        if is_defensive_zone(state, dico['distDefZone']) and opp is not None:
-            return mark(state, opp, dico['rayPressing'])
-    if state.numPlayers == 2:
-        opp = free_opponent(state, dico['distDefZone']+20., dico['rayPressing'])
-        if opp is not None and not is_close_ball(state, opp.position):
-            return mark(state, opp, dico['rayPressing'])
-    if is_defensive_zone(state, dico['distDefZone']+20) and state.team_controls_ball():
-        return loseMark(state, dico['rayPressing'], dico['distDemar'], dico['angleInter'])
-    return cutDownAngle(state, dico['distShoot'], dico['rayInter'])
 
 def loseMark(state, rayPressing, distDemar, angleInter):
     """
