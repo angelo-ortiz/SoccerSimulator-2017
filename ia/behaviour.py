@@ -76,7 +76,7 @@ def WithoutBallControl_1v1(state, dico):
         return tryInterception(state, dico)
     if must_intercept(state, dico['rayInter']):
         return tryInterception(state, dico)
-    return cutDownAngle(state, dico['raySortie'], dico['rayInter'])
+    return cutDownAngle_def(state, dico['raySortie'], dico['rayInter'])
 
 def WithBallControl_2v2(state, dico):
     """

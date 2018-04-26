@@ -45,7 +45,6 @@ class Fonceur1v1Strategy(Strategy):
         else:
             self.dico = dict()
         self.dico['n'] = -1
-        # self.dico['distDefZone'] = 35.
     def compute_strategy(self, state, id_team, id_player):
         me = StateFoot(state, id_team, id_player, 1)
         if is_kick_off(me):
@@ -53,7 +52,7 @@ class Fonceur1v1Strategy(Strategy):
         if has_ball_control(me):
             self.dico['n'] = self.dico['tempsI']
             return WithBallControl_1v1(me, self.dico)
-        return WithoutBallControl_ST_1v1(me, self.dico)
+        return WithoutBallControl_1v1(me, self.dico)
 
 
 

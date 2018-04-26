@@ -210,7 +210,7 @@ def goForwardsPASolo(state, dico):
     reparation pour frapper et dribble
     l'adversaire en face de lui
     """
-    oppDef = nearest_defender(state, state.opponents, dico['rayDribble'])
+    oppDef = nearest_defender_def(state, state.opponents, dico['rayDribble'])
     if oppDef is None:
         if is_close_goal(state, dico['distShoot']) and \
            state.free_trajectory(state.opp_goal, dico['angleInter']):
@@ -224,7 +224,7 @@ def goForwardsMFSolo(state, dico):
     avec la balle et dribble lorsqu'il y a
     un adversaire en face
     """
-    oppDef = nearest_defender(state, state.opponents, dico['rayDribble'])
+    oppDef = nearest_defender_def(state, state.opponents, dico['rayDribble'])
     if oppDef is None:
         return control(state, dico['controleMT'])
     return dribble(state, oppDef, dico['angleDribble'], dico['powerDribble'], dico['coeffAD'])
