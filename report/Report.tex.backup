@@ -296,14 +296,37 @@ d'algorithmes d'apprentissage : supervis\'es et non supervis\'es, ainsi que
 l'apprentissage par renforcement. Deux m\'ethodes ont \'et\'e impl\'ement\'ees 
 lors du projet.
 
-\subsection*{Arbres de d\'ecision}
-Il s'agit d'une technique d'apprentissage supervis\'e. \todo{}
+\subsection*{Arbres de d\'ecision (de classification)}
+Il s'agit d'une technique d'apprentissage supervis\'e. Pour l'appliquer, on 
+a besoin d'un espace de repr\'esentation $\mathcal{X}$, d'un ensemble 
+d'\'etiquettes ou classes $Y$ et d'une liste de $m$ exemples d'apprentissage 
+$(x^i,y^i)$, o\`u $x^i \in \mathcal{X}$, $y^i \in Y, i = 1,\dotsc,m$, appel\'ee 
+ensemble d'apprentissage.
+Le but de cette technique est de trouver une fonction $f: \mathcal{X} \to 
+Y$ telle que l'on puisse pr\'edire \`a quelle classe appartient une 
+future variable $x \in \mathcal{X}$.
+
+Concr\`etement, on veut associer une certaine action \`a chaque \'etat du jeu. 
+Comme le nombre d'\'etats possibles est trop grand, on utilisera une 
+repr\'esentation par $n$ caract\'eristiques g\'en\'eralis\'ees qui 
+pr\'ecisent la configuration du terrain. On a ainsi que $\mathcal{X} = 
+\mathbb{R}^n$, avec $n$ la dimension de l'espace de repr\'esentation. De plus, 
+l'ensemble d'\'etiquettes devient l'ensemble d'actions possibles $A$. On veut 
+donc trouver une fonction $f: \mathbb{R}^n \to A$ qui fournit la meilleure 
+action possible pour tout \'etat du jeu.
+
+Le probl\`eme auquel on est confront\'es se r\'eduit alors \`a 
+partitionner l'espace de repr\'esentation en $p=|A|$ parties 
+$\mathcal{X}_1,\mathcal{X}_2,\dotsc,\mathcal{X}_p$ de sorte que 
+$f([\mathcal{X}_i]) = \{ a_i \} \subset A$, $i = 1,\dotsc,p$. On utilise les 
+arbres binaires de d\'ecisions pour repr\'esenter ce partionnement. Ceci 
+implique que chaque n\oe ud: on fera \`a chaque fois  un d\'ecoupage binaire
 
 \subsection*{Q-learning}
 Cet algorithme d'apprentissage par renforcement r\'epose sur un ensemble 
 d'\'etats $S$, un ensemble d'actions $A$, et une fonction $Q: S \times A \to 
 \mathbb{R}$, appel\'ee {\itshape politique}, pond\'erant une paire form\'ee 
-par un {\itshape \'etat} de jeu donn\'e et une action \`a entreprendre pour cet 
+par un {\itshape \'etat} donn\'e et une action \`a entreprendre pour cet 
 \'etat-ci. Cette pond\'eration est surnomm\'ee {\itshape r\'ecompense}. La 
 notion d'\'etat correspond \`a celle donn\'ee dans la section des arbres 
 binaires. Il utilise aussi la notion d'{\itshape \'episode} que l'on associe 
@@ -348,8 +371,8 @@ en a encore \`a faire, alors que l'on r\'eit\`ere cette phase \`a partir du
 choix d'une action pour le nouvel \'etat $s_{t+1}$ dans le cas contraire.
 
 \`A la fin de l'algorithme, on se retrouve avec une politique qui nous rend 
-l'action la plus ad\'equate pour tout \'etat de jeu. \'Etant donn\'e que les 
-carat\'eristiques utilis\'ees pour d\'efinir un \'etat de jeu sont continues, 
+l'action la plus ad\'equate pour tout \'etat du jeu. \'Etant donn\'e que les 
+carat\'eristiques utilis\'ees pour d\'efinir un \'etat sont continues, 
 on a d\'efini des intervalles d'\'equivalence. Cela n'emp\^eche que le nombre 
 total d'\'etats est \'enorme et fait donc exploser la m\'emoire. On pourrait 
 mettre en place un r\'eseau de neurones pour pallier cette difficult\'e. Ceci 

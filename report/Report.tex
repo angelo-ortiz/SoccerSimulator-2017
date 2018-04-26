@@ -59,43 +59,22 @@ camarades de classe.
 \includegraphics[width=0.8\textwidth]{apercu.png}\par%\vspace{1cm}
 \end{center}
 
-\section*{Arborescence}
-Le projet a \'et\'e organis\'e en un module {\bfseries ia} dirigeant le 
-comportement de nos joueurs et en divers fichiers de test.
-\subsubsection*{ia/tools}
-Ce fichier contient une classe repr\'esentant l'\'etat du jeu qui comporte des 
-m\'ethodes nous facilitant l'acc\`es aux diverses carat\'eristiques de cet 
-\'etat, ainsi que plusieurs fonctions utilitaires.
+\section*{Diagrammes}
+Le projet a \'et\'e organis\'e en un module {\bfseries ia} qui contient 
+l'impl\'ementation nos joueurs et en divers fichiers de test.
 
-\subsubsection*{ia/conditions}
-Comme le nom l'indique, ce fichier a \'et\'e d\'edi\'e aux diverses conditions 
-qui d\'eclenchent les diff\'erents types de comportement.
+On vous pr\'esente le graphe de d\'ependences du module.
 
-\subsubsection*{ia/actions}
-Ce fichier comporte les actions de base que l'on peut r\'ealiser \`a chaque 
-instant du jeu.
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{packages_IA.png}\par%\vspace{1cm}
+\end{center}
 
-\subsubsection*{ia/behaviour}
-En ce qui concerne ce fichier, ici se trouvent les actions complexes, i.e.\ 
-compos\'ees de plusieurs actions de base. En effet, pour une certaine phase de 
-jeu, un joueur peut prendre diff\'erentes d\'ecisions.
+On vous pr\'esente \`a pr\'esent le diagramme de classes du projet.
 
-\subsubsection*{ia/strategies}
-C'est dans ce fichier que les strat\'egies ont \'et\'e r\'eunies. Ces 
-strat\'egies dirigent le comportement des joueurs tout au long d'un 
-match.
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{classes_IA.png}\par%\vspace{1cm}
+\end{center}
 
-\subsubsection*{ia/gene\_optimisation}
-Ce fichier contient les classes n\'ecessaires pour la mise en \oe uvre d'une 
-impl\'ementation des algorithmes g\'en\'etiques.
-
-\subsubsection*{ia/gs\_optimisation}
-On retrouve ici le code utilis\'e pour suivre la m\'ethode de recherche en 
-grille.
-
-\subsubsection*{ia/}
-init ? ML\_strats ? DT\_strats ? 
-\todo{Il reste encore des fichiers}
 
 \addcontentsline{toc}{part}{Introduction}
 \newpage
@@ -296,15 +275,39 @@ d'algorithmes d'apprentissage : supervis\'es et non supervis\'es, ainsi que
 l'apprentissage par renforcement. Deux m\'ethodes ont \'et\'e impl\'ement\'ees 
 lors du projet.
 
-\subsection*{Arbres de d\'ecision}
-Il s'agit d'une technique d'apprentissage supervis\'e. \todo{TODO}
-\todo{notion d'\'etat}
+\subsection*{Arbres de d\'ecision (de classification)}
+Il s'agit d'une technique d'apprentissage supervis\'e. Pour l'appliquer, on 
+a besoin d'un espace de repr\'esentation $\mathcal{X}$, d'un ensemble 
+d'\'etiquettes ou classes $Y$ et d'une liste de $m$ exemples d'apprentissage 
+$(x^i,y^i)$, o\`u $x^i \in \mathcal{X}$, $y^i \in Y, i = 1,\dotsc,m$, appel\'ee 
+ensemble d'apprentissage.
+Le but de cette technique est de trouver une fonction $f: \mathcal{X} \to 
+Y$ telle que l'on puisse pr\'edire \`a quelle classe appartient une 
+future variable $x \in \mathcal{X}$.
+
+Concr\`etement, on veut associer une certaine action \`a chaque \'etat du jeu. 
+Comme le nombre d'\'etats possibles est trop grand, on utilisera une 
+repr\'esentation par $n$ caract\'eristiques g\'en\'eralis\'ees qui 
+pr\'ecisent la configuration du terrain. On a ainsi que $\mathcal{X} = 
+\mathbb{R}^n$, avec $n$ la dimension de l'espace de repr\'esentation. De plus, 
+l'ensemble d'\'etiquettes devient l'ensemble d'actions possibles $A$. On veut 
+donc trouver une fonction $f: \mathbb{R}^n \to A$ qui fournit la meilleure 
+action possible pour tout \'etat du jeu.
+
+Le probl\`eme auquel on est confront\'es se r\'eduit alors \`a 
+partitionner l'espace de repr\'esentation en $p=|A|$ parties 
+$\mathcal{X}_1,\mathcal{X}_2,\dotsc,\mathcal{X}_p$ de sorte que 
+$f([\mathcal{X}_i]) = \{ a_i \} \subset A$, $i = 1,\dotsc,p$. On utilise les 
+arbres de d\'ecisions pour repr\'esenter ce partionnement. Ceci 
+implique que chaque n\oe ud interne correspond \`a un test sur une des $n$ 
+dimensions de $\mathcal{X}$, chaque feuille correspond \`a l'action \`a 
+entreprendre pour l'\'etat donn\'e par le chemin suivi depuis la racine.
 
 \subsection*{Q-learning}
 Cet algorithme d'apprentissage par renforcement r\'epose sur un ensemble 
 d'\'etats $S$, un ensemble d'actions $A$, et une fonction $Q: S \times A \to 
 \mathbb{R}$, appel\'ee {\itshape politique}, pond\'erant une paire form\'ee 
-par un {\itshape \'etat} de jeu donn\'e et une action \`a entreprendre pour cet 
+par un {\itshape \'etat} donn\'e et une action \`a entreprendre pour cet 
 \'etat-ci. Cette pond\'eration est surnomm\'ee {\itshape r\'ecompense}. La 
 notion d'\'etat correspond \`a celle donn\'ee dans la section des arbres 
 binaires. Il utilise aussi la notion d'{\itshape \'episode} que l'on associe 
@@ -349,8 +352,8 @@ en a encore \`a faire, alors que l'on r\'eit\`ere cette phase \`a partir du
 choix d'une action pour le nouvel \'etat $s_{t+1}$ dans le cas contraire.
 
 \`A la fin de l'algorithme, on se retrouve avec une politique qui nous rend 
-l'action la plus ad\'equate pour tout \'etat de jeu. \'Etant donn\'e que les 
-carat\'eristiques utilis\'ees pour d\'efinir un \'etat de jeu sont continues, 
+l'action la plus ad\'equate pour tout \'etat du jeu. \'Etant donn\'e que les 
+carat\'eristiques utilis\'ees pour d\'efinir un \'etat sont continues, 
 on a d\'efini des intervalles d'\'equivalence. Cela n'emp\^eche que le nombre 
 total d'\'etats est \'enorme et fait donc exploser la m\'emoire. On pourrait 
 mettre en place un r\'eseau de neurones pour pallier cette difficult\'e. Ceci 
