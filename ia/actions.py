@@ -72,14 +72,14 @@ def shoot(state, power):
 
 def parallelControl(state, powerControl):
     """
-    Avance avec la balle au pied parallelement
+    Avance balle au pied parallelement
     a la ligne de touche
     """
     return kickAt(state, state.ball_pos + state.attacking_vector, powerControl)
 
 def goalControl(state, powerControl):
     """
-    Avance avec la balle au pied en direction
+    Avance balle au pied en direction
     vers le centre de la cage adverse
     """
     return shoot(state, powerControl)

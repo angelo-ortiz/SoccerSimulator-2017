@@ -1,8 +1,7 @@
 from .strategies import RandomStrategy, GardienStrategy, AttaquantStrategy
 from .strategies import Fonceur1v1Strategy, FonceurChallenge1Strategy
 from .strategies import Attaquant2v2Strategy, Gardien2v2Strategy, CBNaif2v2Strategy
-from .strategies import Attaquant4v4Strategy, Gardien4v4Strategy, CBNaif4v4Strategy#, CBInt4v4Strategy
-from .strategies import *
+from .strategies import Attaquant4v4Strategy, Gardien4v4Strategy, CBNaif4v4Strategy
 from soccersimulator import SoccerTeam
 
 def get_team(nb_players):
