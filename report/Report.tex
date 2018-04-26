@@ -285,9 +285,9 @@ candidats g\'en\'er\'es al\'eatoirement.
 
 Cet algorithme \'etant it\'eratif, on recommence \`a la deuxi\`eme phase avec 
 la nouvelle g\'en\'eration. Au bout d'un nombre raisonnable d'it\'erations, on 
-se retrouve avec une g\'en\'eration compos\'ee de chromosomes tr\`es 
-proches des maxima relatifs. On finit donc l'algorthme par prendre le candidat 
-optimal de la derni\`ere population.  
+se retrouve avec une g\'en\'eration compos\'ee de chromosomes tr\`es proches des 
+maxima relatifs. On finit donc l'algorthme par prendre le candidat optimal de la 
+derni\`ere population.  
 
 \section{Apprentissage automatique}
 Dans la derni\`ere partie du semestre, on s'est concentr\'e sur l'apprentissage 
@@ -297,19 +297,19 @@ l'apprentissage par renforcement. Deux m\'ethodes ont \'et\'e impl\'ement\'ees
 lors du projet.
 
 \subsection*{Arbres de d\'ecision}
-Il s'agit d'une technique d'apprentissage supervis\'e.
+Il s'agit d'une technique d'apprentissage supervis\'e. \todo{TODO}
+\todo{notion d'\'etat}
 
 \subsection*{Q-learning}
-C'est un algorithme d'apprentissage par renforcement. Le principe est le 
-suivant : on apprend une {\itshape politique} comportementale qui optimise 
-l'esp\'erance des {\itshape r\'ecompenses}. Cette politique est tout simplement 
-une fonction qui associe une action \`a entreprendre \`a un \'etat de jeu 
-donn\'e.
-
-Cet algorithme r\'epose sur un ensemble d'\'etats $S$, un ensemble d'actions 
-$A$, et une fonction $Q: S \times A \to \mathbb{R}$, appel\'ee politique, 
-calculant la valeur d'une paire \'etat-action. Il utilise la notion d'{\itshape 
-\'episode} que l'on associe \`a un match dans le cadre du projet.
+Cet algorithme d'apprentissage par renforcement r\'epose sur un ensemble 
+d'\'etats $S$, un ensemble d'actions $A$, et une fonction $Q: S \times A \to 
+\mathbb{R}$, appel\'ee {\itshape politique}, pond\'erant une paire form\'ee 
+par un {\itshape \'etat} de jeu donn\'e et une action \`a entreprendre pour cet 
+\'etat-ci. Cette pond\'eration est surnomm\'ee {\itshape r\'ecompense}. La 
+notion d'\'etat correspond \`a celle donn\'ee dans la section des arbres 
+binaires. Il utilise aussi la notion d'{\itshape \'episode} que l'on associe 
+\`a un match dans le cadre du projet. Son principe est le suivant : on apprend 
+une politique comportementale qui optimise l'esp\'erance des r\'ecompenses.
 
 La premi\`ere phase consiste \`a initialiser $Q$ \`a une valeur fixe 
 arbitraire, ici 0. La deuxi\`eme phase concerne un \'episode, ou encore un 
@@ -330,11 +330,32 @@ jour la politique selon la formule ci-dessous.
 
 Ici, $\alpha$ repr\'esente la vitesse d'apprentissage et $\gamma$ le facteur 
 d'actualisation. D'un c\^ot\'e, la vitesse d'apprentissage d\'etermine 
-l'\'equilibre entre exploration et exploitation. En effet, un facteur plus 
-proche de 0 implique l'utilisation majoritaire des choix actuels, alors qu'un 
-facteur plus proche de 1 ne ferait que consid\'erer les derniers r\'esultats.
+l'\'equilibre entre exploration et exploitation. En effet, une valeur de 
+0 implique l'utilisation exclusive des choix actuels, alors qu'une 
+valeur 1 ne ferait que consid\'erer le dernier r\'esultat.
 D'un autre c\^ot\'e, le facteur d'actualisation d\'etermine l'importance des 
-r\'ecompenses futures. \todo{quid $\gamma$}
+r\'ecompenses futures. Une valeur de 0 ne prend en consid\'eration que les 
+r\'ecompenses courantes, tandis qu'une valeur de 1 met en valeur les 
+r\'ecompenses plus lointaines. On avait pr\'ecis\'e qu'un \'episode 
+correspondait \`a un match ; par cons\'equent, la r\'eussite d'une succession 
+d'actions d\'epend du r\'esultat final du match. De ce fait, on a int\'er\^et 
+\`a retarder au maximum les r\'ecompenses. Ceci se traduit par le choix d'un 
+facteur $\gamma$ proche de 1.
+
+Juste apr\`es la mise \`a jour de la politique $Q$, on d\'etermine si l'\'etat 
+$s_t$ est terminal, i.e.\ qu'il correspond au coup de sifflet final. Dans le 
+cas affirmatif, on passe \`a l'\'episode suivant ou on s'arr\^ete selon s'il y 
+en a encore \`a faire, alors que l'on r\'eit\`ere cette phase \`a partir du 
+choix d'une action pour le nouvel \'etat $s_{t+1}$ dans le cas contraire.
+
+\`A la fin de l'algorithme, on se retrouve avec une politique qui nous rend 
+l'action la plus ad\'equate pour tout \'etat de jeu. \'Etant donn\'e que les 
+carat\'eristiques utilis\'ees pour d\'efinir un \'etat de jeu sont continues, 
+on a d\'efini des intervalles d'\'equivalence. Cela n'emp\^eche que le nombre 
+total d'\'etats est \'enorme et fait donc exploser la m\'emoire. On pourrait 
+mettre en place un r\'eseau de neurones pour pallier cette difficult\'e. Ceci 
+n'a pas \'et\'e le cas pour ce projet et donc, bien qu'impl\'ement\'e, on 
+s'est pas servi de cet algorithme pour am\'eliorer nos strat\'egies. 
 
 \newpage
 
