@@ -43,9 +43,13 @@ Le projet a consist\'e en le d\'eveloppement d'intelligences artificielles de
 joueurs de football. Le simulateur du jeu \'etant d\'ej\`a fourni, notre 
 travail a \'et\'e d'impl\'ementer des strat\'egies de jeu pour mieux r\'eussir 
 les matches.
-L’objectif de ce travail a \'et\'e d'apprendre \`a bien mener un projet 
-collaboratif long sur un nouvel environnement de d\'eveloppement, \`a savoir 
-Python.
+
+L’objectif du travail a \'et\'e d'apprendre \`a bien mener un projet long 
+sur un nouvel environnement de d\'eveloppement, \`a savoir 
+Python. Sachant que travail \`a \'et\'e fait en bin\^ome, on a eu 
+besoin d'un outil collaboratif, en l'occurrence {\bfseries git} qui est un 
+logiciel de gestion de versions d\'ecentralis\'e. On a ainsi appris \`a g\'erer 
+l'avancement d'un projet \`a travers la m\'ethode par fonctionnalit\'es.
 \section*{Aper\c{c}u}
 Voici un aper\c{c}u du simulateur de football lors d'une partie de notre 
 \'equipe {\itshape ChPerFusion} en rouge face \`a l'\'equipe d'un de nos 
@@ -112,8 +116,10 @@ selon le nombre de joueurs par \'equipe : un, deux ou quatre.
 
 \section{Un joueur}
 Pour l'\'equipe compos\'ee uniquement d'un joueur, on a d\'evelopp\'e un seul 
-joueur que l'on appelle {\itshape Fonceur}. Au tout d\'ebut du 
-projet, il faisait tout au maximum : il doit 
+joueur que l'on appelle {\itshape Fonceur}. 
+
+\subsection*{Fonceur}
+Au tout d\'ebut du projet, il faisait tout au maximum : il doit 
 s'approcher de la balle \`a toute vitesse lorsqu'il ne la contr\^ole pas et il 
 frappe avec toute sa puissance dans le cas contraire. On a d\'ecid\'e de garder le 
 m\^eme nom, m\^eme si son comportement diff\`ere. En effet, \`a pr\'esent il 
@@ -123,26 +129,36 @@ trouve dans la surface de r\'eparation.
 
 \section{Deux joueurs}
 Cette cat\'egorie a \'et\'e celle sur laquelle on a consacr\'e la plupart du 
-projet. On compte trois joueurs fonctionnels que l'on appelle 
+projet. On compte trois jocusp pointueurs fonctionnels que l'on appelle 
 {\itshape Attaquant}, {\itshape Gardien} et {\itshape D\'efenseur}. 
 
 \subsection*{Attaquant}
 Il a une vocation plut\^ot offensive. Il se comporte diff\'eremment selon 
 s'il contr\^ole la balle ou pas. Dans la premi\`ere situation, il essaie 
-syst\'ematiquement d'avancer sur le terrain avec la balle et de faire un tir 
+syst\'ematiquement d'avancer sur le terrain balle au pied et de faire un tir 
 vers la cage d\`es qu'il se trouve dans la surface de r\'eparation adverse. 
-Cependant, s'il rencontre un adversaire lui bloquant le chemin, il essaie de 
-faire une passe vers son co\'equipier s'il est sans marquage, il dribble le 
-joueur sinon. Lorsqu'il se trouve sans le contr\^ole de la balle ...
+Cependant, s'il rencontre un adversaire lui bloquant le chemin, il tente de 
+faire une passe vers son co\'equipier s'il est sans marquage, il le 
+dribble sinon. 
+
+Il montre trois conduites lorsqu'il se trouve sans le 
+contr\^ole du ballon : il presse le porteur de la balle s'il en plus 
+proche que son co\'equipier, il se d\'ecale lat\'eralement dans le cas 
+contraire, et il monte dans le terrain si c'est son co\'equipier qui la 
+poss\`ede ou va bient\^ot en prendre possession pour lui proposer une 
+possiblit\'e de passe.
 
 \subsection*{Gardien}
-Ce joueur se comporte exactement pareil que l'attaquant lorsqu'il s'agit 
-d'attaquer. En revanche, en situation d\'efensive, il reste \`a une 
-distance de sa cage lorsque l'\'equipe adverse contr\^ole la balle et essaie 
-d'intercepter la balle lorsque le porteur du ballon se trouve dans sa surface 
-de r\'eparation. S'il voit que son co\'equipier va bient\^ot contr\^oler la 
-balle ou il en a d\'ej\`a le contr\^ole, il monte dans le terrain pour lui 
-proposer une possibilit\'e de passe.
+De la m\^eme mani\`ere que pour le fonceur, le gardien ne garde gu\`ere de son 
+comportement initial. Il restait fix\'e dans sa cage et en sortait juste pour 
+r\'eduire l'angle de frappe \`a l'attaquant adverse. Sa possession de la balle 
+se r\'eduisait \`a un d\'egagement presque al\'eatoire.
+
+On a remplac\'e sa conduite avec la balle par celle de l'attaquant 
+mentionn\'e ci-dessus. En revanche, en absence du ballon, il reste \`a une 
+distance de sa cage lorsque l'\'equipe adverse le contr\^ole et essaie 
+de l'intercepter lorsque le porteur se trouve dans sa surface de r\'eparation. 
+Tout comme pour l'attaquant, il monte dans le terrain lorsque n\'ecessaire.
 
 \subsection*{D\'efenseur}
 Le d\'efenseur n'a par contre qu'une vocation d\'efensive. En effet, s'il a la 
@@ -223,7 +239,7 @@ la notion de s\'election naturelle est le m\'ecanisme permettant de choisir des
 solutions potentielles de plus en plus meilleures.
 
 La toute premi\`ere chose \`a faire est la d\'efinition de la fonction 
-$f(x): \mathbb{R}^n \to \mathbb{E}$ \`a optimiser, o\`u $n$ est le nombre de 
+$f: \mathbb{R}^n \to \mathbb{E}$ \`a optimiser, o\`u $n$ est le nombre de 
 param\`etres concern\'es. Un \'el\'ement $x=(x_1,\dotsc,x_n) \in \mathbb{R}^n$ 
 est appel\'e {\itshape candidat} ou {\itshape chromosome}, et chacune de ses 
 coordonn\'ees $x_i$ avec $i=1,\dotsc,n$, appel\'ee {\itshape propri\'et\'e} 
@@ -285,8 +301,37 @@ Il s'agit d'une technique d'apprentissage supervis\'e.
 
 \subsection*{Q-learning}
 C'est un algorithme d'apprentissage par renforcement. Le principe est le 
-suivant :
+suivant : on apprend une {\itshape politique} comportementale qui optimise 
+l'esp\'erance des {\itshape r\'ecompenses}. Cette politique est tout simplement 
+une fonction qui associe une action \`a entreprendre \`a un \'etat de jeu 
+donn\'e.
 
+Cet algorithme r\'epose sur un ensemble d'\'etats $S$, un ensemble d'actions 
+$A$, et une fonction $Q: S \times A \to \mathbb{R}$, appel\'ee politique, 
+calculant la valeur d'une paire \'etat-action. Il utilise la notion d'{\itshape 
+\'episode} que l'on associe \`a un match dans le cadre du projet.
+
+La premi\`ere phase consiste \`a initialiser $Q$ \`a une valeur fixe 
+arbitraire, ici 0. La deuxi\`eme phase concerne un \'episode, ou encore un 
+match, et est r\'ep\'et\'ee autant de fois qu'il y a d'\'episodes. Pour un 
+\'etat $s_t$ donn\'e, on choisit une action $a_t$ selon la politique $Q$ et 
+observe la r\'ecompense $r_t$ associ\'ee \`a cette paire. Cette action 
+g\'en\`ere un nouvel \'etat $s_{t+1}$. Il est \`a noter qu'il n'y a pas de 
+choix concernant l'\'etat initial $s_0$, puisqu'il est toujours le m\^eme pour 
+un match de football : ceci correspond au coup d'envoi. Ensuite, on met \`a 
+jour la politique selon la formule ci-dessous.
+
+\begin{equation*}
+  Q(s_t,a_t) \gets (1-\alpha) \cdot \underbrace{Q(s_t,a_t)}_\text{valeur 
+actuelle} +   \alpha \cdot \underbrace{\Big(r_t + \gamma \cdot 
+\max_a(Q_{t+1},a) \Big)}_\text{valeur apprise}
+\end{equation*}
+
+Ici, $\alpha$ repr\'esente la vitesse d'apprentissage et $\gamma$ le facteur 
+d'actualisation. La vitesse d'apprentissage d\'etermine l'\'equilibre entre 
+exploration et exploitation. En effet, un facteur plus proche de 0 implique 
+l'utilisation majoritaire des choix actuels, alors qu'un facteur plus proche de 
+1 ne ferait que consid\'erer les derniers r\'esultats.
 \newpage
 
 \part*{Conclusion}

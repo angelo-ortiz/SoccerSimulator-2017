@@ -9,4 +9,4 @@
 \contentsline {section}{\numberline {4}Recherche en grille}{7}
 \contentsline {section}{\numberline {5}Algorithmes g\'en\'etiques}{7}
 \contentsline {section}{\numberline {6}Apprentissage automatique}{8}
-\contentsline {part}{Conclusion}{9}
+\contentsline {part}{Conclusion}{10}
