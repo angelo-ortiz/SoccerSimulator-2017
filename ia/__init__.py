@@ -14,10 +14,7 @@ def get_team(nb_players):
     if nb_players == 4:
         myteam.add("  3_Beckenbauer",CBNaif4v4Strategy(fn_gk="gk_dico_0325_p5_short.pkl",fn_st="st_dico_0325_p5_short.pkl"))
         myteam.add("  6_Matthaus", Gardien4v4Strategy(fn_gk="gk_dico_0325_p5_short.pkl",fn_st="st_dico_0325_p5_short.pkl"))
-        #myteam.add("  6_Matthaus", Gardien4v4Strategy(fn_gk="gk_dico_0420_2.pkl", fn_st="st_dico_0420_2.pkl"))
         myteam.add("  10_Pele", Attaquant4v4Strategy(fn_gk="gk_dico_0325_p5_short.pkl", fn_st="st_dico_0325_p5_short.pkl"))
-        #myteam.add("  10_Pele", Attaquant4v4Strategy(fn_gk="gk_dico_0420_2.pkl", fn_st="st_dico_0420_2.pkl"))
-        #myteam.add("  9_Guerrero", Attaquant4v4Strategy(fn_gk="gk_dico_0420_2.pkl", fn_st="st_dico_0420_2.pkl"))
         myteam.add("  9_Guerrero", Attaquant4v4Strategy(fn_gk="gk_dico_0325_p5_short.pkl", fn_st="st_dico_0325_p5_short.pkl"))
     return myteam
 

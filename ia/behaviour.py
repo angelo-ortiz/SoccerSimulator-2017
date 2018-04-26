@@ -187,5 +187,4 @@ def WithoutBallControl_CBnaif_4v4(state, dico):
         return tryInterception(state, dico)
     if state.distance_ball(state.my_goal) < dico['distDefZone']:
         return tryInterception(state, dico)
-    # version _gk ???
     return cutDownAngle_def(state, dico['raySortie'], dico['rayInter'])
