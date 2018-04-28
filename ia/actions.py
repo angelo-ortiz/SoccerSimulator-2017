@@ -98,6 +98,7 @@ def dribble_prec(state, opp, angleDribble, powerDribble, coeffAD):
     """
     Fait un dribble avec une direction aleatoire
     soit vers l'axe, soit vers l'un des deux cotes
+    Reference : la ligne horizontale
     """
     coeffAD=1.305
     oPos = opp.position
@@ -122,6 +123,7 @@ def dribble(state, opp, angleDribble, powerDribble, coeffAD):
     """
     Fait un dribble avec une direction aleatoire
     soit vers l'axe, soit vers l'un des deux cotes
+    Reference : la ligne horizontale
     """
     me_opp = (opp.position - state.my_pos).normalize()
     me_goal = state.attacking_vector
@@ -135,6 +137,22 @@ def dribble(state, opp, angleDribble, powerDribble, coeffAD):
     else: # bon angle (vers la cage adverse)
         if theta > 0.:
             angleDribble = -angleDribble
+    angle += angleDribble
+    destDribble = Vector2D(angle=angle, norm=1.)
+    return kickAt(state, state.ball_pos + destDribble, powerDribble)
+
+def dribble_speed(state, opp, angleDribble, powerDribble, coeffAD):
+    """
+    Fait un dribble avec une direction aleatoire
+    soit vers l'axe, soit vers l'un des deux cotes
+    Reference : le vecteur vitesse
+    """
+    me_opp = (opp.position - state.ball_pos).normalize()
+    me_goal = state.my_speed.copy().normalize()
+    angle = atan2(me_opp.y,me_opp.x)
+    theta = get_oriented_angle(me_goal, me_opp)/acos(0.)
+    if theta > 0.:
+        angleDribble = -angleDribble
     angle += angleDribble
     destDribble = Vector2D(angle=angle, norm=1.)
     return kickAt(state, state.ball_pos + destDribble, powerDribble)
@@ -239,7 +257,7 @@ def goForwardsPA(state, dico):
     if is_close_goal(state, dico['distShoot']/2.) and \
        state.free_trajectory(state.opp_goal, 2*dico['angleInter']/3):
         return shoot(state, shootPower(state, dico['alphaShoot'], dico['betaShoot']))
-    oppDef = nearest_defender(state, state.opponents, dico['rayDribble'])
+    oppDef = nearest_defender_def(state, state.opponents, dico['rayDribble'])
     tm = free_teammate(state, dico['angleInter'])
     if oppDef is not None:
         if tm is not None:
@@ -259,13 +277,14 @@ def goForwardsMF(state, dico):
     avec la balle et dribble lorsqu'il y a
     un adversaire en face
     """
-    oppDef = nearest_defender(state, state.opponents, dico['rayDribble'])
+    oppDef = nearest_defender_def(state, state.opponents, dico['rayDribble'])
     if oppDef is not None:
         tm = free_teammate(state, dico['angleInter'])
-        if tm is not None and must_pass_ball(state, tm, dico['angleInter']):
+        if tm is not None and must_pass_ball(state, tm, dico['angleInter']) \
+           and not is_under_pressure(state, tm, dico['rayPressing']):
             return passBall(state, tm, dico['powerPasse'], dico['thetaPasse'], dico['coeffPushUp'])+\
                 pushUp(state, dico['coeffPushUp'])
-        return dribble(state, oppDef, dico['angleDribble'], dico['powerDribble'], dico['coeffAD'])
+        return dribble_speed(state, oppDef, dico['angleDribble'], dico['powerDribble'], dico['coeffAD'])
     return control(state, dico['controleMT'])
 
 def goForwardsDef(state, dico):

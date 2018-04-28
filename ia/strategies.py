@@ -71,7 +71,6 @@ class Attaquant2v2Strategy(Strategy):
         else:
             self.dico = dict()
         self.dico['n'] = -1
-        self.dico['rayInter'] = 17.
     def compute_strategy(self, state, id_team, id_player):
         me = StateFoot(state, id_team, id_player, 2)
         if is_kick_off(me):
@@ -94,7 +93,6 @@ class Gardien2v2Strategy(Strategy):
         else:
             self.dico = dict()
         self.dico['n'] = -1
-        self.dico['rayInter'] = 17.
     def compute_strategy(self, state, id_team, id_player):
         me = StateFoot(state, id_team, id_player, 2)
         if is_kick_off(me):
