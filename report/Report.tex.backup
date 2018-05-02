@@ -59,43 +59,22 @@ camarades de classe.
 \includegraphics[width=0.8\textwidth]{apercu.png}\par%\vspace{1cm}
 \end{center}
 
-\section*{Arborescence}
-Le projet a \'et\'e organis\'e en un module {\bfseries ia} dirigeant le 
-comportement de nos joueurs et en divers fichiers de test.
-\subsubsection*{ia/tools}
-Ce fichier contient une classe repr\'esentant l'\'etat du jeu qui comporte des 
-m\'ethodes nous facilitant l'acc\`es aux diverses carat\'eristiques de cet 
-\'etat, ainsi que plusieurs fonctions utilitaires.
+\section*{Diagrammes}
+Le projet a \'et\'e organis\'e en un module {\bfseries ia} qui contient 
+l'impl\'ementation nos joueurs et en divers fichiers de test.
 
-\subsubsection*{ia/conditions}
-Comme le nom l'indique, ce fichier a \'et\'e d\'edi\'e aux diverses conditions 
-qui d\'eclenchent les diff\'erents types de comportement.
+On vous pr\'esente le graphe de d\'ependences du module.
 
-\subsubsection*{ia/actions}
-Ce fichier comporte les actions de base que l'on peut r\'ealiser \`a chaque 
-instant du jeu.
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{packages_IA.png}\par%\vspace{1cm}
+\end{center}
 
-\subsubsection*{ia/behaviour}
-En ce qui concerne ce fichier, ici se trouvent les actions complexes, i.e.\ 
-compos\'ees de plusieurs actions de base. En effet, pour une certaine phase de 
-jeu, un joueur peut prendre diff\'erentes d\'ecisions.
+On vous pr\'esente \`a pr\'esent le diagramme de classes du projet.
 
-\subsubsection*{ia/strategies}
-C'est dans ce fichier que les strat\'egies ont \'et\'e r\'eunies. Ces 
-strat\'egies dirigent le comportement des joueurs tout au long d'un 
-match.
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{classes_IA.png}\par%\vspace{1cm}
+\end{center}
 
-\subsubsection*{ia/gene\_optimisation}
-Ce fichier contient les classes n\'ecessaires pour la mise en \oe uvre d'une 
-impl\'ementation des algorithmes g\'en\'etiques.
-
-\subsubsection*{ia/gs\_optimisation}
-On retrouve ici le code utilis\'e pour suivre la m\'ethode de recherche en 
-grille.
-
-\subsubsection*{ia/}
-init ? ML\_strats ? DT\_strats ? 
-\todo{Il reste encore des fichiers}
 
 \addcontentsline{toc}{part}{Introduction}
 \newpage
@@ -319,8 +298,21 @@ Le probl\`eme auquel on est confront\'es se r\'eduit alors \`a
 partitionner l'espace de repr\'esentation en $p=|A|$ parties 
 $\mathcal{X}_1,\mathcal{X}_2,\dotsc,\mathcal{X}_p$ de sorte que 
 $f([\mathcal{X}_i]) = \{ a_i \} \subset A$, $i = 1,\dotsc,p$. On utilise les 
-arbres binaires de d\'ecisions pour repr\'esenter ce partionnement. Ceci 
-implique que chaque n\oe ud: on fera \`a chaque fois  un d\'ecoupage binaire
+arbres de d\'ecisions pour repr\'esenter ce partionnement. Ceci 
+implique que chaque n\oe ud interne correspond \`a un test sur une des $n$ 
+dimensions de $\mathcal{X}$, chaque feuille correspond \`a l'action \`a 
+entreprendre pour l'\'etat donn\'e par le chemin suivi depuis la racine.
+
+On nous a fourni une strat\'egie sp\'eciale \texttt{KeyboardStrategy} 
+comportant les outils de base n\'ecessaires \`a la mise en place de cette 
+m\'ethode, allant de la g\'en\'eration de l'ensemble d'apprentissage au 
+partionnement de l'espace $\mathcal{X}$, en passant par l'application de la 
+fonction lors des matches. 
+Elle permet d'associer des touches clavier aux diff\'erentes strat\'egies de 
+sorte qu'on puisse pr\'eciser la strat\'egie pr\'econis\'ee pour les 
+diff\'erentes phases du jeu.
+Elle requiert qu'on lui passe les $n$ 
+caract\'eristiques g\'en\'eralis\'ees pour
 
 \subsection*{Q-learning}
 Cet algorithme d'apprentissage par renforcement r\'epose sur un ensemble 

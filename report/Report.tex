@@ -303,6 +303,22 @@ implique que chaque n\oe ud interne correspond \`a un test sur une des $n$
 dimensions de $\mathcal{X}$, chaque feuille correspond \`a l'action \`a 
 entreprendre pour l'\'etat donn\'e par le chemin suivi depuis la racine.
 
+On nous a fourni une strat\'egie sp\'eciale \texttt{KeyboardStrategy} 
+comportant les outils de base n\'ecessaires \`a la mise en place de cette 
+m\'ethode, allant de la g\'en\'eration de l'ensemble d'apprentissage au 
+partionnement de l'espace de repr\'esentation, en passant par l'application de 
+la fonction lors des matches. 
+Elle permet d'associer des touches clavier aux diff\'erentes strat\'egies de 
+sorte que l'on puisse pr\'eciser la strat\'egie pr\'econis\'ee pour les 
+diff\'erentes phases du jeu. Ceci conforme ce que l'on appelle l'ensemble 
+d'apprentissage. Cet ensemble est trait\'e \`a l'aide des $n$ carat\'eristiques 
+g\'en\'eralis\'ees d\'efinies auparavant et, \`a l'issue de ceci, on compte 
+un partionnement de $\mathbb{R}^n$. Cette strat\'egie utilise alors la fonction 
+$f$ lors des matches suivants, ce qui donne un comportement plus intelligent 
+\`a nos joueurs.
+
+\todo{Pourquoi non utilis\'ee ? touches}
+
 \subsection*{Q-learning}
 Cet algorithme d'apprentissage par renforcement r\'epose sur un ensemble 
 d'\'etats $S$, un ensemble d'actions $A$, et une fonction $Q: S \times A \to 
