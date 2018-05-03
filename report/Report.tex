@@ -92,7 +92,7 @@ diff\'erents joueurs.
 Compte tenu de la taille du terrain de jeu, le nombre maximum de joueurs par 
 \'equipe est limit\'e \`a quatre. Ainsi, il y a trois cat\'egories de matches 
 selon le nombre de joueurs par \'equipe : un, deux ou quatre.
-
+\todo{Pr\'eciser l'historique de modifs pour les strats}
 \section{Un joueur}
 Pour l'\'equipe compos\'ee uniquement d'un joueur, on a d\'evelopp\'e un seul 
 joueur que l'on appelle {\itshape Fonceur}. 
@@ -206,7 +206,7 @@ besoin d'un pas de discr\'etisation tr\`es petit. Ainsi, on r\'ealise qu'une
 augmentation du nombre de param\`etres \`a optimiser a une tr\`es forte 
 influence sur le temps d'ex\'ecution de l'algorithme mis en place. On en 
 d\'eduit que le minuscule gain relatif nombre de param\`etres--temps 
-d'ex\'ecution ne convient pas au moyen terme.
+d'ex\'ecution ne convient pas \`a moyen terme.
 
 \section{Algorithmes g\'en\'etiques}
 Dans un deuxi\`eme temps, on est pass\'es aux algorithmes g\'en\'etiques. On en 
@@ -300,7 +300,7 @@ $\mathcal{X}_1,\mathcal{X}_2,\dotsc,\mathcal{X}_p$ de sorte que
 $f([\mathcal{X}_i]) = \{ a_i \} \subset A$, $i = 1,\dotsc,p$. On utilise les 
 arbres de d\'ecisions pour repr\'esenter ce partionnement. Ceci 
 implique que chaque n\oe ud interne correspond \`a un test sur une des $n$ 
-dimensions de $\mathcal{X}$, chaque feuille correspond \`a l'action \`a 
+dimensions de $\mathcal{X}$ et que chaque feuille correspond \`a l'action \`a 
 entreprendre pour l'\'etat donn\'e par le chemin suivi depuis la racine.
 
 On nous a fourni une strat\'egie sp\'eciale \texttt{KeyboardStrategy} 
@@ -317,7 +317,10 @@ un partionnement de $\mathbb{R}^n$. Cette strat\'egie utilise alors la fonction
 $f$ lors des matches suivants, ce qui donne un comportement plus intelligent 
 \`a nos joueurs.
 
-\todo{Pourquoi non utilis\'ee ? touches}
+Cette m\'ethode d'optimisation n'a pas \'et\'e utilis\'ee pour am\'eliorer la 
+prise de d\'ecisions sur les actions parce que l'on a trouv\'e difficile 
+l'interaction \`a travers le clavier d\`es que le nombre d'actions 
+possibles d\'epasse 5.
 
 \subsection*{Q-learning}
 Cet algorithme d'apprentissage par renforcement r\'epose sur un ensemble 
