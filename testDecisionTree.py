@@ -1,6 +1,6 @@
 from soccersimulator import SoccerTeam, Simulation, show_simu,KeyboardStrategy,DTreeStrategy,load_jsonz,dump_jsonz
 from soccersimulator import apprend_arbre, build_apprentissage, genere_dot
-from ia.strategies_dectree import *
+from ia.dt_strategies import *
 from ia.tools import *
 import ia
 import module
