@@ -211,20 +211,6 @@ class StateFoot(Wrapper):
             return opp
         return None
 
-    def nearest_opponent(self, rayPressing):
-        """
-        L'adversaire le plus proche du joueur
-        """
-        liste = self.opponents
-        distMin = rayPressing
-        opp = None
-        for p in liste:
-            dist = self.distance(p.position)
-            if self.distance(p.position) < distMin:
-                distMin = dist
-                opp = p
-        return opp
-
     def opponent_1v1(self):
         """
         Son unique adversaire lorsqu'il s'agit d'un match 1v1
