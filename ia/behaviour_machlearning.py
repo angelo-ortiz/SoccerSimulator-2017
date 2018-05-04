@@ -4,8 +4,8 @@ from soccersimulator import SoccerAction, Vector2D
 from soccersimulator.settings import maxPlayerShoot
 from .tools import StateFoot, nearest_defender, get_empty_strategy, shootPower, distance_horizontale
 from .conditions import is_close_goal, free_teammate, has_ball_control, free_opponent, both_must_kick
-from .behaviour import kickAt, shoot, parallelControl, goalControl, dribble, passBall, mark, loseMark, \
-    tryInterception, pushUp, goToBall, cutDownAngle, cutDownAngle_gk, cutDownAngle_def, clear_gk
+from .actions import kickAt, shoot, parallelControl, goalControl, dribble, passBall, mark, loseMark, \
+    tryInterception, pushUp, goToBall, cutDownAngle, cutDownAngle_gk, cutDownAngle_def, clear
 
 def st_kick_off(state, dico):
     if has_ball_control(state):
@@ -60,7 +60,7 @@ def shoot_mark(state, dico):
 def shoot_loseMark(state, dico):
     if has_ball_control(state):
         return shoot(state, shootPower(state, dico['alphaShoot'], dico['betaShoot']))
-    return loseMark(state, dico['rayPressing'], dico['distDemar'])
+    return loseMark(state, dico['rayPressing'], dico['distDemar'], dico['angleInter'])
 
 def shoot_intercept(state, dico):
     if has_ball_control(state):
@@ -90,7 +90,7 @@ def dribble_mark(state, dico):
 def dribble_loseMark(state, dico):
     if has_ball_control(state):
         return ml_dribble(state, dico)
-    return loseMark(state, dico['rayPressing'], dico['distDemar'])
+    return loseMark(state, dico['rayPressing'], dico['distDemar'], dico['angleInter'])
 
 def dribble_intercept(state, dico):
     if has_ball_control(state):
@@ -120,7 +120,7 @@ def control_mark(state, dico):
 def control_loseMark(state, dico):
     if has_ball_control(state):
         return ml_control(state, dico['controleMT'])
-    return loseMark(state, dico['rayPressing'], dico['distDemar'])
+    return loseMark(state, dico['rayPressing'], dico['distDemar'], dico['angleInter'])
 
 def control_intercept(state, dico):
     if has_ball_control(state):
@@ -150,7 +150,7 @@ def pass_mark(state, dico):
 def pass_loseMark(state, dico):
     if has_ball_control(state):
         return ml_pass(state, dico)
-    return loseMark(state, dico['rayPressing'], dico['distDemar'])
+    return loseMark(state, dico['rayPressing'], dico['distDemar'], dico['angleInter'])
 
 def pass_intercept(state, dico):
     if has_ball_control(state):
@@ -174,32 +174,32 @@ def pass_cutDownAngle_st(state, dico):
 
 def clear_mark(state, dico):
     if has_ball_control(state):
-        return clear_gk(state, angleClear=1.2)
+        return clear(state, angleClear=1.2)
     return cutDownAngle_def(state, dico['distMontee']+10., dico['rayInter'])#60., 20.)
 
 def clear_loseMark(state, dico):
     if has_ball_control(state):
-        return clear_gk(state, angleClear=1.2)
-    return loseMark(state, dico['rayPressing'], dico['distDemar'])
+        return clear(state, angleClear=1.2)
+    return loseMark(state, dico['rayPressing'], dico['distDemar'], dico['angleInter'])
 
 def clear_intercept(state, dico):
     if has_ball_control(state):
-        return clear_gk(state, angleClear=1.2)
+        return clear(state, angleClear=1.2)
     return tryInterception(state, dico)
 
 def clear_pushUp(state, dico):
     if has_ball_control(state):
-        return clear_gk(state, angleClear=1.2)
+        return clear(state, angleClear=1.2)
     return pushUp(state, dico['coeffPushUp'])
 
 def clear_goToBall(state, dico):
     if has_ball_control(state):
-        return clear_gk(state, angleClear=1.2)
+        return clear(state, angleClear=1.2)
     return goToBall(state)
 
 def clear_cutDownAngle_st(state, dico):
     if has_ball_control(state):
-        return clear_gk(state, angleClear=1.2)
+        return clear(state, angleClear=1.2)
     return cutDownAngle(state, dico['raySortie'], dico['rayInter'])#60., 20.)
 
 def shoot_cutDownAngle_gk(state, dico):
@@ -224,7 +224,7 @@ def pass_cutDownAngle_gk(state, dico):
 
 def clear_cutDownAngle_gk(state, dico):
     if has_ball_control(state):
-        return clear_gk(state, angleClear=1.2)
+        return clear(state, angleClear=1.2)
     return cutDownAngle_def(state, dico['distMontee']+10., dico['rayInter'])#60., 20.)
 
 attDict = {

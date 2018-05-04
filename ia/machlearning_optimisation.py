@@ -22,7 +22,7 @@ class LearningState(object):
         self.distances['JoG'] = stateFoot.distance(stateFoot.opp_goal)
         #self.distances['BmG'] = stateFoot.distance_ball(stateFoot.my_goal)
         #self.distances['BoG'] = stateFoot.distance_ball(stateFoot.opp_goal)
-        nearestOpp = stateFoot.nearest_opp.position
+        nearestOpp = stateFoot.opponent_nearest_ball.position
         self.distances['JnO'] = stateFoot.distance(nearestOpp)
         #self.distances['nOoG'] = nearestOpp.distance(stateFoot.opp_goal)
         nearestTm = nearest(stateFoot.my_pos, stateFoot.teammates)
