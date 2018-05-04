@@ -92,15 +92,18 @@ diff\'erents joueurs.
 Compte tenu de la taille du terrain de jeu, le nombre maximum de joueurs par 
 \'equipe est limit\'e \`a quatre. Ainsi, il y a trois cat\'egories de matches 
 selon le nombre de joueurs par \'equipe : un, deux ou quatre.
-
+\todo{Pr\'eciser l'historique de modifs pour les strats}
 \section{Un joueur}
 Pour l'\'equipe compos\'ee uniquement d'un joueur, on a d\'evelopp\'e un seul 
 joueur que l'on appelle {\itshape Fonceur}. 
 
 \subsection*{Fonceur}
-Au tout d\'ebut du projet, il faisait tout au maximum : il doit 
-s'approcher de la balle \`a toute vitesse lorsqu'il ne la contr\^ole pas et il 
-frappe avec toute sa puissance dans le cas contraire. On a d\'ecid\'e de garder le 
+Il s'agit du point de d\'epart du projet. Le but des premi\`eres semaines 
+\'etant de se familiariser avec le code source fourni, on a cr\'e\'e une 
+strat\'egie tr\`es simple et na\"ive. Ainsi, il faisait tout au maximum : il 
+devait se rapprocher de la balle \`a toute vitesse lorsqu'il ne la contr\^olait 
+pas et il frappait avec toute sa puissance dans le cas contraire. On a 
+d\'ecid\'e de garder le 
 m\^eme nom, m\^eme si son comportement diff\`ere. En effet, \`a pr\'esent il 
 avance avec la balle de petites distances et lorsqu'un adversaire lui fait 
 opposition il essaie de le dribbler ; il frappe vers la cage adverse s'il se 
@@ -318,7 +321,9 @@ $f$ lors des matches suivants, ce qui donne un comportement plus intelligent
 \`a nos joueurs.
 
 Cette m\'ethode d'optimisation n'a pas \'et\'e utilis\'ee pour am\'eliorer la 
-prise de d\'ecisions sur les strat\'egies
+prise de d\'ecisions sur les actions parce que l'on a trouv\'e difficile 
+l'interaction \`a travers le clavier d\`es que le nombre d'actions 
+possibles d\'epasse 5.
 
 \subsection*{Q-learning}
 Cet algorithme d'apprentissage par renforcement r\'epose sur un ensemble 
