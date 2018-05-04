@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from ia.machlearning_optimisation import LearningTeam
-from ia.strategies_machlearning import Attaquant2v2Strategy, Defenseur2v2Strategy
+from ia.ml_optimisation import LearningTeam
+from ia.ml_strategies import Attaquant2v2Strategy, Defenseur2v2Strategy
 
 import module
 import module2

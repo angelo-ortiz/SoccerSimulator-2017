@@ -1,5 +1,5 @@
 from ia.gs_optimisation import ParamSearchShoot, ParamSearchGoal, ParamSearchDribble, ParamSearchControle, ParamSearchPasse, ParamSearchReception
-from ia.strategies_gs_optimisation import ControlerTestStrategy, ShootTestStrategy, DribblerTestStrategy, GardienTestStrategy, PasseTestStrategy, ReceptionTestStrategy
+from ia.gs_strategies import ControlerTestStrategy, ShootTestStrategy, DribblerTestStrategy, GardienTestStrategy, PasseTestStrategy, ReceptionTestStrategy
 import operator
 
 #==============================================

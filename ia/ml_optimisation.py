@@ -1,11 +1,11 @@
 # coding: utf-8
 from __future__ import print_function, division
-from soccersimulator import SoccerTeam, Simulation, Vector2D, show_simu
-from ia.strategies import loadPath
-from ia.behaviour_machlearning import attDict, defDict
-from ia.strategies_machlearning import Attaquant2v2Strategy, Defenseur2v2Strategy
+from soccersimulator import SoccerTeam, Simulation, show_simu
 from ia.tools import StateFoot, nearest
+from ia.strategies import loadPath
 from ia.gene_optimisation import savePath
+from ia.ml_behaviour import attDict, defDict
+from ia.ml_strategies import Attaquant2v2Strategy, Defenseur2v2Strategy
 import numpy as np
 import random
 import pickle

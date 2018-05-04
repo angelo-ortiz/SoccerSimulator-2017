@@ -2,12 +2,12 @@
 from __future__ import print_function, division
 from soccersimulator import SoccerTeam, Simulation, Strategy, show_simu, Vector2D
 from soccersimulator.settings import GAME_WIDTH, GAME_HEIGHT
-from ia.strategies import FonceurStrategy
-from ia.strategies_gs_optimisation import PasseTestStrategy
 from ia.tools import StateFoot
 from ia.conditions import has_ball_control
-from math import cos, sin, pi
+from ia.strategies import FonceurStrategy
+from ia.gs_strategies import PasseTestStrategy
 from module5 import Fonceur as FSF
+from math import cos, sin, pi
 
 class ParamSearchShoot(object):
     def __init__(self, strategy, params, simu=None, trials=20, max_steps=1000000,

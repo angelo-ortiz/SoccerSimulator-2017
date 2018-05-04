@@ -1,7 +1,9 @@
-from soccersimulator import SoccerTeam, Simulation, show_simu,KeyboardStrategy,DTreeStrategy,load_jsonz,dump_jsonz
+from soccersimulator import SoccerTeam, Simulation, show_simu, KeyboardStrategy, \
+    DTreeStrategy, load_jsonz, dump_jsonz
 from soccersimulator import apprend_arbre, build_apprentissage, genere_dot
-from ia.dt_strategies import *
 from ia.tools import *
+from ia.strategies import Attaquant2v2Strategy, Gardien2v2Strategy
+from ia.dt_strategies import *
 import ia
 import module
 import module6
@@ -49,7 +51,7 @@ def entrainer(fname):
     #Creation d'une partie
     kb_strat = KeyboardStrategy()
     #kb_strat.add("z",GoToMyGoalStrategy())#revenir
-    kb_strat.add("z",DefenseStrategy(fn_gk="gk_dico_0325_p5_short.pkl", fn_st="st_dico_0325_p5_short.pkl"))#defendre
+    kb_strat.add("z",Gardien2v2Strategy(fn_gk="gk_dico_0325_p5_short.pkl", fn_st="st_dico_0325_p5_short.pkl"))#defendre
     #kb_strat.add("m",PushUpStrategy())#monter
     #kb_strat.add("s",PassStrategy())#faire passe
     kb_strat.add("q",PassiveSituationStrategy(fn_gk="gk_dico_0325_p5_short.pkl", fn_st="st_dico_0325_p5_short.pkl"))#recevoir passe
@@ -63,7 +65,7 @@ def entrainer(fname):
     team1 = SoccerTeam(name="Contol Team")
     team2 = module.get_team(2)
     team1.add("ControlPlayer",kb_strat) 
-    team1.add("     ST",AttaquantStrategy(fn_gk="gk_dico_0325_p5_short.pkl", fn_st="st_dico_0325_p5_short.pkl")) 
+    team1.add("     ST",Attaquant2v2Strategy(fn_gk="gk_dico_0325_p5_short.pkl", fn_st="st_dico_0325_p5_short.pkl")) 
     simu = Simulation(team1,team2,max_steps=4000)
     #Jouer, afficher et controler la partie
     show_simu(simu)
@@ -86,7 +88,7 @@ if __name__=="__main__":
 
     entrainer("test_kb_strat.jz")
 
-    dic_strategy = {DefenseStrategy(fn_gk="gk_dico_0325_p5_short.pkl", fn_st="st_dico_0325_p5_short.pkl").name:DefenseStrategy(fn_gk="gk_dico_0325_p5_short.pkl", fn_st="st_dico_0325_p5_short.pkl"), \
+    dic_strategy = {Gardien2v2Strategy(fn_gk="gk_dico_0325_p5_short.pkl", fn_st="st_dico_0325_p5_short.pkl").name:Gardien2v2Strategy(fn_gk="gk_dico_0325_p5_short.pkl", fn_st="st_dico_0325_p5_short.pkl"), \
                     PassiveSituationStrategy(fn_gk="gk_dico_0325_p5_short.pkl", fn_st="st_dico_0325_p5_short.pkl").name:PassiveSituationStrategy(fn_gk="gk_dico_0325_p5_short.pkl", fn_st="st_dico_0325_p5_short.pkl"),
                     DribbleShootStrategy(fn_gk="gk_dico_0325_p5_short.pkl", fn_st="st_dico_0325_p5_short.pkl").name:DribbleShootStrategy(fn_gk="gk_dico_0325_p5_short.pkl", fn_st="st_dico_0325_p5_short.pkl"),
                     ControlDribbleStrategy(fn_gk="gk_dico_0325_p5_short.pkl", fn_st="st_dico_0325_p5_short.pkl").name:ControlDribbleStrategy(fn_gk="gk_dico_0325_p5_short.pkl", fn_st="st_dico_0325_p5_short.pkl")
@@ -103,7 +105,7 @@ if __name__=="__main__":
     treeteam = SoccerTeam("Arbre Team")
     team2 = module.get_team(2)
     treeteam.add("    GK",treeStrat1)
-    treeteam.add("    ST",AttaquantStrategy(fn_gk="gk_dico_0325_p5_short.pkl", fn_st="st_dico_0325_p5_short.pkl"))
+    treeteam.add("    ST",Attaquant2v2Strategy(fn_gk="gk_dico_0325_p5_short.pkl", fn_st="st_dico_0325_p5_short.pkl"))
     simu = Simulation(treeteam,team2)
     show_simu(simu)
 

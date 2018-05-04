@@ -3,7 +3,7 @@ from soccersimulator import Strategy
 from .tools import StateFoot
 from .conditions import is_kick_off
 from .strategies import loadPath
-from .behaviour_machlearning import st_kick_off, gk_kick_off, attDict, defDict
+from .ml_behaviour import st_kick_off, gk_kick_off, attDict, defDict
 import pickle
 
 class Attaquant2v2Strategy(Strategy):

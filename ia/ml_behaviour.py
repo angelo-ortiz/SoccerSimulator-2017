@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
 from soccersimulator import SoccerAction, Vector2D
 from soccersimulator.settings import maxPlayerShoot
-from .tools import StateFoot, nearest_defender, get_empty_strategy, shootPower, distance_horizontale
-from .conditions import is_close_goal, free_teammate, has_ball_control, free_opponent, both_must_kick
-from .actions import kickAt, shoot, parallelControl, goalControl, dribble, passBall, mark, loseMark, \
-    tryInterception, pushUp, goToBall, cutDownAngle, cutDownAngle_gk, cutDownAngle_def, clear
+from .tools import StateFoot, nearest_defender, get_empty_strategy, shootPower, \
+    distance_horizontale
+from .conditions import is_close_goal, free_teammate, has_ball_control, \
+    free_opponent, both_must_kick
+from .actions import kickAt, shoot, control, dribble, passBall, mark, loseMark, clear, \
+    tryInterception, pushUp, goToBall, cutDownAngle, cutDownAngle_gk, cutDownAngle_def
 
 def st_kick_off(state, dico):
     if has_ball_control(state):
@@ -14,7 +15,7 @@ def st_kick_off(state, dico):
             return cutDownAngle_gk(state, 40.)
         if count == 1:
             return shoot(state, maxPlayerShoot)
-        return ml_control(state, dico['controleMT'])
+        return control(state, dico['controleMT'])
     return goToBall(state)
 
 def gk_kick_off(state, dico):
@@ -31,16 +32,11 @@ def ml_mark(state, dico):
         return mark(state, oppAtt, dico['rayPressing'])#20.
     return get_empty_strategy()
 
-def ml_control(state, powerControl):
-    if distance_horizontale(state.my_pos, state.opp_goal) < 30.:
-        return goalControl(state, powerControl)
-    return parallelControl(state, powerControl)
-
 def ml_dribble(state, dico):
     oppDef = nearest_defender(state, state.opponents, dico['rayDribble'])
     if oppDef is not None:
         return dribble(state, oppDef, dico['angleDribble'], dico['powerDribble'], dico['coeffAD'])
-    return ml_control(state, dico['controleMT'])
+    return control(state, dico['controleMT'])
 
 def ml_pass(state, dico):
     tm = free_teammate(state, dico['angleInter'])
@@ -50,7 +46,7 @@ def ml_pass(state, dico):
             coeffPushUp /= 2.
         return passBall(state, tm, dico['powerPasse'], dico['thetaPasse'], coeffPushUp) + \
             pushUp(state, dico['coeffPushUp'])
-    return ml_control(state, dico['controleMT'])
+    return control(state, dico['controleMT'])
 
 def shoot_mark(state, dico):
     if has_ball_control(state):
@@ -114,32 +110,32 @@ def dribble_cutDownAngle_st(state, dico):
 
 def control_mark(state, dico):
     if has_ball_control(state):
-        return ml_control(state, dico['controleMT'])
+        return control(state, dico['controleMT'])
     return ml_mark(state, dico)
 
 def control_loseMark(state, dico):
     if has_ball_control(state):
-        return ml_control(state, dico['controleMT'])
+        return control(state, dico['controleMT'])
     return loseMark(state, dico['rayPressing'], dico['distDemar'], dico['angleInter'])
 
 def control_intercept(state, dico):
     if has_ball_control(state):
-        return ml_control(state, dico['controleMT'])
+        return control(state, dico['controleMT'])
     return tryInterception(state, dico)
 
 def control_pushUp(state, dico):
     if has_ball_control(state):
-        return ml_control(state, dico['controleMT'])
+        return control(state, dico['controleMT'])
     return pushUp(state, dico['coeffPushUp'])
 
 def control_goToBall(state, dico):
     if has_ball_control(state):
-        return ml_control(state, dico['controleMT'])
+        return control(state, dico['controleMT'])
     return goToBall(state)
 
 def control_cutDownAngle_st(state, dico):
     if has_ball_control(state):
-        return ml_control(state, dico['controleMT'])
+        return control(state, dico['controleMT'])
     return cutDownAngle(state, dico['raySortie'], dico['rayInter'])#60., 20.)
 
 def pass_mark(state, dico):
@@ -214,7 +210,7 @@ def dribble_cutDownAngle_gk(state, dico):
 
 def control_cutDownAngle_gk(state, dico):
     if has_ball_control(state):
-        return ml_control(state, dico['controleMT'])
+        return control(state, dico['controleMT'])
     return cutDownAngle_def(state, dico['distMontee']+10., dico['rayInter'])#60., 20.)
 
 def pass_cutDownAngle_gk(state, dico):

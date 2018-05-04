@@ -58,7 +58,7 @@ def setCountersSolo(simu, team1, rev):
 def getDistinctTuple(low=0, high=30):
     """
     Renvoie un couple d'entiers distincts compris entre
-    low (inclus) et high (exlu)
+    <low> (inclus) et <high> (exlu)
     """
     i = random.randrange(low, high)
     while True:
@@ -134,7 +134,7 @@ class dictParams(object):
 
     def isValid(self, p):
         """
-        Renvoie vrai ssi la valeur du parametre p est bien valide,
+        Renvoie vrai ssi la valeur du parametre <p> est bien valide,
         i.e. comprise dans ses limites definies
         """
         val = self.params[p]
@@ -206,7 +206,7 @@ class GeneTeam(object):
     def getTeam(self, i):
         """
         Renvoie l'equipe composee des strategies contenues
-        dans l'instance avec l'i-ieme vecteur de parametres,
+        dans l'instance avec le <i>-ieme vecteur de parametres,
         i.e. une SoccerTeam
         """
         self.team = SoccerTeam(self.name)
@@ -227,7 +227,7 @@ class GeneTeam(object):
 
     def getVector(self, i):
         """
-        Renvoie l'i-ieme vecteur de parametres, ie un dictParams
+        Renvoie le <i>-ieme vecteur de parametres, i.e. un dictParams
         """
         return self.vectors[i]
 
@@ -240,8 +240,8 @@ class GeneTeam(object):
 
     def crossover(self, i, j, k):
         """
-        Fait un croisement entre les vecteurs i- et j-ieme et
-        le met dans le k-ieme vecteur
+        Fait un croisement entre les vecteurs <i>- et <j>-ieme et
+        le met dans le <k>-ieme vecteur
         """
         vi = self.vectors[i]
         vj = self.vectors[j]
@@ -256,7 +256,7 @@ class GeneTeam(object):
 
     def addNoise(self, i, p):
         """
-        Ajoute du bruit au parametre p de l'i-ieme vecteur
+        Ajoute du bruit au parametre <p> du <i>-ieme vecteur
         de parametres
         """
         val = self.vectors[i].params[p]
@@ -269,8 +269,8 @@ class GeneTeam(object):
 
     def mutation(self, i, j, k):
         """
-        Fait une mutation entre les vecteurs i- et j-ieme dans
-        le vecteur k-ieme, ie un croisement avec du bruit sur
+        Fait une mutation entre les vecteurs <i>- et <j>-ieme dans
+        le vecteur <k>-ieme, i.e. un croisement avec du bruit sur
         l'un des parametres
         """
         self.crossover(i, j, k)
@@ -281,7 +281,7 @@ class GeneTeam(object):
     def update(self):
         """
         Garde les meilleurs resultats, qui representent le
-        keep*100% superieur, et modifie le reste avec une
+        <keep> superieur, et modifie le reste avec une
         mutation, un croisement des meilleurs scores ou
         des valeurs aleatoires (deux vecteurs)
         """
@@ -307,7 +307,7 @@ class GeneTeam(object):
 
     def printVectors(self, nVect):
         """
-        Affiche les nVect premiers vecteurs de parametres
+        Affiche les <nVect> premiers vecteurs de parametres
         """
         print(self.name)
         pList = self.paramsList()
@@ -327,7 +327,7 @@ class GeneTeam(object):
         """
         Renvoie le sous-dictionnaire du meilleur vecteur de
         parametres compose uniquement de ceux concernant
-        le i-ieme joueur
+        le <i>-ieme joueur
         Hypothese : sortVectors() doit avoir ete appele
         auparavant
         """
@@ -411,7 +411,7 @@ class GKStrikerMixTeam(GKStrikerTeam):
     def getTeam(self, i):
         """
         Renvoie l'equipe composee des strategies contenues
-        dans l'instance avec l'i-ieme vecteur de parametres
+        dans l'instance avec le <i>-ieme vecteur de parametres
         applique a toutes les deux i.e. une SoccerTeam dont
         les deux joueurs ont les meme parametres
         """
@@ -447,7 +447,7 @@ class STTeam(GeneTeam):
     def getTeam(self, i):
         """
         Renvoie l'equipe composee de la strategie contenue
-        dans l'instance avec l'i-ieme vecteur de parametres
+        dans l'instance avec le <i>-ieme vecteur de parametres
         i.e. une SoccerTeam d'un joueur ayant les deux types
         de parametres
         """

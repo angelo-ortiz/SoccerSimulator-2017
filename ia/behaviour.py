@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from .tools import is_in_radius_action
+from soccersimulator import Vector2D
 from soccersimulator.settings import maxPlayerShoot
+from .tools import is_in_radius_action
 from .conditions import must_intercept, has_ball_control, is_defensive_zone, \
     is_close_goal, is_close_ball, opponent_approaches_my_goal, must_advance, \
     free_teammate, had_ball_control, is_kick_off, must_pass_ball, distance_horizontale, \
