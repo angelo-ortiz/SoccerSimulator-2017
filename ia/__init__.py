@@ -7,7 +7,7 @@ from soccersimulator import SoccerTeam
 def get_team(nb_players):
     myteam = SoccerTeam(name="ChPerFusion")
     if nb_players == 1:
-        myteam.add("  9_Guerrero", Fonceur1v1Strategy(fn_gk="fonceur_gk_dico_0401.pkl", fn_st="fonceur_st_dico_0401.pkl"))
+        myteam.add("  9_Guerrero", Fonceur1v1Strategy(fn_gk="fonceur_gk_dico_0505_1.pkl", fn_st="fonceur_st_dico_0505_1.pkl"))
     if nb_players == 2:
         myteam.add("  10_Messi", Attaquant2v2Strategy(fn_gk="gk_dico_0428_1.pkl", fn_st="st_dico_0428_1.pkl"))
         myteam.add("  3_Beckenbauer", Gardien2v2Strategy(fn_gk="gk_dico_0428_1.pkl", fn_st="st_dico_0428_1.pkl"))

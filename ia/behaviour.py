@@ -7,9 +7,9 @@ from .conditions import must_intercept, has_ball_control, is_defensive_zone, \
     free_teammate, had_ball_control, is_kick_off, must_pass_ball, distance_horizontale, \
     both_must_kick, free_opponent, ball_advances, is_under_pressure
 from .actions import goToBall, goToMyGoal, kickAt, shoot, control, dribble, passBall, \
-    goForwardsDef, goForwardsPA, goForwardsMF, goForwardsPASolo, goForwardsMFSolo, \
-    mark, loseMark, clear, cutDownAngle, cutDownAngle_def, cutDownAngle_gk, \
-    pushUp, tryInterception
+    goForwardsDef, goForwardsPA, goForwardsMF, goForwardsDefSolo, goForwardsPASolo, \
+    goForwardsMFSolo, mark, loseMark, clear, cutDownAngle, cutDownAngle_def, \
+    cutDownAngle_gk, pushUp, tryInterception
     
 
 def st_kickOffSolo(state, dico):
@@ -52,6 +52,8 @@ def gk_kickOff(state, dico):
 def WithBallControl_1v1(state, dico):
     """
     """
+    if is_defensive_zone(state, dico['distDefZone']):
+        return goForwardsDefSolo(state, dico)
     if is_close_goal(state, dico['distAttaque']):
         return goForwardsPASolo(state, dico)
     return goForwardsMFSolo(state, dico)
@@ -73,11 +75,11 @@ def WithoutBallControl_1v1(state, dico):
     if state.is_nearest_ball() or \
        had_ball_control(state, dico['rayReprise'], dico['angleReprise']):
         return tryInterception(state, dico)
-    if is_close_goal(state, dico['distAttaque']) and ball_advances(state):
-        return tryInterception(state, dico)
     if must_intercept(state, dico['rayInter']):
         return tryInterception(state, dico)
-    return cutDownAngle_def(state, dico['raySortie'], dico['rayInter'])
+    if not state.team_controls_ball():
+        return tryInterception(state, dico)
+    return cutDownAngle(state, dico['raySortie'], dico['rayInter'])
 
 def WithBallControl_2v2(state, dico):
     """

@@ -230,8 +230,7 @@ def goForwardsPASolo(state, dico):
     """
     oppDef = nearest_defender_def(state, state.opponents, dico['rayDribble'])
     if oppDef is None:
-        if is_close_goal(state, dico['distShoot']) and \
-           state.free_trajectory(state.opp_goal, dico['angleInter']):
+        if is_close_goal(state, dico['distShoot']):
             return shoot(state, shootPower(state, dico['alphaShoot'], dico['betaShoot']))
         return control(state, dico['controleAttaque'])
     return dribble(state, oppDef, dico['angleDribble'], dico['powerDribble'], dico['coeffAD'])
@@ -246,6 +245,20 @@ def goForwardsMFSolo(state, dico):
     if oppDef is None:
         return control(state, dico['controleMT'])
     return dribble(state, oppDef, dico['angleDribble'], dico['powerDribble'], dico['coeffAD'])
+
+def goForwardsDefSolo(state, dico):
+    """1v1
+    Essaye d'avancer dans la zone defensive
+    avec la balle et fait une passe passe ou
+    un degagement lorsqu'il y a un
+    adversaire en face
+    """
+    angleInter = 5.*dico['angleInter']/4.
+    oppDef = nearest_defender_def(state, state.opponents, dico['rayDribble'])
+    if oppDef is None:
+        return control(state, dico['controleMT'])
+    return clear(state, angleClear=0.7, power=6.)
+    
 
 def goForwardsPA(state, dico):
     """ 2v2/4v4
