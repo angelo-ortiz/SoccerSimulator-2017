@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.3.31)  5 MAY 2018 19:13
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.3.31)  5 MAY 2018 19:33
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -994,31 +994,23 @@ File: apercu.png Graphic file (type png)
 Package pdftex.def Info: apercu.png used on input line 64.
 (pdftex.def)             Requested size: 386.95897pt x 257.96997pt.
 
-<packages_IA.png, id=23, 719.68875pt x 541.02126pt>
+<packages_IA.png, id=23, 979.66pt x 637.38126pt>
 File: packages_IA.png Graphic file (type png)
  <use packages_IA.png>
-Package pdftex.def Info: packages_IA.png used on input line 74.
-(pdftex.def)             Requested size: 386.95897pt x 290.90057pt.
-
-[2 <./apercu.png (PNG copy)>]
-<classes_IA.png, id=29, 6651.85126pt x 3881.50125pt>
-File: classes_IA.png Graphic file (type png)
- <use classes_IA.png>
-Package pdftex.def Info: classes_IA.png used on input line 80.
-(pdftex.def)             Requested size: 386.95897pt x 225.7728pt.
-
-[3 <./packages_IA.png> <./classes_IA.png>] [4] [5] [6] [7]
-LaTeX Font Info:    Try loading font information for U+msa on input line 301.
+Package pdftex.def Info: packages_IA.png used on input line 75.
+(pdftex.def)             Requested size: 386.95897pt x 251.75797pt.
+ [2 <./apercu.png (PNG copy)>] [3 <./packages_IA.png>] [4] [5] [6] [7]
+LaTeX Font Info:    Try loading font information for U+msa on input line 295.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 301.
+LaTeX Font Info:    Try loading font information for U+msb on input line 295.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [8]
-LaTeX Font Info:    Try loading font information for T1+cmtt on input line 390.
+LaTeX Font Info:    Try loading font information for T1+cmtt on input line 384.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
@@ -1026,10 +1018,10 @@ File: t1cmtt.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 ) [9] [10] [11]
 (./Report.aux) ) 
 Here is how much of TeX's memory you used:
- 16206 strings out of 493029
- 300306 string characters out of 6136234
+ 16201 strings out of 493029
+ 300217 string characters out of 6136234
  367500 words of memory out of 5000000
- 19391 multiletter control sequences out of 15000+600000
+ 19387 multiletter control sequences out of 15000+600000
  19699 words of font info for 48 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  62i,12n,56p,866b,439s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1050,10 +1042,10 @@ e1/public/cm-super/sfrm1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/s
 frm1440.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfti1200.pfb></usr/sh
 are/texmf/fonts/type1/public/cm-super/sfti1728.pfb></usr/share/texmf/fonts/type
 1/public/cm-super/sftt1200.pfb>
-Output written on Report.pdf (12 pages, 2365936 bytes).
+Output written on Report.pdf (12 pages, 1515865 bytes).
 PDF statistics:
- 130 PDF objects out of 1000 (max. 8388607)
+ 128 PDF objects out of 1000 (max. 8388607)
  90 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 33 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 28 words of extra memory for PDF output out of 10000 (max. 10000000)
 
