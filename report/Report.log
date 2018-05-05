@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.3.31)  5 MAY 2018 01:13
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.3.31)  5 MAY 2018 01:59
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -978,29 +978,29 @@ File: classes_IA.png Graphic file (type png)
 Package pdftex.def Info: classes_IA.png used on input line 75.
 (pdftex.def)             Requested size: 386.95897pt x 225.7728pt.
 
-[3 <./packages_IA.png> <./classes_IA.png>] [4] [5] [6]
-LaTeX Font Info:    Try loading font information for U+msa on input line 221.
+[3 <./packages_IA.png> <./classes_IA.png>] [4] [5] [6] [7]
+LaTeX Font Info:    Try loading font information for U+msa on input line 245.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 221.
+LaTeX Font Info:    Try loading font information for U+msb on input line 245.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-) [7]
-LaTeX Font Info:    Try loading font information for T1+cmtt on input line 306.
+) [8]
+LaTeX Font Info:    Try loading font information for T1+cmtt on input line 330.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 2014/09/29 v2.5h Standard LaTeX font definitions
-) [8] [9] [10]
+) [9] [10] [11]
 (./Report.aux) ) 
 Here is how much of TeX's memory you used:
- 15461 strings out of 493029
- 290210 string characters out of 6136234
- 345067 words of memory out of 5000000
- 18658 multiletter control sequences out of 15000+600000
+ 15469 strings out of 493029
+ 290389 string characters out of 6136234
+ 347208 words of memory out of 5000000
+ 18666 multiletter control sequences out of 15000+600000
  19699 words of font info for 48 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  62i,12n,76p,476b,715s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1022,10 +1022,10 @@ frm1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1440.pfb></usr/sh
 are/texmf/fonts/type1/public/cm-super/sfti1200.pfb></usr/share/texmf/fonts/type
 1/public/cm-super/sfti1728.pfb></usr/share/texmf/fonts/type1/public/cm-super/sf
 tt1200.pfb>
-Output written on Report.pdf (11 pages, 2383718 bytes).
+Output written on Report.pdf (12 pages, 2384356 bytes).
 PDF statistics:
- 131 PDF objects out of 1000 (max. 8388607)
- 91 compressed objects within 1 object stream
+ 134 PDF objects out of 1000 (max. 8388607)
+ 93 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  33 words of extra memory for PDF output out of 10000 (max. 10000000)
 
