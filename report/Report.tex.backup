@@ -7,6 +7,7 @@
 \usepackage{amssymb}
 \usepackage[pdftex]{graphicx}
 \usepackage{comment}
+\usepackage{csquotes}
 \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
 \usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
 \author{Angelo Ortiz}
@@ -40,16 +41,20 @@
 \part*{Introduction}
 \section*{Pr\'esentation}
 Le projet a consist\'e en le d\'eveloppement d'intelligences artificielles de 
-joueurs de football. Le simulateur du jeu \'etant d\'ej\`a fourni, notre 
+joueurs de football. 
+Le simulateur du jeu \'etant d\'ej\`a fourni, notre 
 travail a \'et\'e d'impl\'ementer des strat\'egies de jeu pour mieux r\'eussir 
 les matches.
 
 L’objectif du travail a \'et\'e d'apprendre \`a bien mener un projet long 
 sur un nouvel environnement de d\'eveloppement, \`a savoir 
-Python. Sachant que travail \`a \'et\'e fait en bin\^ome, on a eu 
+Python. 
+Sachant que travail \`a \'et\'e fait en bin\^ome, on a eu 
 besoin d'un outil collaboratif, en l'occurrence {\bfseries git} qui est un 
-logiciel de gestion de versions d\'ecentralis\'e. On a ainsi appris \`a g\'erer 
+logiciel de gestion de versions d\'ecentralis\'e. 
+On a ainsi appris \`a g\'erer 
 l'avancement d'un projet \`a travers la m\'ethode par fonctionnalit\'es.
+
 \section*{Aper\c{c}u}
 Voici un aper\c{c}u du simulateur de football lors d'une partie de notre 
 \'equipe {\itshape ChPerFusion} en rouge face \`a l'\'equipe d'un de nos 
@@ -61,7 +66,7 @@ camarades de classe.
 
 \section*{Diagrammes}
 Le projet a \'et\'e organis\'e en un module {\bfseries ia} qui contient 
-l'impl\'ementation nos joueurs et en divers fichiers de test.
+l'impl\'ementation de nos joueurs.
 
 On vous pr\'esente le graphe de d\'ependences du module.
 
@@ -88,11 +93,11 @@ concernant l'architecture logicielle.
 \part{Strat\'egies}
 Dans cette deuxi\`eme partie, on vous d\'etaille le comportement de nos 
 diff\'erents joueurs.
-
 Compte tenu de la taille du terrain de jeu, le nombre maximum de joueurs par 
-\'equipe est limit\'e \`a quatre. Ainsi, il y a trois cat\'egories de matches 
+\'equipe est limit\'e \`a quatre. 
+Ainsi, il y a trois cat\'egories de matches 
 selon le nombre de joueurs par \'equipe : un, deux ou quatre.
-\todo{Pr\'eciser l'historique de modifs pour les strats}
+
 \section{Un joueur}
 Pour l'\'equipe compos\'ee uniquement d'un joueur, on a d\'evelopp\'e un seul 
 joueur que l'on appelle {\itshape Fonceur}. 
@@ -100,23 +105,30 @@ joueur que l'on appelle {\itshape Fonceur}.
 \subsection*{Fonceur}
 Il s'agit du point de d\'epart du projet. Le but des premi\`eres semaines 
 \'etant de se familiariser avec le code source fourni, on a cr\'e\'e une 
-strat\'egie tr\`es simple et na\"ive. Ainsi, il faisait tout au maximum : il 
-devait se rapprocher de la balle \`a toute vitesse lorsqu'il ne la contr\^olait 
-pas et il frappait avec toute sa puissance dans le cas contraire. Compte tenu 
-que ce comportement ressemblait beacoup aux autres fonceurs de la classe \`a 
-une param\'etrisation pr\`es et que les matches finissaint en nul, on a 
-ajout\'e les fonctionnalit\'es suivantes : l'avanc\'ee balle au pied et le 
-dribble. Ceci a rapport\'e de bons r\'esultats contre les \'equipes restant 
+strat\'egie tr\`es simple et na\"ive. 
+Ainsi, il faisait tout au maximum : il devait se rapprocher de la balle \`a 
+toute vitesse lorsqu'il ne la contr\^olait pas et il frappait avec toute sa 
+puissance dans le cas contraire. 
+Compte tenu que ce comportement ressemblait beacoup aux autres fonceurs de la 
+classe \`a une param\'etrisation pr\`es et que les matches finissaint en nul, on 
+a ajout\'e les fonctionnalit\'es suivantes : l'avanc\'ee balle au pied et le 
+dribble. 
+Ceci a rapport\'e de bons r\'esultats contre les \'equipes restant 
 na\"ives, mais n'a pas suffit pour battre les \'equipes plus d\'evelopp\'ees. 
 En effet, il est tr\`es difficile de devancer un adversaire qui fait une 
 pression sur le ballon \`a une distance moyenne de sorte que les tentatives de 
-dribbles du fonceur \'echouent. 
+dribbles du fonceur \'echouent.
+De plus, ses essais de dribble dans sa propre surface de r\'eparation 
+\'etaient souvent insuffisants pour \'echapper au danger que signifie 
+l'adversaire venant le presser. Il d\'egage \`a pres\'ent la balle le plus loin 
+possible pour pallier cette difficult\'e.
 
 Cette strat\'egie est rest\'ee assez basique \`a l'\'egard de celles de nos 
 camarades de classe vu les r\'esultats des derniers tournois hebdomadaires et 
-de nos tests. Autrement dit, le dribble est tr\`es peu r\'eussi et les contres 
-arrivent lorsque le joueur est dans sa course vers l'avant, ce qui le surprend 
-et fait que l'adversaire se trouve facilement seul face \`a notre cage.
+de nos tests. Autrement dit, le dribble est tr\`es peu r\'eussi et les 
+contre-attaques arrivent lorsque le joueur est dans sa course vers l'avant, ce 
+qui le surprend et fait que l'adversaire se trouve facilement seul face \`a 
+notre cage.
 
 \section{Deux joueurs}
 Cette cat\'egorie a \'et\'e celle sur laquelle on a consacr\'e la plupart du 
@@ -125,48 +137,78 @@ projet. On compte trois joueurs fonctionnels que l'on appelle
 
 \subsection*{Attaquant}
 Il a une vocation plut\^ot offensive. Son comportement initial \'etait celui 
-d'un attaquant classique. Sa conduite sans la balle d\'ependait de la zone dans 
-laquelle se trouvait le porteur de la balle : il le pressait si l'adversaire 
-\'etait \'eloign\'e de sa surface et se d\'ecalait vers les c\^ot\'es pour 
-faciliter les contre-attaques dans le cas contraire. Quant \`a son style de jeu 
-avec la balle au pied, il avan\c{c}ait de petites distances sur le terrain et 
-frappait la balle lorsqu'il se trouvait dans la surface de r\'eparation 
-adverse. 
+d'un attaquant classique. 
+Sa conduite sans la balle d\'ependait de la zone dans laquelle se trouvait le 
+porteur de la balle : il le pressait si l'adversaire \'etait \'eloign\'e de sa 
+surface et se d\'ecalait vers les c\^ot\'es pour faciliter les contre-attaques 
+dans le cas contraire. 
+Quant \`a son style de jeu avec la balle au pied, il avan\c{c}ait de petites 
+distances sur le terrain et frappait la balle lorsqu'il se trouvait dans la 
+surface de r\'eparation adverse. Tout comme pour le fonceur, il perdait la balle 
+trop facilement. 
+C'est pourquoi on a ajout\'e le dribble al\'eatoire, ce qui l'a rendu 
+impr\'evisible face aux tentatives adverses de lui arracher le ballon. 
+Lorsque le contr\^ole de la balle avait lieu en sa zone d\'efensive et qu'un 
+adversaire \'etait si proche de lui qu'il pouvait aussi la frapper, la 
+puissance de son dribble \'etait d\'epass\'ee par celle de la frappe. On a 
+ajout\'e le d\'egagement vers un point quelconque tel que le tir soit le moins 
+risqu\'e possible pour \'eviter ce genre de situations.
 
-Il se comporte diff\'eremment selon 
-s'il contr\^ole la balle ou pas. Dans la premi\`ere situation, il essaie 
-syst\'ematiquement d'avancer sur le terrain balle au pied et de faire un tir 
-vers la cage d\`es qu'il se trouve dans la surface de r\'eparation adverse. 
-Cependant, s'il rencontre un adversaire lui bloquant le chemin, il tente de 
-faire une passe vers son co\'equipier s'il est sans marquage, il le 
-dribble sinon. 
-
-Il montre trois conduites lorsqu'il se trouve sans le 
-contr\^ole du ballon : il presse le porteur de la balle s'il en plus 
-proche que son co\'equipier, il se d\'ecale lat\'eralement dans le cas 
-contraire, et il monte dans le terrain si c'est son co\'equipier qui la 
-poss\`ede ou va bient\^ot en prendre possession pour lui proposer une 
-possiblit\'e de passe.
+Puis on s'est rendu compte qu'il se trouvait en inf\'eriorit\'e num\'erique face 
+\`a l'\'equipe adverse dans la plupart des matches. Cette contrainte a motiv\'e 
+l'id\'ee de faire monter le co\'equipier dans le terrain et, par cons\'equent, 
+le d\'eveloppement de l'action de passe de la balle.
+Ce comportement s'est r\'ev\'el\'e tr\`es efficace en situation d'attaque vu 
+que les autres \'equipes utilisent seulement un attaquant, mais les 
+contre-attaques s'av\'eraient tr\`es dangereuses. Celles-ci arrivaient comme 
+r\'esultat des dribbles \'echou\'es. Par ailleurs, on a remarqu\'e que les 
+adversaires restaient fix\'es dans l'axe tout en laissant dans les c\^ot\'es 
+des voies libres. Tout ceci nous a am\'en\'e \`a mettre en place la toute 
+derni\`ere modification : le dribble lat\'eral. Dans le milieu de terrain, le 
+joueur essaie syst\'ematiquement de dribbler le joueur lui bloquant la 
+trajectoire vers les c\^ot\'es. Le comportement final est encore plus 
+dangereux en attaque et les possibilit\'es de contre-attaques sont \`a 
+pr\'esent tr\`es mitig\'ees.
 
 \subsection*{Gardien}
-De la m\^eme mani\`ere que pour le fonceur, le gardien ne garde gu\`ere de son 
-comportement initial. Il restait fix\'e dans sa cage et en sortait juste pour 
-r\'eduire l'angle de frappe \`a l'attaquant adverse. Sa possession de la balle 
-se r\'eduisait \`a un d\'egagement presque al\'eatoire.
+La prise de d\'ecisions initiale du gardien avait pour vocation de d\'efendre 
+la cage \`a tous les coups. En effet, il se positionnait dans le point central 
+sur la ligne de sa cage et n'en sortait que pour d\'egager la balle lorsqu'un 
+adversaire se rapprochait avec elle. 
+Ce d\'egagement consistait en fait \`a faire une pseudopasse vers son 
+co\'equipier, c'est-\`a-dire qu'il l'adressait vers l'un de deux points 
+axialement sym\'etriques selon si le co\'equipier se trouvait en la partie haute 
+ou basse du terrain. 
+Le point faible de cette conduite \'etait que certains attaquants adverses 
+tiraient vers notre cage depuis des longues distances et on essayait ainsi 
+d'attraper la balle avec des trajectoires circulaires. On a donc d\'ecid\'e 
+d'am\'eliorer la trajectoire d'interception de la balle avec une certaine 
+pr\'evision de sorte \`a y arriver en ligne de droite et plus rapidement. De 
+plus, sa position de base passerait \`a une certaine distance de sa cage 
+align\'ee avec une potentielle trajectoire de la balle vers la cage.
 
-On a remplac\'e sa conduite avec la balle par celle de l'attaquant 
-mentionn\'e ci-dessus. En revanche, en absence du ballon, il reste \`a une 
-distance de sa cage lorsque l'\'equipe adverse le contr\^ole et essaie 
-de l'intercepter lorsque le porteur se trouve dans sa surface de r\'eparation. 
-Tout comme pour l'attaquant, il monte dans le terrain lorsque n\'ecessaire.
+On n'est jamais parvenus \`a perfectionner l'interception de la balle et on 
+compte ainsi jusqu'\`a pres\'ent un taux non n\'egligeable d'\'echec. De plus, 
+comme dit pr\'ec\'edemment, une attaque \`a un n'offrait pas d'avantage \`a 
+l'\'egard des \'equipes de nos camarades. Ceci a impuls\'e le 
+d\'eveloppement de la d\'ej\`a mentionn\'ee mont\'ee du gardien. Lorsque son 
+co\'equipier poss\`ede la balle, il monte dans le terrain pour proposer des 
+possibilit\'es de passe. Son comportement avec la balle a fait aussi objet de 
+modifications : c'est exactement le m\^eme que celui de l'attaquant.
+On peut donc r\'esumer le comportement de notre \'equipe \`a deux joueurs en 
+l'expression footballistique \enquote{la meilleure d\'efense, c'est l'attaque.}
 
 \subsection*{D\'efenseur}
-Le d\'efenseur n'a par contre qu'une vocation d\'efensive. En effet, s'il a la 
-balle, il s'en d\'efait le plus rapidement possible soit \`a l'aide d'une passe 
-vers son co\'equipier si d\'emarqu\'e, soit via le d\'egagement le moins 
-risqu\'e possible. Quant \`a son effort d\'efensif, il demeure \`a une certaine 
-distance radial \`a partir de sa cage et s'approche de la balle en vu d'une 
-interception s'il en suffisamment proche.
+Il est \`a noter que ce joueur ne fait pas partie de l'\'equipe pr\'econis\'ee.
+Il correspond \`a la derni\`ere strat\'egie impl\'ement\'ee dans cette 
+cat\'egorie, \`a savoir celle d'un d\'efenseur, qui n'a par contre qu'une 
+vocation d\'efensive. 
+En effet, s'il a la balle, il s'en d\'efait le plus rapidement possible soit \`a 
+l'aide d'une passe vers son co\'equipier si d\'emarqu\'e, soit via le 
+d\'egagement le moins risqu\'e possible. 
+Quant \`a son effort d\'efensif, il demeure \`a une certaine distance radial \`a 
+partir de sa cage et s'approche de la balle en vue d'une interception s'il en 
+suffisamment proche.
 
 \section{Quatre joueurs}
 Il s'agit de la cat\'egorie que l'on a trouv\'e la plus int\'eressante en 
@@ -174,18 +216,30 @@ raison de la difficult\'e de la gestion des espaces et la r\'epartition des
 fonctions. Tout comme pour la cat\'egorie pr\'ecedente, on compte trois 
 joueurs fonctionnels que l'on rep\`ere d'ailleurs par les m\^emes noms. 
 
+Le d\'eveloppement des strat\'egies suivantes a commenc\'e lorsque leurs pairs 
+de la cat\'egorie pr\'ec\'edente \'etaient proches de leurs versions finales. 
+En effet, il n'y avait que le dribble lat\'eral qui n'\'etait pas encore mis en 
+place lors du d\'ebut de leur conception. 
+Cette modification dans le dribble a \'et\'e ajout\'ee \`a ces strat\'egies au 
+m\^eme temps que pour leurs pairs.
+
 \subsection*{Attaquant}
 Il y a deux diff\'erences en son comportement par rapport \`a son pair 
 de la cat\'egorie ci-dessus et celles-ci concernent toutes les deux la 
 situation o\`u il se trouve dans sa surface de r\'eparation. La premi\`ere fait 
 r\'ef\'erence \`a la r\'ecup\'eration de la balle : il ne se 
-pr\'ecipite plus et se comporte tel qu'il le fait dans le milieu du terrain. La 
-deuxi\`eme correspond \`a l'effort de marquer les adversaires sans 
-marquage.
+pr\'ecipite plus et fait de nouveau le contr\^ole, le dribble ou la passe 
+n\'ecessaire de la m\^eme mani\`ere que dans le milieu de terrain. 
+La deuxi\`eme correspond \`a l'effort de marquer les adversaires sans 
+marquage. En effet, les avanc\'ees adverses comportent plus de participants et 
+il se r\'ev\`ele crucial de marquer les adversaires susceptibles de 
+recevoir une passe pour intercepter la balle et lancer des contre-attaques 
+rapides et efficaces.
 
 \subsection*{Gardien}
 Ce joueur combine le comportement de son pair de la cat\'egorie ci-dessus et de 
-l'attaquant de cette cat\'egorie. En effet, il suit les m\^emes indications que 
+l'attaquant de cette cat\'egorie \`a des valeurs des param\`etres pr\`es. En 
+effet, il suit les m\^emes indications que 
 l'attaquant lorsqu'il contr\^ole et r\'ealise les m\^emes mouvements sans ballon 
 que le d\'efenseur de l'\'equipe \`a deux joueurs.
 
@@ -204,8 +258,9 @@ appris tout au long du semestre pour l'am\'elioration des strat\'egies
 initialement propos\'ees.
 
 \section{Recherche en grille}
-La premi\`ere m\'ethode d'optimisation pre\'esent\'ee en cours a \'et\'e la 
-recherche en grille. Celle-ci est utilis\'ee pour l'optimisation d'une 
+La premi\`ere m\'ethode d'optimisation pre\'esent\'ee en cours a \'et\'e 
+celle de la recherche en grille. Celle-ci est utilis\'ee pour l'optimisation 
+d'une 
 action.
 
 Tout d'abord, on doit d\'efinir l'action \`a optimiser et le crit\`ere 
@@ -225,9 +280,9 @@ Il est important de remarquer que la plupart de nos param\`etres sont continus.
 Pour obtenir des valeurs plus pr\'ecises et un meilleur comportement, on a 
 besoin d'un pas de discr\'etisation tr\`es petit. Ainsi, on r\'ealise qu'une 
 augmentation du nombre de param\`etres \`a optimiser a une tr\`es forte 
-influence sur le temps d'ex\'ecution de l'algorithme mis en place. On en 
-d\'eduit que le minuscule gain relatif nombre de param\`etres--temps 
-d'ex\'ecution ne convient pas \`a moyen terme.
+influence sur le temps d'ex\'ecution de l'algorithme mis en place. On 
+en a d\'eduit que le minuscule gain relatif nombre de param\`etres--temps 
+d'ex\'ecution ne convenait pas \`a moyen terme.
 
 \section{Algorithmes g\'en\'etiques}
 Dans un deuxi\`eme temps, on est pass\'es aux algorithmes g\'en\'etiques. On en 
@@ -287,7 +342,11 @@ Cet algorithme \'etant it\'eratif, on recommence \`a la deuxi\`eme phase avec
 la nouvelle g\'en\'eration. Au bout d'un nombre raisonnable d'it\'erations, on 
 se retrouve avec une g\'en\'eration compos\'ee de chromosomes tr\`es proches des 
 maxima relatifs. On finit donc l'algorthme par prendre le candidat optimal de la 
-derni\`ere population.  
+derni\`ere population.
+
+Cette m\'ethode a permis d'am\'eliorer nos \'equipes progressivement et les 
+valeurs de tous les param\`etres mis en place ont \'et\'e d\'efinies au moyen 
+de nombreuses ex\'ecutions de cette m\'ethode.
 
 \section{Apprentissage automatique}
 Dans la derni\`ere partie du semestre, on s'est concentr\'e sur l'apprentissage 
@@ -298,10 +357,10 @@ lors du projet.
 
 \subsection*{Arbres de d\'ecision (de classification)}
 Il s'agit d'une technique d'apprentissage supervis\'e. Pour l'appliquer, on 
-a besoin d'un espace de repr\'esentation $\mathcal{X}$, d'un ensemble 
-d'\'etiquettes ou classes $Y$ et d'une liste de $m$ exemples d'apprentissage 
-$(x^i,y^i)$, o\`u $x^i \in \mathcal{X}$, $y^i \in Y, i = 1,\dotsc,m$, appel\'ee 
-ensemble d'apprentissage.
+a besoin d'un {\itshape espace de repr\'esentation} $\mathcal{X}$, d'un 
+ensemble d'{\itshape \'etiquettes} ou {\itshape classes} $Y$ et d'une liste de 
+$m$ exemples d'apprentissage $(x^i,y^i)$, o\`u $x^i \in \mathcal{X}$, $y^i \in 
+Y, i = 1,\dotsc,m$, appel\'ee {\itshape ensemble d'apprentissage}.
 Le but de cette technique est de trouver une fonction $f: \mathcal{X} \to 
 Y$ telle que l'on puisse pr\'edire \`a quelle classe appartient une 
 future variable $x \in \mathcal{X}$.
@@ -347,8 +406,8 @@ possibles d\'epasse 5.
 Cet algorithme d'apprentissage par renforcement r\'epose sur un ensemble 
 d'\'etats $S$, un ensemble d'actions $A$, et une fonction $Q: S \times A \to 
 \mathbb{R}$, appel\'ee {\itshape politique}, pond\'erant une paire form\'ee 
-par un {\itshape \'etat} donn\'e et une action \`a entreprendre pour cet 
-\'etat-ci. Cette pond\'eration est surnomm\'ee {\itshape r\'ecompense}. La 
+par un {\itshape \'etat} donn\'e et une {\itshape action} \`a entreprendre pour 
+cet \'etat-ci. Cette pond\'eration est nomm\'ee {\itshape r\'ecompense}. La 
 notion d'\'etat correspond \`a celle donn\'ee dans la section des arbres 
 binaires. Il utilise aussi la notion d'{\itshape \'episode} que l'on associe 
 \`a un match dans le cadre du projet. Son principe est le suivant : on apprend 
@@ -385,11 +444,11 @@ d'actions d\'epend du r\'esultat final du match. De ce fait, on a int\'er\^et
 \`a retarder au maximum les r\'ecompenses. Ceci se traduit par le choix d'un 
 facteur $\gamma$ proche de 1.
 
-Juste apr\`es la mise \`a jour de la politique $Q$, on d\'etermine si l'\'etat 
-$s_t$ est terminal, i.e.\ qu'il correspond au coup de sifflet final. Dans le 
-cas affirmatif, on passe \`a l'\'episode suivant ou on s'arr\^ete selon s'il y 
-en a encore \`a faire, alors que l'on r\'eit\`ere cette phase \`a partir du 
-choix d'une action pour le nouvel \'etat $s_{t+1}$ dans le cas contraire.
+Juste apr\`es la mise \`a jour de la politique $Q$, on d\'etermine si le 
+nouvel \'etat $s_{t+1}$ est terminal, i.e.\ qu'il correspond au coup de sifflet 
+final. Dans le cas affirmatif, on passe \`a l'\'episode suivant ou on s'arr\^ete 
+selon s'il y en a encore \`a faire ; on r\'eit\`ere cette phase \`a partir du 
+choix d'une action pour $s_{t+1}$ dans le cas contraire.
 
 \`A la fin de l'algorithme, on se retrouve avec une politique qui nous rend 
 l'action la plus ad\'equate pour tout \'etat du jeu. \'Etant donn\'e que les 

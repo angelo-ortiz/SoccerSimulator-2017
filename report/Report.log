@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.3.31)  5 MAY 2018 01:59
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.3.31)  5 MAY 2018 19:13
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -508,6 +508,30 @@ Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
 \CommentStream=\write3
 
 Excluding comment 'comment')
+(/usr/share/texlive/texmf-dist/tex/latex/csquotes/csquotes.sty
+Package: csquotes 2016/01/31 v5.1g context-sensitive quotations (JAW)
+
+(/usr/share/texlive/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+Package: etoolbox 2015/08/02 v2.2a e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count108
+)
+\csq@reset=\count109
+\csq@gtype=\count110
+\csq@glevel=\count111
+\csq@qlevel=\count112
+\csq@maxlvl=\count113
+\csq@tshold=\count114
+\csq@ltx@everypar=\toks23
+
+(/usr/share/texlive/texmf-dist/tex/latex/csquotes/csquotes.def
+File: csquotes.def 2016/01/31 v5.1g csquotes generic definitions (JAW)
+)
+Package csquotes Info: Trying to load configuration file 'csquotes.cfg'...
+Package csquotes Info: ... configuration file loaded successfully.
+
+(/usr/share/texlive/texmf-dist/tex/latex/csquotes/csquotes.cfg
+File: csquotes.cfg 
+))
 (/usr/share/texlive/texmf-dist/tex/latex/todonotes/todonotes.sty
 Package: todonotes 2015/07/09 .dtx Todonotes source and documentation.
 Package: todonotes 2012/07/25
@@ -520,10 +544,10 @@ Package: xkeyval 2014/12/03 v2.7a package option processing (HA)
 
 (/usr/share/texlive/texmf-dist/tex/generic/xkeyval/xkeyval.tex
 (/usr/share/texlive/texmf-dist/tex/generic/xkeyval/xkvutils.tex
-\XKV@toks=\toks23
-\XKV@tempa@toks=\toks24
+\XKV@toks=\toks24
+\XKV@tempa@toks=\toks25
 )
-\XKV@depth=\count108
+\XKV@depth=\count115
 File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
 ))
 (/usr/share/texlive/texmf-dist/tex/latex/xcolor/xcolor.sty
@@ -547,7 +571,7 @@ Package xcolor Info: Model `wave' substituted by `hsb' on input line 1360.
 (/usr/share/texlive/texmf-dist/tex/latex/pgf/basiclayer/pgf.sty
 (/usr/share/texlive/texmf-dist/tex/latex/pgf/utilities/pgfrcs.sty
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfutil-common.tex
-\pgfutil@everybye=\toks25
+\pgfutil@everybye=\toks26
 \pgfutil@tempdima=\dimen126
 \pgfutil@tempdimb=\dimen127
 
@@ -568,12 +592,12 @@ Package: pgf 2015/08/07 v3.0.1a (rcs-revision 1.15)
 Package: pgfsys 2014/07/09 v3.0.1a (rcs-revision 1.48)
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex
-\pgfkeys@pathtoks=\toks26
-\pgfkeys@temptoks=\toks27
+\pgfkeys@pathtoks=\toks27
+\pgfkeys@temptoks=\toks28
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfkeysfiltered.code.t
 ex
-\pgfkeys@tmptoks=\toks28
+\pgfkeys@tmptoks=\toks29
 ))
 \pgf@x=\dimen128
 \pgf@y=\dimen129
@@ -585,13 +609,13 @@ ex
 \pgf@yc=\dimen135
 \w@pgf@writea=\write4
 \r@pgf@reada=\read1
-\c@pgf@counta=\count109
-\c@pgf@countb=\count110
-\c@pgf@countc=\count111
-\c@pgf@countd=\count112
-\t@pgf@toka=\toks29
-\t@pgf@tokb=\toks30
-\t@pgf@tokc=\toks31
+\c@pgf@counta=\count116
+\c@pgf@countb=\count117
+\c@pgf@countc=\count118
+\c@pgf@countd=\count119
+\t@pgf@toka=\toks30
+\t@pgf@tokb=\toks31
+\t@pgf@tokc=\toks32
  (/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgf.cfg
 File: pgf.cfg 2008/05/14  (rcs-revision 1.7)
 )
@@ -607,8 +631,8 @@ File: pgfsys-common-pdf.def 2013/10/10  (rcs-revision 1.13)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsyssoftpath.code.
 tex
 File: pgfsyssoftpath.code.tex 2013/09/09  (rcs-revision 1.9)
-\pgfsyssoftpath@smallbuffer@items=\count113
-\pgfsyssoftpath@bigbuffer@items=\count114
+\pgfsyssoftpath@smallbuffer@items=\count120
+\pgfsyssoftpath@bigbuffer@items=\count121
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsysprotocol.code.
 tex
@@ -622,11 +646,11 @@ Package: pgfcore 2010/04/11 v3.0.1a (rcs-revision 1.7)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathutil.code.tex)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathparser.code.tex
 \pgfmath@dimen=\dimen136
-\pgfmath@count=\count115
+\pgfmath@count=\count122
 \pgfmath@box=\box29
-\pgfmath@toks=\toks32
-\pgfmath@stack@operand=\toks33
-\pgfmath@stack@operation=\toks34
+\pgfmath@toks=\toks33
+\pgfmath@stack@operand=\toks34
+\pgfmath@stack@operation=\toks35
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.code.tex
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.basic.code
@@ -646,7 +670,7 @@ tex)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.integerari
 thmetics.code.tex)))
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfloat.code.tex
-\c@pgfmathroundto@lastzeros=\count116
+\c@pgfmathroundto@lastzeros=\count123
 ))
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepoints.code.te
 x
@@ -684,7 +708,7 @@ File: pgfcorescopes.code.tex 2015/05/08  (rcs-revision 1.46)
 \pgfpic=\box30
 \pgf@hbox=\box31
 \pgf@layerbox@main=\box32
-\pgf@picture@serial@count=\count117
+\pgf@picture@serial@count=\count124
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoregraphicstate.c
 ode.tex
@@ -717,7 +741,7 @@ File: pgfcorearrows.code.tex 2015/05/14  (rcs-revision 1.43)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreshade.code.tex
 File: pgfcoreshade.code.tex 2013/07/15  (rcs-revision 1.15)
 \pgf@max=\dimen160
-\pgf@sys@shading@range@num=\count118
+\pgf@sys@shading@range@num=\count125
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreimage.code.tex
 File: pgfcoreimage.code.tex 2013/07/15  (rcs-revision 1.18)
@@ -765,8 +789,8 @@ Package: pgffor 2013/12/13 v3.0.1a (rcs-revision 1.25)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex)
 \pgffor@iter=\dimen163
 \pgffor@skip=\dimen164
-\pgffor@stack=\toks35
-\pgffor@toks=\toks36
+\pgffor@stack=\toks36
+\pgffor@toks=\toks37
 ))
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/tikz.code.tex
 Package: tikz 2015/08/07 v3.0.1a (rcs-revision 1.151)
@@ -774,7 +798,7 @@ Package: tikz 2015/08/07 v3.0.1a (rcs-revision 1.151)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/pgflibraryplothandlers
 .code.tex
 File: pgflibraryplothandlers.code.tex 2013/08/31 v3.0.1a (rcs-revision 1.20)
-\pgf@plot@mark@count=\count119
+\pgf@plot@mark@count=\count126
 \pgfplotmarksize=\dimen165
 )
 \tikz@lastx=\dimen166
@@ -787,18 +811,18 @@ File: pgflibraryplothandlers.code.tex 2013/08/31 v3.0.1a (rcs-revision 1.20)
 \tikz@figbox@bg=\box36
 \tikz@tempbox=\box37
 \tikz@tempbox@bg=\box38
-\tikztreelevel=\count120
-\tikznumberofchildren=\count121
-\tikznumberofcurrentchild=\count122
-\tikz@fig@count=\count123
+\tikztreelevel=\count127
+\tikznumberofchildren=\count128
+\tikznumberofcurrentchild=\count129
+\tikz@fig@count=\count130
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/modules/pgfmodulematrix.code.tex
 File: pgfmodulematrix.code.tex 2013/09/17  (rcs-revision 1.8)
-\pgfmatrixcurrentrow=\count124
-\pgfmatrixcurrentcolumn=\count125
-\pgf@matrix@numberofcolumns=\count126
+\pgfmatrixcurrentrow=\count131
+\pgfmatrixcurrentcolumn=\count132
+\pgf@matrix@numberofcolumns=\count133
 )
-\tikz@expandcount=\count127
+\tikz@expandcount=\count134
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
 zlibrarytopaths.code.tex
@@ -808,7 +832,7 @@ File: tikzlibrarytopaths.code.tex 2008/06/17 v3.0.1a (rcs-revision 1.2)
 zlibrarypositioning.code.tex
 File: tikzlibrarypositioning.code.tex 2008/10/06 v3.0.1a (rcs-revision 1.7)
 )
-\c@@todonotes@numberoftodonotes=\count128
+\c@@todonotes@numberoftodonotes=\count135
 )
 (/usr/share/texlive/texmf-dist/tex/latex/geometry/geometry.sty
 Package: geometry 2010/09/12 v5.6 Page Geometry
@@ -824,9 +848,9 @@ Package ifvtex Info: VTeX not detected.
 (/usr/share/texlive/texmf-dist/tex/generic/ifxetex/ifxetex.sty
 Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
 )
-\Gm@cnth=\count129
-\Gm@cntv=\count130
-\c@Gm@tempcnt=\count131
+\Gm@cnth=\count136
+\Gm@cntv=\count137
+\c@Gm@tempcnt=\count138
 \Gm@bindingoffset=\dimen172
 \Gm@wd@mp=\dimen173
 \Gm@odd@mp=\dimen174
@@ -835,38 +859,43 @@ Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
 \Gm@layoutheight=\dimen177
 \Gm@layouthoffset=\dimen178
 \Gm@layoutvoffset=\dimen179
-\Gm@dimlist=\toks37
-) (./Report.aux)
+\Gm@dimlist=\toks38
+)
+Package csquotes Info: Checking for multilingual support...
+Package csquotes Info: ... found 'babel' package.
+Package csquotes Info: Adjusting default style.
+Package csquotes Info: Redefining alias 'default' -> 'french'.
+ (./Report.aux)
 \openout1 = `Report.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Info: Redefining \degres on input line 15.
-LaTeX Info: Redefining \dots on input line 15.
-LaTeX Info: Redefining \up on input line 15.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Info: Redefining \degres on input line 16.
+LaTeX Info: Redefining \dots on input line 16.
+LaTeX Info: Redefining \up on input line 16.
 (/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count132
+\scratchcounter=\count139
 \scratchdimen=\dimen180
 \scratchbox=\box39
-\nofMPsegments=\count133
-\nofMParguments=\count134
-\everyMPshowfont=\toks38
-\MPscratchCnt=\count135
+\nofMPsegments=\count140
+\nofMParguments=\count141
+\everyMPshowfont=\toks39
+\MPscratchCnt=\count142
 \MPscratchDim=\dimen181
-\MPnumerator=\count136
-\makeMPintoPDFobject=\count137
-\everyMPtoPDFconversion=\toks39
+\MPnumerator=\count143
+\makeMPintoPDFobject=\count144
+\everyMPtoPDFconversion=\toks40
 ) (/usr/share/texlive/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
 Package: pdftexcmds 2011/11/29 v0.20 Utility functions of pdfTeX for LuaTeX (HO
 )
@@ -949,7 +978,7 @@ ABD: EveryShipout initializing macros
 <logo.jpg, id=4, 1629.08624pt x 654.445pt>
 File: logo.jpg Graphic file (type jpg)
  <use logo.jpg>
-Package pdftex.def Info: logo.jpg used on input line 18.
+Package pdftex.def Info: logo.jpg used on input line 19.
 (pdftex.def)             Requested size: 145.11053pt x 58.28836pt.
  [1
 
@@ -962,34 +991,34 @@ Package pdftex.def Info: logo.jpg used on input line 18.
 <apercu.png, id=22, 1204.5pt x 803.0pt>
 File: apercu.png Graphic file (type png)
  <use apercu.png>
-Package pdftex.def Info: apercu.png used on input line 59.
+Package pdftex.def Info: apercu.png used on input line 64.
 (pdftex.def)             Requested size: 386.95897pt x 257.96997pt.
 
 <packages_IA.png, id=23, 719.68875pt x 541.02126pt>
 File: packages_IA.png Graphic file (type png)
  <use packages_IA.png>
-Package pdftex.def Info: packages_IA.png used on input line 69.
+Package pdftex.def Info: packages_IA.png used on input line 74.
 (pdftex.def)             Requested size: 386.95897pt x 290.90057pt.
 
 [2 <./apercu.png (PNG copy)>]
 <classes_IA.png, id=29, 6651.85126pt x 3881.50125pt>
 File: classes_IA.png Graphic file (type png)
  <use classes_IA.png>
-Package pdftex.def Info: classes_IA.png used on input line 75.
+Package pdftex.def Info: classes_IA.png used on input line 80.
 (pdftex.def)             Requested size: 386.95897pt x 225.7728pt.
 
 [3 <./packages_IA.png> <./classes_IA.png>] [4] [5] [6] [7]
-LaTeX Font Info:    Try loading font information for U+msa on input line 245.
+LaTeX Font Info:    Try loading font information for U+msa on input line 301.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 245.
+LaTeX Font Info:    Try loading font information for U+msb on input line 301.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [8]
-LaTeX Font Info:    Try loading font information for T1+cmtt on input line 330.
+LaTeX Font Info:    Try loading font information for T1+cmtt on input line 390.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
@@ -997,13 +1026,13 @@ File: t1cmtt.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 ) [9] [10] [11]
 (./Report.aux) ) 
 Here is how much of TeX's memory you used:
- 15469 strings out of 493029
- 290389 string characters out of 6136234
- 347208 words of memory out of 5000000
- 18666 multiletter control sequences out of 15000+600000
+ 16206 strings out of 493029
+ 300306 string characters out of 6136234
+ 367500 words of memory out of 5000000
+ 19391 multiletter control sequences out of 15000+600000
  19699 words of font info for 48 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 62i,12n,76p,476b,715s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 62i,12n,56p,866b,439s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t1.enc}</us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/shar
 e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texl
@@ -1016,16 +1045,15 @@ ublic/amsfonts/symbols/msbm10.pfb></usr/share/texmf/fonts/type1/public/cm-super
 share/texmf/fonts/type1/public/cm-super/sfbx1728.pfb></usr/share/texmf/fonts/ty
 pe1/public/cm-super/sfbx2488.pfb></usr/share/texmf/fonts/type1/public/cm-super/
 sfcc1728.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfcc2074.pfb></usr/s
-hare/texmf/fonts/type1/public/cm-super/sfrm0600.pfb></usr/share/texmf/fonts/typ
-e1/public/cm-super/sfrm0800.pfb></usr/share/texmf/fonts/type1/public/cm-super/s
-frm1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1440.pfb></usr/sh
-are/texmf/fonts/type1/public/cm-super/sfti1200.pfb></usr/share/texmf/fonts/type
-1/public/cm-super/sfti1728.pfb></usr/share/texmf/fonts/type1/public/cm-super/sf
-tt1200.pfb>
-Output written on Report.pdf (12 pages, 2384356 bytes).
+hare/texmf/fonts/type1/public/cm-super/sfrm0800.pfb></usr/share/texmf/fonts/typ
+e1/public/cm-super/sfrm1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/s
+frm1440.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfti1200.pfb></usr/sh
+are/texmf/fonts/type1/public/cm-super/sfti1728.pfb></usr/share/texmf/fonts/type
+1/public/cm-super/sftt1200.pfb>
+Output written on Report.pdf (12 pages, 2365936 bytes).
 PDF statistics:
- 134 PDF objects out of 1000 (max. 8388607)
- 93 compressed objects within 1 object stream
+ 130 PDF objects out of 1000 (max. 8388607)
+ 90 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  33 words of extra memory for PDF output out of 10000 (max. 10000000)
 
