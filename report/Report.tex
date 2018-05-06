@@ -16,7 +16,7 @@
 \begin{document}
 \begin{titlepage}
   \centering
-  \includegraphics[width=0.30\textwidth]{logo.jpg}\par\vspace{1cm}
+  \includegraphics[width=0.30\textwidth]{../img/logo.jpg}\par\vspace{1cm}
   {\scshape\LARGE Sorbonne Universit\'e\par}
   \vspace{1cm}
   {\scshape\Large 2I013 : Projet (application)\par}
@@ -61,18 +61,7 @@ Voici un aper\c{c}u du simulateur de football lors d'une partie de notre
 camarades de classe.
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{apercu.png}\par%\vspace{1cm}
-\end{center}
-
-\section*{Diagramme de d\'ependances}
-Le projet a \'et\'e organis\'e en un module {\bfseries ia} qui contient 
-l'impl\'ementation de nos joueurs et en divers fichiers ex\'ecutables 
-permettant de lancer les algorithmes d'optimisation.
-
-On vous pr\'esente le graphe de d\'ependances du module.
-
-\begin{center}
-  \includegraphics[width=0.8\textwidth]{packages_IA.png}\par%\vspace{1cm}
+\includegraphics[width=0.8\textwidth]{../img/apercu.png}\par%\vspace{1cm}
 \end{center}
 
 \addcontentsline{toc}{part}{Introduction}
@@ -81,6 +70,39 @@ On vous pr\'esente le graphe de d\'ependances du module.
 \part{Architecture logicielle} %et demarche
 Dans cette premi\`ere partie, on vous expliquera les choix faits 
 concernant l'architecture logicielle.
+
+Le projet a \'et\'e organis\'e en un module {\bfseries ia} qui contient 
+l'impl\'ementation de nos joueurs et en divers fichiers ex\'ecutables 
+permettant de lancer les algorithmes d'optimisation.
+
+\section*{Strat\'egies}
+\begin{center}  
+  \includegraphics[width=1.\textwidth]{../img/baseStrategies.png}\par
+\end{center}
+
+\begin{center}
+  \includegraphics[width=0.9\textwidth]{../img/gridSearch.png}\par
+\end{center}
+
+\begin{center}
+\includegraphics[width=1.\textwidth]{../img/decisionTree.png}\par
+\end{center}
+
+\section*{Classes suppl\'ementaires}
+\begin{center}
+  \includegraphics[width=0.3\textwidth]{../img/genetic_mod.png}\par
+\end{center}
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{../img/machineLearning_mod.png}\par
+\end{center}
+
+\section*{Structure r\'esultante}
+On vous pr\'esente la structure finale du module contenant tout notre travail.
+
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{../img/packages_IA.png}\par%\vspace{1cm}
+\end{center}
 
 \newpage
 
