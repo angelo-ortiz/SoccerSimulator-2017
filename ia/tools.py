@@ -22,6 +22,14 @@ class StateFoot(Wrapper):
         super(StateFoot, self).__init__(state)
         self.key = (id_team, id_player)
         self.numPlayers = numPlayers
+        self.ballsInside = [False] * len(state.balls)
+
+    @property
+    def nextBall(self):
+        for i in range(len(self.ballsInside)):
+            if not self.ballsInside[i]:
+                return i
+        return True
 
     @property
     def my_team(self):
@@ -94,6 +102,16 @@ class StateFoot(Wrapper):
         return Vector2D((self.opp_team - 1) * self.width, self.goal_height)
 
     @property
+    def poteau_sup(self):
+        centre = self.opp_goal
+        return centre + Vector2D(0., GAME_GOAL_HEIGHT/2.)
+
+    @property
+    def poteau_inf(self):
+        centre = self.opp_goal
+        return centre - Vector2D(0., GAME_GOAL_HEIGHT/2.)
+
+    @property
     def height(self):
         """
         La hauteur du terrain
@@ -155,6 +173,10 @@ class StateFoot(Wrapper):
         pour qu'il puisse la frapper
         """
         return PLAYER_RADIUS + BALL_RADIUS
+
+    @property
+    def shoot_precision(self):
+        return 2 * BALL_RADIUS
 
     @property
     def teammates(self):

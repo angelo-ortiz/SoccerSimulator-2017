@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from soccersimulator import SoccerAction, Vector2D
+from soccersimulator import SoccerAction, Vector2D, get_collision
 from soccersimulator.settings import maxPlayerShoot, maxPlayerAcceleration, \
     ballBrakeConstant, playerBrackConstant
 from .tools import normalise_diff, coeff_friction, is_upside, nearest_defender, \
@@ -7,9 +7,11 @@ from .tools import normalise_diff, coeff_friction, is_upside, nearest_defender, 
     delete_teammate, distance_verticale, is_in_radius_action, nearest_defender_def
 from .conditions import is_close_goal, free_teammate, must_advance, is_defensive_zone, \
     must_pass_ball, had_ball_control, must_assist, free_opponent, is_close_ball, \
-    ball_advances, is_under_pressure, has_ball_control, both_must_kick, must_intercept
+    ball_advances, is_under_pressure, has_ball_control, both_must_kick, must_intercept, \
+    is_inside_goal
 from math import acos, exp, atan2, atan
 import random
+import copy
 
 def beh_fonceurNormal(state):
     distMaxFonceurNormShoot = state.width/4.
@@ -69,6 +71,33 @@ def shoot(state, power):
     la cage adverse
     """
     return kickAt(state, state.opp_goal, power)
+
+def shootBillard(state, ind, power):
+    if state.distance_ball(state.balls[ind].position) < state.shoot_precision:
+        return shootBillardPrec(state, ind, power)
+    return kickAt(state, state.balls[ind].position, power)
+
+def shootBillardPrec(state, ind, power):
+    """
+    
+    """
+    ball = state.balls[ind]
+    dest = ball.position.copy()
+    maballe = copy.deepcopy(state.ball)
+    while True:
+        vitesse = normalise_diff(state.ball_pos, dest, power)
+        maballe.vitesse = vitesse
+        va,res = get_collision(maballe, ball)
+        is_goal = is_inside_goal(state, ball.position, res)
+        if is_goal == True:
+            break
+        if is_goal == "monte":
+            # print("monte")
+            dest = dest - Vector2D(0,0.1)
+        else:
+            # print("descends")
+            dest = dest + Vector2D(0,0.1)
+    return kickAt(state, dest, power)
 
 def parallelControl(state, powerControl):
     """

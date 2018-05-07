@@ -1,0 +1,7 @@
+J'ai commencé le TME solo par reprendre ma fonction d'interception de la balle, sauf que cette
+fois-ci j'utilise une prévision assez élévée, en l'occurrence 120.
+Puis j'ai développé une fonction shootBillardPrec qui calcule la bonne direction pour le shoot et le
+fait. Je n'ai pas réussi à la faire marcher : il manque la traslation de la balle blanche vers une
+position de contact avec la balle noire de sorte que la fonction get_collision fasse le bon calcul
+des vitesses résultantes. Ceci devrait être la fonction à utlisier tout au long du programme. Comme
+elle n'est pas fonctionnelle, j'ai ajouté un shoot simple.

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from .tools import is_in_radius_action, distance_horizontale, nearest, nearest_state
+from math import atan2
 
 def is_close_ball(stateFoot, player):
     """
@@ -16,6 +17,18 @@ def is_close_goal(stateFoot, distGoal=27.):
     """
     return is_in_radius_action(stateFoot, stateFoot.opp_goal, distGoal) or \
         distance_horizontale(stateFoot.opp_goal, stateFoot.ball_pos) < distGoal-10.
+
+def is_inside_goal(stateFoot, ball_pos, speed):
+    p_sup = stateFoot.poteau_sup - ball_pos
+    p_inf = stateFoot.poteau_inf - ball_pos
+    angleSup = atan2(p_sup.y, p_sup.x)
+    angleInf = atan2(p_inf.y, p_inf.x)
+    angleSpeed = atan2(speed.y, speed.x)
+    if angleInf > angleSpeed:
+        return "monte"
+    if angleSpeed > angleSup:
+        return "descends"
+    return True
 
 def is_kick_off(stateFoot):
     """
