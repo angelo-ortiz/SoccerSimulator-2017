@@ -6,6 +6,7 @@ from ia.strategies import loadPath
 from ia.gene_optimisation import savePath
 from ia.ml_behaviour import attDict, defDict
 from ia.ml_strategies import Attaquant2v2Strategy, Defenseur2v2Strategy
+from math import floor
 import numpy as np
 import random
 import pickle
@@ -17,30 +18,36 @@ class LearningState(object):
     def __init__(self, stateFoot):
         stateFoot = stateFoot
         self.distances = dict()
-        self.distances['JB'] = stateFoot.distance(stateFoot.ball_pos)
+        self.distances['JB'] = LearningState.discretize(stateFoot.distance(stateFoot.ball_pos))
         #self.distances['JmG'] = stateFoot.distance(stateFoot.my_goal)
-        self.distances['JoG'] = stateFoot.distance(stateFoot.opp_goal)
+        self.distances['JoG'] = LearningState.discretize(stateFoot.distance(stateFoot.opp_goal))
         #self.distances['BmG'] = stateFoot.distance_ball(stateFoot.my_goal)
         #self.distances['BoG'] = stateFoot.distance_ball(stateFoot.opp_goal)
         nearestOpp = stateFoot.opponent_nearest_ball.position
-        self.distances['JnO'] = stateFoot.distance(nearestOpp)
+        self.distances['JnO'] = LearningState.discretize(stateFoot.distance(nearestOpp))
         #self.distances['nOoG'] = nearestOpp.distance(stateFoot.opp_goal)
         nearestTm = nearest(stateFoot.my_pos, stateFoot.teammates)
         nearestOppTm = nearest(nearestTm, stateFoot.opponents)
-        self.distances['TmnO'] = nearestTm.distance(nearestOppTm)
+        self.distances['TmnO'] = LearningState.discretize(nearestTm.distance(nearestOppTm))
         #self.distances['nTmoG'] = nearestTm.distance(stateFoot.opp_goal)
         #self.distances['nOnTmoG'] = nearestOppTm.distance(stateFoot.opp_goal)
-        self.distances['nJnT'] = stateFoot.distance(nearestTm)
+        self.distances['nJnT'] = LearningState.discretize(stateFoot.distance(nearestTm))
         self.ballDir = stateFoot.attacking_vector.dot(stateFoot.ball_speed.copy().normalize())
 
+    @classmethod
+    def discretize(cls, dist):
+        return floor(dist/10.)
+        
     def __eq__(self, other):
         if not isinstance(other, LearningState): return False
         if self.ballDir * other.ballDir == 0. and self.ballDir + other.ballDir != 0.:
             return False
         if self.ballDir * other.ballDir < 0.: return False
         for k, dist in self.distances.items():
-            if abs(dist - other.distances[k]) >= self.difference:
+            if dist != other.distances[k]:
                 return False
+            # if abs(dist - other.distances[k]) >= self.difference:
+            #     return False
         return True
 
     def __hash__(self):
@@ -154,6 +161,7 @@ class LearningTeam(object):
     def start(self):
         """
         """
+        print(self.currMatch, end=' ')
         right, left = self.getTeam(), self.oppList[self.currMatch[1]]
         self.idTeam = 2
         if self.currMatch[2]:
@@ -177,6 +185,11 @@ class LearningTeam(object):
     def end_match(self, left, right, state):
         """
         """
+        print("fini")
+
+    def next_match(self):
+        """
+        """
         if self.currMatch[3] < self.numMatches - 1:
             self.currMatch[3] += 1
         elif self.currMatch[2]:
@@ -196,8 +209,8 @@ class LearningTeam(object):
             # print("Fin iteration", self.currMatch[0])
         else:
             # print("Fin iteration", self.currMatch[0]+1)
-            return
-        self.start()
+            return False
+        return True
 
     def printQTable(self, i):
         """

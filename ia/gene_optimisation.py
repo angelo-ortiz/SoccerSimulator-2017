@@ -3,6 +3,7 @@ from __future__ import print_function, division
 from soccersimulator import SoccerTeam
 from ia.strategies import AttaquantStrategy, GardienStrategy
 from ia.strategies import Gardien2v2Strategy, Attaquant2v2Strategy, Fonceur1v1Strategy
+from ia.strategies import Gardien4v4Strategy, Attaquant4v4Strategy, CBNaif4v4Strategy
 from functools import total_ordering
 from math import pi as PI, sqrt
 import random
@@ -203,7 +204,7 @@ class GeneTeam(object):
         for v in self.vectors:
             v.restart()
 
-    def getTeam(self, i):
+    def getTeamSeparately(self, i):
         """
         Renvoie l'equipe composee des strategies contenues
         dans l'instance avec le <i>-ieme vecteur de parametres,
@@ -216,6 +217,25 @@ class GeneTeam(object):
             for p in self.playerParams[i]:
                 self.playerStrats[i].dico[p] = params[p]
             self.team.add(self.playerStrats[i].name, self.playerStrats[i])
+        return self.team
+
+    def getTeam(self, i):
+        """
+        Renvoie l'equipe composee des strategies contenues
+        dans l'instance avec le <i>-ieme vecteur de parametres
+        applique a toutes les deux i.e. une SoccerTeam dont
+        les deux joueurs ont les meme parametres
+        """
+        self.team = SoccerTeam(self.name)
+        params = self.vectors[i].params
+        for playerParam in self.playerParams:
+            for p in playerParam:
+                for strat in self.playerStrats:
+                    if strat is None: continue
+                    strat.dico[p] = params[p]
+        for strat in self.playerStrats:
+            if strat is None: continue
+            self.team.add(strat.name, strat)
         return self.team
 
     def getBestTeam(self):
@@ -373,58 +393,6 @@ class GKStrikerTeam(GeneTeam):
                 'rayReprise', 'angleReprise', 'coeffPushUp', 'distPasse', \
                 'distMontee', 'angleInter', 'coeffDef']
 
-    def gkDict(self):
-        """
-        Renvoie le sous-dictionnaire du meilleur vecteur de
-        parametres compose uniquement de ceux concernant
-        le gardien
-        Hypothese : sortVectors() doit avoir ete appele
-        auparavant
-        """
-        return super(GKStrikerTeam, self).playerDict(0)
-
-    def stDict(self):
-        """
-        Renvoie le sous-dictionnaire du meilleur vecteur de
-        parametres compose uniquement de ceux concernant
-        l'attaquant
-        Hypothese : sortVectors() doit avoir ete appele
-        auparavant
-        """
-        return super(GKStrikerTeam, self).playerDict(1)
-
-    def save(self, fn_gk="gk_dico.pkl", fn_st="st_dico.pkl"):
-        """
-        Sauvegarde le dictionnaire de parametres du gardien
-        et de l'attaquant dans des fichiers dans le repertoire
-        'parameters'
-        """
-        return super(GKStrikerTeam, self).save([fn_gk, fn_st, None, None])
-
-
-
-class GKStrikerMixTeam(GKStrikerTeam):
-    def __init__(self, size=20, keep=0.5, coProb=0.7, mProb=0.01):
-        super(GKStrikerMixTeam, self).__init__(size=size, keep=keep, \
-            coProb=coProb, mProb=mProb)
-
-    def getTeam(self, i):
-        """
-        Renvoie l'equipe composee des strategies contenues
-        dans l'instance avec le <i>-ieme vecteur de parametres
-        applique a toutes les deux i.e. une SoccerTeam dont
-        les deux joueurs ont les meme parametres
-        """
-        self.team = SoccerTeam(self.name)
-        params = self.vectors[i].params
-        for i in range(2):
-            for p in self.playerParams[i]:
-                self.playerStrats[0].dico[p] = params[p] # params du gk
-                self.playerStrats[1].dico[p] = params[p] # params du st
-        self.team.add(self.playerStrats[0].name, self.playerStrats[0])
-        self.team.add(self.playerStrats[1].name, self.playerStrats[1])
-        return self.team
-
 
 
 class STTeam(GeneTeam):
@@ -434,35 +402,12 @@ class STTeam(GeneTeam):
             playerParams=[GKStrikerTeam.gk_params(), GKStrikerTeam.st_params(), [], []], \
             size=size, keep=keep, coProb=coProb, mProb=mProb)
 
-    def stDict(self):
-        """
-        Renvoie le sous-dictionnaire du meilleur vecteur de
-        parametres compose uniquement de ceux concernant
-        l'attaquant
-        Hypothese : sortVectors() doit avoir ete appele
-        auparavant
-        """
-        return super(STTeam, self).playerDict(0)
 
-    def getTeam(self, i):
-        """
-        Renvoie l'equipe composee de la strategie contenue
-        dans l'instance avec le <i>-ieme vecteur de parametres
-        i.e. une SoccerTeam d'un joueur ayant les deux types
-        de parametres
-        """
-        self.team = SoccerTeam(self.name)
-        params = self.vectors[i].params
-        for i in range(2):
-            for p in self.playerParams[i]:
-                self.playerStrats[0].dico[p] = params[p] # params du st
-        self.team.add(self.playerStrats[0].name, self.playerStrats[0])
-        return self.team
 
-    def save(self, fn_gk="fonceur_gk_dico.pkl", fn_st="fonceur_st_dico.pkl"):
-        """
-        Sauvegarde les deux dictionnaires de parametres utilises
-        par le fonceur dans des fichiers dans le repertoire
-        'parameters'
-        """
-        return super(STTeam, self).save([fn_gk, fn_st, None, None])
+class FullTeam(GeneTeam):
+    def __init__(self, size=20, keep=0.5, coProb=0.7, mProb=0.01):
+        super(FullTeam, self).__init__(name="FullTeam", \
+            playerStrats=[CBNaif4v4Strategy(), Gardien4v4Strategy(), Attaquant4v4Strategy(), \
+                          Attaquant4v4Strategy()], \
+            playerParams=[GKStrikerTeam.gk_params(), GKStrikerTeam.st_params(), [], []], \
+            size=size, keep=keep, coProb=coProb, mProb=mProb)

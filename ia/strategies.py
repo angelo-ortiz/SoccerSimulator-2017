@@ -147,16 +147,16 @@ class Attaquant4v4Strategy(Strategy):
         else:
             self.dico = dict()
         self.dico['n'] = -1
-        self.dico['tempsI'] = 4.8
-        self.dico['rayDribble'] = 16.
-        self.dico['rayRecept'] = 30.
-        self.dico['coeffPushUp'] = 6.
-        self.dico['controleAttaque'] = self.dico['controleMT']
-        self.dico['rayPressing'] = 30.
-        self.dico['distDefZone'] = 75.
-        self.dico['distShoot'] = 40.
-        self.dico['rayPressing'] = 18.
-        self.dico['angleInter'] = 0.54
+        # self.dico['tempsI'] = 4.8
+        # self.dico['rayDribble'] = 16.
+        # self.dico['rayRecept'] = 30.
+        # self.dico['coeffPushUp'] = 6.
+        # self.dico['controleAttaque'] = self.dico['controleMT']
+        # self.dico['rayPressing'] = 30.
+        # self.dico['distDefZone'] = 75.
+        # self.dico['distShoot'] = 40.
+        # self.dico['rayPressing'] = 18.
+        # self.dico['angleInter'] = 0.54
     def compute_strategy(self, state, id_team, id_player):
         me = StateFoot(state, id_team, id_player, 4)
         if is_kick_off(me):
@@ -179,14 +179,14 @@ class Gardien4v4Strategy(Strategy):
         else:
             self.dico = dict()
         self.dico['n'] = -1
-        self.dico['tempsI'] = 4.8
-        self.dico['rayDribble'] = 16.
-        self.dico['rayRecept'] = 30.
-        self.dico['coeffPushUp'] = 6.
-        self.dico['controleAttaque'] = self.dico['controleMT']
-        self.dico['distShoot'] = 40.
-        self.dico['rayPressing'] = 18.
-        self.dico['angleInter'] = 0.54
+        # self.dico['tempsI'] = 4.8
+        # self.dico['rayDribble'] = 16.
+        # self.dico['rayRecept'] = 30.
+        # self.dico['coeffPushUp'] = 6.
+        # self.dico['controleAttaque'] = self.dico['controleMT']
+        # self.dico['distShoot'] = 40.
+        # self.dico['rayPressing'] = 18.
+        # self.dico['angleInter'] = 0.54
     def compute_strategy(self, state, id_team, id_player):
         me = StateFoot(state, id_team, id_player, 4)
         if is_kick_off(me):
@@ -209,14 +209,14 @@ class CBNaif4v4Strategy(Strategy):
         else:
             self.dico = dict()
         self.dico['n'] = -1
-        self.dico['tempsI'] = 4.8
-        self.dico['rayDribble'] = 19.
-        self.dico['rayRecept'] = 30.
-        self.dico['coeffPushUp'] = 6.
-        self.dico['controleAttaque'] = self.dico['controleMT']
-        self.dico['rayPressing'] = 18.
-        self.dico['distSortie'] = 50.
-        self.dico['raySortie'] = 35.
+        # self.dico['tempsI'] = 4.8
+        # self.dico['rayDribble'] = 19.
+        # self.dico['rayRecept'] = 30.
+        # self.dico['coeffPushUp'] = 6.
+        # self.dico['controleAttaque'] = self.dico['controleMT']
+        # self.dico['rayPressing'] = 18.
+        # self.dico['distSortie'] = 50.
+        # self.dico['raySortie'] = 35.
     def compute_strategy(self, state, id_team, id_player):
         me = StateFoot(state, id_team, id_player, 4)
         if has_ball_control(me):
