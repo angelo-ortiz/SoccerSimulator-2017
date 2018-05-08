@@ -297,7 +297,10 @@ def goForwardsMF(state, dico):
            and not is_under_pressure(state, tm, dico['rayPressing']):
             return passBall(state, tm, dico['powerPasse'], dico['thetaPasse'], dico['coeffPushUp'])+\
                 pushUp(state, dico['coeffPushUp'])
-        return dribble_speed(state, oppDef, dico['angleDribble'], dico['powerDribble'], dico['coeffAD'])
+        if state.numPlayers == 4:
+            return dribble(state, oppDef, dico['angleDribble'], dico['powerDribble'], dico['coeffAD'])
+        else : # state.numPlayers == 2
+            return dribble_speed(state, oppDef, dico['angleDribble'], dico['powerDribble'], dico['coeffAD'])
     return control(state, dico['controleMT'])
 
 def goForwardsDef(state, dico):

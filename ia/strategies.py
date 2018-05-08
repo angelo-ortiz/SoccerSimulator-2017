@@ -157,6 +157,7 @@ class Attaquant4v4Strategy(Strategy):
         # self.dico['distShoot'] = 40.
         # self.dico['rayPressing'] = 18.
         # self.dico['angleInter'] = 0.54
+        # self.dico['powerPasse'] = 3.2
     def compute_strategy(self, state, id_team, id_player):
         me = StateFoot(state, id_team, id_player, 4)
         if is_kick_off(me):

@@ -161,7 +161,7 @@ class LearningTeam(object):
     def start(self):
         """
         """
-        print(self.currMatch, end=' ')
+        print(self.currMatch, end=' ', flush=True)
         right, left = self.getTeam(), self.oppList[self.currMatch[1]]
         self.idTeam = 2
         if self.currMatch[2]:
@@ -185,7 +185,7 @@ class LearningTeam(object):
     def end_match(self, left, right, state):
         """
         """
-        print("fini")
+        print("fini", flush=True)
 
     def next_match(self):
         """
@@ -195,20 +195,16 @@ class LearningTeam(object):
         elif self.currMatch[2]:
             self.currMatch[3] = 0
             self.currMatch[2] = False
-            # print("Fin aller")
         elif self.currMatch[1] < len(self.oppList) - 1:
             self.currMatch[3] = 0
             self.currMatch[2] = True
             self.currMatch[1] += 1
-            # print("Fin retour")
         elif self.currMatch[0] < self.numIter - 1:
             self.currMatch[3] = 0
             self.currMatch[2] = True
             self.currMatch[1] = 0
             self.currMatch[0] += 1
-            # print("Fin iteration", self.currMatch[0])
         else:
-            # print("Fin iteration", self.currMatch[0]+1)
             return False
         return True
 

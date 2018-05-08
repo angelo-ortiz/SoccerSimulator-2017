@@ -14,9 +14,13 @@ if __name__=="__main__":
     key =''
     while key !='q':
         tournoi.print_scores(True)
-        key = raw_input("Match ? : ")
+        key = input("Match ? : ")
         try:
             i,j = [int(x) for x in key.split(" ")]
             show_simu(tournoi.get_match(i,j))
         except:
+            matches = tournoi.get_matches(int(key))
+            for match in matches:
+                print(match.get_score_team(1),match.get_score_team(2))
+                print(match.team1.name, match.team2.name)
             key = 'q'
