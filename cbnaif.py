@@ -11,7 +11,7 @@ import module5
 import module6
 import module7
 
-left = module3.get_team(4)
+left = module.get_team(4)
 #left = module2.get_team(4)
 #left = module3.get_team(4)
 #left = module4.get_team(4)

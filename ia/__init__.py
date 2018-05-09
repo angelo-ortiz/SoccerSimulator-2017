@@ -9,8 +9,8 @@ def get_team(nb_players):
     if nb_players == 1:
         myteam.add("  9_Guerrero", Fonceur1v1Strategy(fn_gk="1v1_gk_dico_0505_1.pkl", fn_st="1v1_st_dico_0505_1.pkl"))
     if nb_players == 2:
-        myteam.add("  10_Messi", Attaquant2v2Strategy(fn_gk="2v2_gk_dico_0428_1.pkl", fn_st="2v2_st_dico_0428_1.pkl"))
-        myteam.add("  3_Beckenbauer", Gardien2v2Strategy(fn_gk="2v2_gk_dico_0428_1.pkl", fn_st="2v2_st_dico_0428_1.pkl"))
+        myteam.add("  10_Messi", Attaquant2v2Strategy(fn_gk="2v2_gk_dico_0508_2.pkl", fn_st="2v2_st_dico_0508_2.pkl"))
+        myteam.add("  3_Beckenbauer", Gardien2v2Strategy(fn_gk="2v2_gk_dico_0508_2.pkl", fn_st="2v2_st_dico_0508_2.pkl"))
     if nb_players == 4:
         # myteam.add("  3_Beckenbauer",CBNaif4v4Strategy(fn_gk="2v2_gk_dico_0325_p5_short.pkl",fn_st="2v2_st_dico_0325_p5_short.pkl"))
         # myteam.add("  6_Matthaus", Gardien4v4Strategy(fn_gk="2v2_gk_dico_0325_p5_short.pkl",fn_st="2v2_st_dico_0325_p5_short.pkl"))
