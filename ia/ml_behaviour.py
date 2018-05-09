@@ -2,11 +2,12 @@
 from soccersimulator import SoccerAction, Vector2D
 from soccersimulator.settings import maxPlayerShoot
 from .tools import StateFoot, nearest_defender, get_empty_strategy, shootPower, \
-    distance_horizontale
+    distance_horizontale, nearest
 from .conditions import is_close_goal, free_teammate, has_ball_control, \
     free_opponent, both_must_kick
-from .actions import kickAt, shoot, control, dribble, passBall, mark, loseMark, clear, \
+from .actions import goTo, kickAt, shoot, control, dribble, passBall, mark, clear, \
     tryInterception, pushUp, goToBall, cutDownAngle, cutDownAngle_gk, cutDownAngle_def
+from math import atan2
 
 def st_kick_off(state, dico):
     if has_ball_control(state):
@@ -30,6 +31,20 @@ def ml_mark(state, dico):
     oppAtt = free_opponent(state, 60., dico['rayPressing'])
     if oppAtt is not None:
         return mark(state, oppAtt, dico['rayPressing'])#20.
+    return get_empty_strategy()
+
+def ml_loseMark(state, dico):
+    opp = nearest(state.my_pos, state.opponents)
+    if state.distance(opp) < dico['rayPressing']:
+        tm = state.teammates[0].position
+        tm_opp = (opp - tm)
+        dist = tm_opp.norm + dico['distDemar']
+        angle = atan2(tm_opp.y, tm_opp.x)
+        rotAngle = dico['angleInter']
+        decalage = Vector2D(angle=angle+rotAngle, norm=dist)
+        if not state.is_valid_position(tm + decalage):
+            decalage = Vector2D(angle=angle-rotAngle, norm=dist)
+        return goTo(state, tm + decalage)
     return get_empty_strategy()
 
 def ml_dribble(state, dico):
@@ -56,7 +71,7 @@ def shoot_mark(state, dico):
 def shoot_loseMark(state, dico):
     if has_ball_control(state):
         return shoot(state, shootPower(state, dico['alphaShoot'], dico['betaShoot']))
-    return loseMark(state, dico['rayPressing'], dico['distDemar'], dico['angleInter'])
+    return ml_loseMark(state, dico)
 
 def shoot_intercept(state, dico):
     if has_ball_control(state):
@@ -86,7 +101,7 @@ def dribble_mark(state, dico):
 def dribble_loseMark(state, dico):
     if has_ball_control(state):
         return ml_dribble(state, dico)
-    return loseMark(state, dico['rayPressing'], dico['distDemar'], dico['angleInter'])
+    return ml_loseMark(state, dico)
 
 def dribble_intercept(state, dico):
     if has_ball_control(state):
@@ -116,7 +131,7 @@ def control_mark(state, dico):
 def control_loseMark(state, dico):
     if has_ball_control(state):
         return control(state, dico['controleMT'])
-    return loseMark(state, dico['rayPressing'], dico['distDemar'], dico['angleInter'])
+    return ml_loseMark(state, dico)
 
 def control_intercept(state, dico):
     if has_ball_control(state):
@@ -146,7 +161,7 @@ def pass_mark(state, dico):
 def pass_loseMark(state, dico):
     if has_ball_control(state):
         return ml_pass(state, dico)
-    return loseMark(state, dico['rayPressing'], dico['distDemar'], dico['angleInter'])
+    return ml_loseMark(state, dico)
 
 def pass_intercept(state, dico):
     if has_ball_control(state):
@@ -176,7 +191,7 @@ def clear_mark(state, dico):
 def clear_loseMark(state, dico):
     if has_ball_control(state):
         return clear(state, angleClear=1.2)
-    return loseMark(state, dico['rayPressing'], dico['distDemar'], dico['angleInter'])
+    return ml_loseMark(state, dico)
 
 def clear_intercept(state, dico):
     if has_ball_control(state):
