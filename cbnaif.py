@@ -26,6 +26,6 @@ myteam.add("  9_Guerrero", Attaquant4v4Strategy(fn_gk="4v4_gk_dico_0508_1.pkl", 
 
 #simu = Simulation(left, myteam)
 #simu = Simulation(myteam, left)
-simu = Simulation(left,right)
-#simu = Simulation(right,left)
+#simu = Simulation(left,right)
+simu = Simulation(right,left)
 show_simu(simu)

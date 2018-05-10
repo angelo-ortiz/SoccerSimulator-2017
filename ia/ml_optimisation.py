@@ -60,7 +60,7 @@ class LearningTeam(object):
 
     actionsDict = {'Attaquant2v2': len(attDict), 'Defenseur2v2': len(defDict)}
 
-    def __init__(self, numPlayers=2, playerStrats=[None]*4, alpha=0.6, gamma=0.8, eps=0.2, oppList=[],
+    def __init__(self, numPlayers=2, playerStrats=[None]*4, alpha=0.6, gamma=0.8, eps=0.1, oppList=[],
                  numIter=10, numMatches=3, graphical=False):
         self.name = "LearningTeam"
         self.team = None
@@ -79,7 +79,7 @@ class LearningTeam(object):
         self.prevState = None
         self.currState = None
         self.idTeam = 0
-        self.count = [0] * self.numPlayers
+        self.count = [0] * self.numPlayers # number of states for each player
 
     def initialize(self, filenames=None):
         """
@@ -149,7 +149,7 @@ class LearningTeam(object):
             prevQ = self.q(idPlayer, prevState, action)
             rew = self.computeReward()
             self.q(idPlayer, prevState)[action] = \
-                    prevQ + self.alpha * (self.computeReward() + self.gamma * np.max(self.q(idPlayer, currState)) - prevQ)
+                    prevQ + self.alpha * (self.computeReward() + self.gamma * np.amax(self.q(idPlayer, currState)) - prevQ)
         self.playerStrats[idPlayer].action = self.chooseAction(idPlayer, currState)
 
     def updateAll(self):
@@ -224,9 +224,9 @@ class LearningTeam(object):
         print(self.count)
         print(self.playerStrats[i].name, len(self.playerQTables[i]))
         for state, actions in self.playerQTables[i].items():
-            if np.amax(actions) > 1.:
+            if np.amax(actions) > 3.5:
                 print(state, actions)
-            elif np.amin(actions) < -1.:
+            elif np.amin(actions) < -3.5:
                 print(state, actions)
 
     def printAllQTables(self):
