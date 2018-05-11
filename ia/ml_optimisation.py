@@ -60,15 +60,16 @@ class LearningTeam(object):
 
     actionsDict = {'Attaquant2v2': len(attDict), 'Defenseur2v2': len(defDict)}
 
-    def __init__(self, numPlayers=2, playerStrats=[None]*4, alpha=0.6, gamma=0.8, eps=0.1, oppList=[],
-                 numIter=10, numMatches=3, graphical=False):
+    def __init__(self, numPlayers=2, playerStrats=[None]*4, gamma=0.8, omega=0.85, t=0, eps=0.1, \
+                 oppList=[], numIter=10, numMatches=3, graphical=False):
         self.name = "LearningTeam"
         self.team = None
         self.numPlayers = numPlayers
         self.playerStrats = playerStrats
         self.playerQTables = []
-        self.alpha = alpha
         self.gamma = gamma
+        self.omega = omega
+        self.t = t
         self.eps = eps
         self.oppList = oppList
         self.numIter = numIter
@@ -127,18 +128,25 @@ class LearningTeam(object):
     def computeReward(self):
         """
         """
-        control = StateFoot(self.prevState, self.idTeam, 0, self.numPlayers).team_controls_ball()
+        control = StateFoot(self.currState, self.idTeam, 0, self.numPlayers).team_controls_ball()
         if control == True:
             rew = 1
         elif control == False:
             rew = -1
         else:
             rew = 0
-        if self.prevState.goal == self.idTeam:
+        if self.currState.goal == self.idTeam:
             rew += 100
-        elif self.prevState.goal != 0:
+        elif self.currState.goal != 0:
             rew -= 100
         return rew
+
+    @property
+    def alpha(self):
+        """
+        Polynomial learning rate
+        """
+        return 1./self.t**self.omega
 
     def updateAction(self, idPlayer, action):
         """
@@ -164,6 +172,7 @@ class LearningTeam(object):
         # print(self.currMatch, end=' ', flush=True)
         right, left = self.getTeam(), self.oppList[self.currMatch[1]]
         self.idTeam = 2
+        self.t += 1
         if self.currMatch[2]:
             left, right = right, left
             self.idTeam = 1
@@ -224,9 +233,9 @@ class LearningTeam(object):
         print(self.count)
         print(self.playerStrats[i].name, len(self.playerQTables[i]))
         for state, actions in self.playerQTables[i].items():
-            if np.amax(actions) > 3.5:
+            if np.amax(actions) > 70.:
                 print(state, actions)
-            elif np.amin(actions) < -3.5:
+            elif np.amin(actions) < -70.:
                 print(state, actions)
 
     def printAllQTables(self):
@@ -242,6 +251,7 @@ class LearningTeam(object):
         Sauvegarde la table Q(S,A) d'apprentissage de chaque joueur
         dans des fichiers dans le repertoire 'parameters'
         """
+        print('t =', self.t)
         for i in range(len(filenames)):
             if filenames[i] is None: continue
             with open(savePath(filenames[i]), "wb") as f:
