@@ -8,10 +8,12 @@
 \usepackage[pdftex]{graphicx}
 \usepackage{comment}
 \usepackage{csquotes}
+\usepackage{caption}
 \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
 \usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
 \author{Angelo Ortiz}
 \title{Rapport du Projet}
+\graphicspath{ {../img/} }
 
 \begin{document}
 \begin{titlepage}
@@ -35,34 +37,57 @@
  
 %\newpage
 \tableofcontents
-  
+\listoffigures
 \newpage
   
 \part*{Introduction}
 \section*{Pr\'esentation}
-Le projet a consist\'e en le d\'eveloppement d'intelligences artificielles de 
-joueurs de football. 
-Le simulateur du jeu \'etant d\'ej\`a fourni, notre 
-travail a \'et\'e d'impl\'ementer des strat\'egies de jeu pour mieux r\'eussir 
-les matches.
+L'unit\'e d'enseignement 2I013 consiste en un projet d'application des 
+connaissances et de d\'ecouverte de nouveaux algorithmes. La th\'ematique du 
+projet du groupe 1 a \'et\'e le football.
 
-L’objectif du travail a \'et\'e d'apprendre \`a bien mener un projet long 
+Le jeu comporte un terrain, deux \'equipes de joueurs et une 
+balle. \'Etant donn\'e qu'une grille rectangulaire sous forme matricielle, 
+c'est-\`a-dire discr\`ete, n'\'etait pas envisageable, un rep\`ere 
+orthonorm\'e a \'et\'e choisi comme repr\'esentation du terrain. Pour ce faire, 
+il y a deux droites en plus des axes qui d\'elimitent la surface du terrain.
+
+\begin{figure}[!h]
+  \centering
+  \captionsetup{justification=centering}  
+  \includegraphics[width=0.7\textwidth]{apercu}
+  \caption[Un aper\c{c}u du jeu]{Voici un aper\c{c}u du simulateur de football 
+  lors d'une partie de notre \'equipe {\itshape ChPerFusion} en rouge face \`a 
+  l'\'equipe d'un de nos camarades de classe.}
+  \label{fig:apercu}
+\end{figure}
+
+Les r\`egles du football ont \'et\'e l\'eg\`erement simplifi\'ees dans le cadre 
+du projet. En effet, il n'existe pas de notion de touche, mais de rebond : la 
+balle ne peut pas sortir du terrain et elle choque \'elastiquement dans les 
+bordures. Par ailleurs, les objets physiques du jeu, \`a savoir les joueurs et 
+la balle, sont intangibles. Ceci veut dire que la balle peut passer \`a travers 
+les joueurs sans modifier sa direction. C'est le cas notamment lorsque le 
+joueur d\'ecide de ne pas frapper.
+
+Pour rendre le jeu plus r\'ealiste, la notion de frottement \`a \'et\'e prise 
+en compte, ce qui facilite le contr\^ole de la balle aux joueurs.
+Le moteur du jeu g\'erant toutes ces r\`egles et les interactions entre les 
+objets a \'et\'e fourni.
+
+\section*{Objectifs}
+L’objectif du module a \'et\'e d'apprendre \`a bien mener un projet long 
 sur un nouvel environnement de d\'eveloppement, \`a savoir 
 Python. 
-Sachant que travail \`a \'et\'e fait en bin\^ome, on a eu 
-besoin d'un outil collaboratif, en l'occurrence {\bfseries git} qui est un 
-logiciel de gestion de versions d\'ecentralis\'e. 
-On a ainsi appris \`a g\'erer 
-l'avancement d'un projet \`a travers la m\'ethode par fonctionnalit\'es.
+Sachant que travail \`a \'et\'e fait en bin\^ome, on a eu besoin d'un outil 
+collaboratif, en l'occurrence {\bfseries git} qui est un logiciel de gestion de 
+versions d\'ecentralis\'e. 
+On a ainsi appris \`a g\'erer l'avancement d'un projet \`a travers la m\'ethode 
+par fonctionnalit\'es.
 
-\section*{Aper\c{c}u}
-Voici un aper\c{c}u du simulateur de football lors d'une partie de notre 
-\'equipe {\itshape ChPerFusion} en rouge face \`a l'\'equipe d'un de nos 
-camarades de classe.
-
-\begin{center}
-\includegraphics[width=0.8\textwidth]{../img/apercu.png}\par%\vspace{1cm}
-\end{center}
+Le travail a consist\'e \`a d\'evelopper des intelligences artificielles 
+dirigeant la prise de d\'ecisions des joueurs pour r\'eussir au mieux les 
+matches dans les cat\'egories \`a un, deux et quatre joueurs.
 
 \addcontentsline{toc}{part}{Introduction}
 \newpage
@@ -76,33 +101,282 @@ l'impl\'ementation de nos joueurs et en divers fichiers ex\'ecutables
 permettant de lancer les algorithmes d'optimisation.
 
 \section*{Strat\'egies}
-\begin{center}  
-  \includegraphics[width=1.\textwidth]{../img/baseStrategies.png}\par
-\end{center}
+% \todo{expliquer arborescence}
+\begin{figure}[!h]
+  \centering
+  \captionsetup{justification=centering}
+  \includegraphics[width=1.\textwidth]{baseStrategies}
+  \caption[Les strat\'egies de base]{Les diff\'erentes strat\'egies pour les 
+\'equipes \`a un, deux ou quatre joueurs, une strat\'egie compl\`etement 
+al\'eatoire et une autre pour l'unique challenge propos\'e}
+  \label{fig:strats}
+\end{figure}
 
-\begin{center}
-  \includegraphics[width=0.9\textwidth]{../img/gridSearch.png}\par
-\end{center}
+\begin{figure}[!h]
+  \centering
+  \captionsetup{justification=centering}
+  \includegraphics[width=0.9\textwidth]{gridSearch}
+  \caption[Les strat\'egies pour la recherche en grille]{Les strat\'egies \`a 
+am\'eliorer \`a l'aide de la recherche en grille}
+  \label{fig:gs}
+\end{figure}
 
-\begin{center}
-\includegraphics[width=1.\textwidth]{../img/decisionTree.png}\par
-\end{center}
+\begin{figure}[!h]
+  \centering
+  \captionsetup{justification=centering}
+  \includegraphics[width=1.\textwidth]{decisionTree}
+  \caption[Les strat\'egies pour l'arbre de d\'ecision]{Les strat\'egies 
+utilis\'ees pour l'application de la m\'ethode par arbres de d\'ecision}
+  \label{fig:dt}
+\end{figure}
 
 \section*{Classes suppl\'ementaires}
-\begin{center}
-  \includegraphics[width=0.3\textwidth]{../img/genetic_mod.png}\par
-\end{center}
+\begin{figure}[!h]
+  \centering
+  \captionsetup{justification=centering}
+  \includegraphics[width=0.3\textwidth]{genetic_mod}
+  \caption[Les classes pour l'algorithme g\'en\'etique]{Le diagramme des 
+classes pour la mise en \oe uvre d'un algorithme g\'en\'etique}
+  \label{fig:gene}
+\end{figure}
 
-\begin{center}
-\includegraphics[width=0.8\textwidth]{../img/machineLearning_mod.png}\par
-\end{center}
+\begin{figure}[!h]
+  \centering
+  \captionsetup{justification=centering}
+  \includegraphics[width=0.8\textwidth]{machineLearning_mod}
+  \caption[Les classes pour l'apprentissage automatique]{Le diagramme de 
+d\'ependances des classes \texttt{LearningState} et \texttt{LearningTeam} pour 
+l'impl\'ementation de l'algorithme Q-learning}
+  \label{fig:ml}
+\end{figure}
 
 \section*{Structure r\'esultante}
 On vous pr\'esente la structure finale du module contenant tout notre travail.
 
-\begin{center}
-  \includegraphics[width=0.8\textwidth]{../img/packages_IA.png}\par%\vspace{1cm}
-\end{center}
+\begin{figure}[!h]
+  \centering
+  \captionsetup{justification=centering}
+  \includegraphics[width=0.8\textwidth]{packages_IA}
+  \caption[La structure du module]{La structure de notre module {\bfseries ia} 
+d\'evelopp\'e tout au long du semestre}
+  \label{fig:diag_classes}
+\end{figure}
+
+\newpage
+
+\part{M\'ethodes d'optimisation}
+Dans cette deuxi\`eme partie, on vous d\'etaille les diff\'erents 
+algorithmes appris tout au long du semestre pour am\'eliorer 
+les strat\'egies propos\'ees.
+
+\section{Recherche en grille}
+Il s'agit de la premi\`ere m\'ethode d'optimisation pre\'esent\'ee en cours. 
+Elle a \'et\'e utilis\'ee pour l'optimisation d'une action.
+
+Tout d'abord, on doit d\'efinir l'action \`a optimiser et le crit\`ere 
+d'optimalit\'e, et rep\'erer les $n$ param\`etres associ\'es. Ces param\`etres 
+r\'eels sont d\'enot\'es $x_i$, avec $i=1,\dotsc,n$. Le crit\`ere 
+d'optimalit\'e correspond alors \`a la fonction $f: \mathbb{R}^n \to \{0,1\}$.
+
+Puis on obtient l'ensemble $\mathbb{E}_i$ de valeurs possibles pour chaque 
+param\`etre. 
+Pour les param\`etres discrets, il suffit de prendre l'ensemble 
+fini des valeurs qu'il peut prendre. 
+Quant aux param\`etres continus, on compte un intervalle ferm\'e $I_i$ de 
+valeurs possibles pour chaque $x_i$. Il est alors n\'ecessaire de faire en 
+amont une discr\'etisation, i.e.\ on divise l'intervalle selon un pas de 
+pr\'ecision. La fonction se transforme alors en $f: \mathbb{E} \to \{0,1\}$, 
+o\`u $\mathbb{E} =  \mathbb{E}_1 \times \cdots \times \mathbb{E}_n$.
+
+On fait ensuite une recherche exhaustive sur tout l'espace $\mathbb{E}$ : 
+on teste chaque vecteur $x \in \mathbb{E}$ sous diff\'erents conditions 
+environnementales et on moyenne les \'evaluations par $f(x)$ dans lesdites 
+conditions. Finalement, on prend la valeur optimale et son vecteur $x$ 
+associ\'e.
+
+Il est important de remarquer que la plupart de nos param\`etres sont continus. 
+Pour obtenir des valeurs plus pr\'ecises et un meilleur comportement, on a 
+besoin d'un pas de discr\'etisation tr\`es petit. De ce fait, 
+$|\mathbb{E}| \gg 1$. \`A cause des longs temps d'ex\'ecution, on a 
+d\'ecid\'e que l'algorithme mis en place ne convenait pas \`a moyen terme.
+
+\section{Algorithmes g\'en\'etiques}
+Dans un deuxi\`eme temps, on est pass\'es \`a une m\'ethode heuristique au 
+lieu d'une recherche exhaustive de l'espace de repr\'esentation. En effet, 
+une solution approch\'ee est suffisante dans un certain intervalle de 
+confiance. Ceci a donn\'e lieu aux algorithmes g\'en\'etiques. On en a mis en 
+place une impl\'ementation pour optimiser toutes nos \'equipes.
+
+Cette classe d'algorithmes se base sur la th\'eorie de l'\'evolution. En effet, 
+la notion de s\'election naturelle est le m\'ecanisme permettant de choisir des 
+solutions potentielles de plus en plus meilleures.
+
+La toute premi\`ere chose \`a faire est la d\'efinition de la fonction 
+$f: \mathbb{R}^n \to \mathbb{E}$ \`a optimiser, o\`u $n$ est le nombre de 
+param\`etres concern\'es. Un \'el\'ement $x=(x_1,\dotsc,x_n) \in \mathbb{R}^n$ 
+est appel\'e {\itshape candidat} ou {\itshape chromosome}, et chacune de ses 
+coordonn\'ees $x_i$ avec $i=1,\dotsc,n$, appel\'ee {\itshape propri\'et\'e} 
+ou encore {\itshape g\`ene}, correspond \`a un param\`etre \`a optimiser. Elles 
+forment le {\itshape g\'enotype}.
+Autrement dit, un candidat correspond \`a une \'equipe d\'efinie par les valeurs
+de ses propri\'et\'es.
+
+Dans le cadre du projet, on a d\'efini $f(x)=(V,N,D,P,C)$ comme le 
+bilan apr\`es avoir disput\'e plusieurs matches avec les m\^emes valeurs des 
+param\`etres donn\'ees par $x$, i.e.\ le tuple compos\'e du nombre de 
+victoires, matches nuls, d\'efaites, buts marqu\'es et buts encaiss\'es. La 
+relation d'ordre suit les r\`egles du classement d'un tournoi de football.
+
+Cette classe d'algorithmes comportent quatre \'etapes.
+
+\begin{enumerate}
+  \item \underline{Initialisation :} Tout d'abord, il faut g\'en\'erer un 
+  ensemble de candidats $\{x_1,\dotsc,x_m\}$. Le but est d'obtenir une 
+  population initiale la plus diverse possible de sorte \`a pouvoir atteindre 
+le plus de maxima relatifs. C'est pourquoi cette premi\`ere g\'en\'eration est 
+obtenue de mani\`ere al\'eatoire.
+  \item \underline{\'Evaluation :} Ensuite, on \'evalue la fonction en 
+  chacun des candidats, i.e.\ on calcule $\{f(x_1),\dotsc,f(x_m)\}$.
+  \item \underline{S\'election :} Suivant la notion de s\'election 
+  naturelle, on ne conserve que les candidats avec les meilleurs r\'esultats. 
+  Autrement dit, on dresse un classement des \'equipes associ\'ees aux 
+  candidats et n'en garde qu'une partie.
+  \item \underline{Reproduction :} Finalement, on attribue les places 
+  libres aux candidats n\'es du brassage g\'en\'etique des candidats les 
+  plus performants. Pour ce faire, on compte sur deux m\'ethodes, \`a savoir le 
+  croisement et la mutation. \'Etant donn\'e deux parents, on commence par les 
+  cloner en deux enfants. Puis on choisit une ligne de coupe divisant le 
+  g\'enotype en deux parties. Ensuite, les enfants s'\'echangent une partie de 
+  leur g\'enotype. Le croisement s'arr\^ete \`a ce stade-l\`a, tandis que la 
+  mutation ajoute du bruit al\'eatoirement dans un g\`ene pour chacun 
+  des nouveaux chromosomes. On a d\'ecid\'e de faire une petite modification 
+  \`a cette \'etape-l\`a lors de l'impl\'ementation pour avoir plus de 
+  diversification : une minorit\'e des places libres est attrribu\'ee \`a des 
+  candidats g\'en\'er\'es al\'eatoirement.
+\end{enumerate}
+
+Cet algorithme \'etant it\'eratif, on recommence \`a la deuxi\`eme phase avec 
+la nouvelle g\'en\'eration. Au bout d'un nombre raisonnable d'it\'erations, on 
+se retrouve avec une g\'en\'eration compos\'ee de chromosomes tr\`es proches 
+des maxima relatifs. On finit donc l'algorithme par prendre le candidat optimal 
+de la derni\`ere population.
+
+Cette m\'ethode a permis d'am\'eliorer nos \'equipes progressivement et les 
+valeurs de tous les param\`etres mis en place ont \'et\'e d\'efinies au moyen 
+de nombreuses ex\'ecutions de cette m\'ethode.
+
+\section{Apprentissage automatique}
+Dans la derni\`ere partie du semestre, on s'est concentr\'e sur l'apprentissage 
+automatique. On nous a pr\'esent\'e les deux grandes familles 
+d'algorithmes d'apprentissage : supervis\'es et non supervis\'es, ainsi que 
+l'apprentissage par renforcement. Deux m\'ethodes ont \'et\'e impl\'ement\'ees 
+lors du projet.
+
+\subsection*{Arbres de d\'ecision (de classification)}
+Il s'agit d'une technique d'apprentissage supervis\'e. Pour l'appliquer, on 
+a besoin d'un {\itshape espace de repr\'esentation} $\mathcal{X}$, d'un 
+ensemble d'{\itshape \'etiquettes} ou {\itshape classes} $Y$ et d'une liste de 
+$m$ exemples d'apprentissage $(x^i,y^i)$, o\`u $x^i \in \mathcal{X}$, $y^i \in 
+Y, i = 1,\dotsc,m$, appel\'ee {\itshape ensemble d'apprentissage}.
+Le but de cette technique est de trouver une fonction $f: \mathcal{X} \to 
+Y$ telle que l'on puisse pr\'edire \`a quelle classe appartient une 
+future variable $x \in \mathcal{X}$.
+
+Concr\`etement, on veut associer une certaine action \`a chaque \'etat du jeu. 
+Comme les informations contenues dans les \'etats du jeu ne sont pas 
+g\'en\'eralisables dans l'\'etat, on utilisera une repr\'esentation par $n$ 
+caract\'eristiques g\'en\'eralis\'ees qui pr\'ecisent la configuration du 
+terrain. On a ainsi que $\mathcal{X} = \mathbb{R}^n$, avec $n$ la dimension de 
+l'espace de repr\'esentation. De plus, l'ensemble d'\'etiquettes devient 
+l'ensemble d'actions possibles $A$. On veut donc trouver une fonction $f: 
+\mathbb{R}^n \to A$ qui fournit la meilleure action possible pour tout \'etat du 
+jeu.
+
+Le probl\`eme auquel on est confront\'es se r\'eduit alors \`a 
+partitionner l'espace de repr\'esentation en $p=|A|$ parties 
+$\mathcal{X}_1,\mathcal{X}_2,\dotsc,\mathcal{X}_p$ de sorte que 
+$f([\mathcal{X}_i]) = \{ a_i \} \subset A$, $i = 1,\dotsc,p$. On utilise les 
+arbres de d\'ecisions pour repr\'esenter ce partionnement. Ceci 
+implique que chaque n\oe ud interne correspond \`a un test sur une des $n$ 
+dimensions de $\mathcal{X}$ et que chaque feuille correspond \`a l'action \`a 
+entreprendre pour l'\'etat donn\'e par le chemin suivi depuis la racine.
+
+On nous a fourni une strat\'egie sp\'eciale \texttt{KeyboardStrategy} 
+comportant les outils de base n\'ecessaires \`a la mise en place de cette 
+m\'ethode, allant de la g\'en\'eration de l'ensemble d'apprentissage au 
+partionnement de l'espace de repr\'esentation, en passant par l'application de 
+la fonction lors des matches. 
+Elle permet d'associer des touches clavier aux diff\'erentes strat\'egies de 
+sorte que l'on puisse pr\'eciser la strat\'egie pr\'econis\'ee pour les 
+diff\'erentes phases du jeu. Ceci conforme ce que l'on appelle l'ensemble 
+d'apprentissage. Cet ensemble est trait\'e \`a l'aide des $n$ carat\'eristiques 
+g\'en\'eralis\'ees d\'efinies auparavant et, \`a l'issue de ceci, on compte 
+un partionnement de $\mathbb{R}^n$. Cette strat\'egie utilise alors la fonction 
+$f$ lors des matches suivants, ce qui donne un comportement plus intelligent 
+\`a nos joueurs.
+
+Cette m\'ethode n'a pas \'et\'e utilis\'ee pour am\'eliorer la 
+prise de d\'ecisions sur les actions parce que l'on a trouv\'e difficile 
+l'interaction \`a travers le clavier pour plus de quatre actions.
+
+\subsection*{Q-learning}
+Cet algorithme d'apprentissage par renforcement r\'epose sur un ensemble 
+d'\'etats $S$, un ensemble d'actions $A$, et une fonction $Q: S \times A \to 
+\mathbb{R}$, appel\'ee {\itshape politique}, pond\'erant une paire form\'ee 
+par un {\itshape \'etat} donn\'e et une {\itshape action} \`a entreprendre pour 
+cet \'etat-ci. Cette pond\'eration est nomm\'ee {\itshape r\'ecompense}. La 
+notion d'\'etat correspond \`a celle donn\'ee dans la section des arbres 
+binaires. Il utilise aussi la notion d'{\itshape \'episode} que l'on associe 
+\`a un match dans le cadre du projet. Son principe est le suivant : on apprend 
+une politique comportementale qui optimise l'esp\'erance des r\'ecompenses.
+
+La phase d'initialisation consiste \`a attribuer \`a $Q$ une valeur fixe 
+arbitraire, ici 0. La phase it\'erative concerne un \'episode, ou encore un 
+match, et est r\'ep\'et\'ee pour les $k$ \'episodes. 
+Pour un \'etat $s_t$ donn\'e, on choisit une action $a_t$ selon la politique $Q$ 
+et observe la r\'ecompense $r_t$ associ\'ee \`a cette paire. Cette action 
+g\'en\`ere un nouvel \'etat $s_{t+1}$. Il est \`a noter qu'il n'y a pas de 
+choix concernant l'\'etat initial $s_0$, puisqu'il est toujours le m\^eme pour 
+un match de football : ceci correspond au coup d'envoi. Ensuite, on met \`a 
+jour la politique selon la formule ci-dessous.
+
+\begin{equation*}
+  Q(s_t,a_t) \gets (1-\alpha) \cdot 
+  \underbrace{Q(s_t,a_t)}_{\mathclap{\text{valeur actuelle}}} + \ \alpha(k) 
+\cdot \underbrace{\Big(r_t + \gamma \cdot \max_a(Q_{t+1},a) 
+	\Big)}_{\mathclap{\text{valeur   apprise}}}
+\end{equation*}
+
+Ici, $\alpha$ repr\'esente la vitesse d'apprentissage et $\gamma$ le facteur 
+d'actualisation. D'un c\^ot\'e, la vitesse d'apprentissage d\'etermine 
+l'\'equilibre entre exploration et exploitation. En effet, une valeur de 
+0 implique l'utilisation exclusive des choix actuels, alors qu'une 
+valeur 1 ne ferait que consid\'erer le dernier r\'esultat.
+Comme notre agent est cens\'e \^etre plus intelligent au fur et \`a mesure des 
+\'episodes, il doit apprendre de moins en moins des it\'erations suivant. 
+C'est pourquoi on a choisi une vitesse d'apprentissage polyn\^omiale, i.e.\ 
+$\alpha(k)=\dfrac{1}{k^\omega}$, avec $\omega \in \left] 0,5;1 \right[$ fix\'e.
+
+D'un autre c\^ot\'e, le facteur d'actualisation d\'etermine l'importance des 
+r\'ecompenses futures. Une valeur de 0 ne prend en consid\'eration que les 
+r\'ecompenses courantes, tandis qu'une valeur de 1 met en valeur les 
+r\'ecompenses plus lointaines. On avait pr\'ecis\'e qu'un \'episode 
+correspondait \`a un match ; par cons\'equent, la r\'eussite d'une succession 
+d'actions d\'epend du r\'esultat final du match. De ce fait, on a int\'er\^et 
+\`a retarder au maximum les r\'ecompenses. Ceci se traduit par le choix d'un 
+facteur $\gamma$ proche de 1.
+
+Si le nouvel \'etat $s_{t+1}$ est terminal, on passe \`a l'\'episode 
+suivant. Sinon on choisit une action pour cet \'etat et refait la mise \`a jour 
+de la politique.
+
+\`A la fin de l'algorithme, on se retrouve avec une politique qui nous rend 
+l'action la plus ad\'equate pour tout \'etat du jeu. \'Etant donn\'e que les 
+carat\'eristiques utilis\'ees pour d\'efinir un \'etat sont continues, 
+on a d\'efini des intervalles d'\'equivalence. Cela n'emp\^eche que le nombre 
+total d'\'etats est \'enorme et fait donc exploser la m\'emoire. Bien 
+qu'impl\'ement\'e, on s'est pas servi de cet algorithme pour am\'eliorer nos 
+strat\'egies. 
 
 \newpage
 
@@ -269,215 +543,6 @@ modification est le produit de la constatation que l'effort d\'efensif des
 autres joueurs de cette cat\'egorie n'\'egale pas celui du d\'efenseur et que 
 l'abandon de position d\'efensive entra\^ine des terribles risques pour le 
 score.
-
-\newpage
-
-\part{M\'ethodes d'optimisation}
-Dans cette troisi\`eme partie, on vous d\'etaille les diff\'erents algorithmes 
-appris tout au long du semestre pour l'am\'elioration des strat\'egies 
-initialement propos\'ees.
-
-\section{Recherche en grille}
-La premi\`ere m\'ethode d'optimisation pre\'esent\'ee en cours a \'et\'e 
-celle de la recherche en grille. Celle-ci est utilis\'ee pour l'optimisation 
-d'une 
-action.
-
-Tout d'abord, on doit d\'efinir l'action \`a optimiser et le crit\`ere 
-d'optimalit\'e, et rep\'erer les param\`etres associ\'es. Puis on 
-obtient un ensemble de valeurs pour chaque param\`etre. 
-Pour les param\`etres discrets, il suffit de prendre toutes les valeurs 
-possibles, alors que pour les param\`etres continus il faudra faire en amont 
-une discr\'etisation, i.e.\ on divise l'intervalle d\'elimit\'e par des bornes 
-d\'efinies selon un pas de pr\'ecision. On compte ainsi des vecteurs dont les 
-coordonn\'ees correspondent chacune \`a un param\`etre. On fait ensuite une 
-recherche exhaustive sur tous les vecteurs obtenus : on teste chaque vecteur 
-sous diff\'erents conditions environnementales et on moyenne les \'evaluations 
- du crit\`ere dans lesdites conditions. Finalement, on prend la valeur optimale 
-et son vecteur associ\'e.
-
-Il est important de remarquer que la plupart de nos param\`etres sont continus. 
-Pour obtenir des valeurs plus pr\'ecises et un meilleur comportement, on a 
-besoin d'un pas de discr\'etisation tr\`es petit. Ainsi, on r\'ealise qu'une 
-augmentation du nombre de param\`etres \`a optimiser a une tr\`es forte 
-influence sur le temps d'ex\'ecution de l'algorithme mis en place. On 
-en a d\'eduit que le minuscule gain relatif nombre de param\`etres--temps 
-d'ex\'ecution ne convenait pas \`a moyen terme.
-
-\section{Algorithmes g\'en\'etiques}
-Dans un deuxi\`eme temps, on est pass\'es aux algorithmes g\'en\'etiques. On en 
-a mis en place une impl\'ementation pour optimiser les \'equipes compos\'ees 
-d'un ou deux joueurs.
-
-Cette classe d'algorithmes se base sur la th\'eorie de l'\'evolution. En effet, 
-la notion de s\'election naturelle est le m\'ecanisme permettant de choisir des 
-solutions potentielles de plus en plus meilleures.
-
-La toute premi\`ere chose \`a faire est la d\'efinition de la fonction 
-$f: \mathbb{R}^n \to \mathbb{E}$ \`a optimiser, o\`u $n$ est le nombre de 
-param\`etres concern\'es. Un \'el\'ement $x=(x_1,\dotsc,x_n) \in \mathbb{R}^n$ 
-est appel\'e {\itshape candidat} ou {\itshape chromosome}, et chacune de ses 
-coordonn\'ees $x_i$ avec $i=1,\dotsc,n$, appel\'ee {\itshape propri\'et\'e} 
-ou encore {\itshape g\`ene}, correspond \`a un param\`etre \`a optimiser. Elles 
-forment le {\itshape g\'enotype}.
-Autrement dit, un candidat correspond \`a une \'equipe d\'efinie par les valeurs
-de ses propri\'et\'es.
-
-Dans le cadre du projet, on a d\'efini $f(x)=(V,N,D,P,C)$ comme le 
-bilan apr\`es avoir disput\'e plusieurs matches avec les m\^emes valeurs des 
-param\`etres donn\'ees par $x$, i.e.\ le tuple compos\'e du 
-nombre de 
-victoires, matches nuls, d\'efaites, buts marqu\'es et buts encaiss\'es. La 
-relation d'ordre suit les r\`egles du classement d'un tournoi de football.
-
-Cette classe d'algorithmes comportent quatre \'etapes.
-
-\begin{enumerate}
-\item \underline{Initialisation :} Tout d'abord, il faut g\'en\'erer un 
-ensemble de candidats $\{x_1,\dotsc,x_m\}$. Le but est d'obtenir une population 
-initiale la plus diverse possible de sorte \`a pouvoir atteindre le plus de 
-maxima relatifs. C'est pourquoi cette premi\`ere g\'en\'eration est obtenue de 
-mani\`ere al\'eatoire.
-\item \underline{\'Evaluation :} Ensuite, on \'evalue la fonction en 
-chacun des candidats, i.e.\ on calcule $\{f(x_1),\dotsc,f(x_m)\}$.
-\item \underline{S\'election :} Suivant la notion de s\'election 
-naturelle, on ne conserve que les candidats avec les meilleurs r\'esultats. 
-Autrement dit, on dresse un classement des \'equipes associ\'ees aux candidats 
-et n'en garde qu'une partie.
-\item \underline{Reproduction :} Finalement, on attribue les places 
-libres aux candidats n\'es du brassage g\'en\'etique des candidats les 
-plus performants. Pour ce faire, on compte sur deux m\'ethodes, \`a savoir le 
-croisement et la mutation. \'Etant donn\'e deux parents, on commence par les 
-cloner en deux enfants. Puis on choisit une ligne de coupe divisant le 
-g\'enotype en deux parties. Ensuite, les enfants s'\'echangent une partie de 
-leur g\'enotype. Le croisement s'arr\^ete \`a ce stade-l\`a, tandis que la 
-mutation ajoute du bruit al\'eatoirement dans un g\`ene pour chacun 
-des nouveaux chromosomes. On a d\'ecid\'e de faire une petite modification \`a 
-cette \'etape-l\`a lors de l'impl\'ementation pour avoir plus de 
-diversification : une minorit\'e des places libres est attrribu\'ee \`a des 
-candidats g\'en\'er\'es al\'eatoirement.
-\end{enumerate}
-
-Cet algorithme \'etant it\'eratif, on recommence \`a la deuxi\`eme phase avec 
-la nouvelle g\'en\'eration. Au bout d'un nombre raisonnable d'it\'erations, on 
-se retrouve avec une g\'en\'eration compos\'ee de chromosomes tr\`es proches des 
-maxima relatifs. On finit donc l'algorthme par prendre le candidat optimal de la 
-derni\`ere population.
-
-Cette m\'ethode a permis d'am\'eliorer nos \'equipes progressivement et les 
-valeurs de tous les param\`etres mis en place ont \'et\'e d\'efinies au moyen 
-de nombreuses ex\'ecutions de cette m\'ethode.
-
-\section{Apprentissage automatique}
-Dans la derni\`ere partie du semestre, on s'est concentr\'e sur l'apprentissage 
-automatique. On nous a pr\'esent\'e les deux grandes familles 
-d'algorithmes d'apprentissage : supervis\'es et non supervis\'es, ainsi que 
-l'apprentissage par renforcement. Deux m\'ethodes ont \'et\'e impl\'ement\'ees 
-lors du projet.
-
-\subsection*{Arbres de d\'ecision (de classification)}
-Il s'agit d'une technique d'apprentissage supervis\'e. Pour l'appliquer, on 
-a besoin d'un {\itshape espace de repr\'esentation} $\mathcal{X}$, d'un 
-ensemble d'{\itshape \'etiquettes} ou {\itshape classes} $Y$ et d'une liste de 
-$m$ exemples d'apprentissage $(x^i,y^i)$, o\`u $x^i \in \mathcal{X}$, $y^i \in 
-Y, i = 1,\dotsc,m$, appel\'ee {\itshape ensemble d'apprentissage}.
-Le but de cette technique est de trouver une fonction $f: \mathcal{X} \to 
-Y$ telle que l'on puisse pr\'edire \`a quelle classe appartient une 
-future variable $x \in \mathcal{X}$.
-
-Concr\`etement, on veut associer une certaine action \`a chaque \'etat du jeu. 
-Comme le nombre d'\'etats possibles est trop grand, on utilisera une 
-repr\'esentation par $n$ caract\'eristiques g\'en\'eralis\'ees qui 
-pr\'ecisent la configuration du terrain. On a ainsi que $\mathcal{X} = 
-\mathbb{R}^n$, avec $n$ la dimension de l'espace de repr\'esentation. De plus, 
-l'ensemble d'\'etiquettes devient l'ensemble d'actions possibles $A$. On veut 
-donc trouver une fonction $f: \mathbb{R}^n \to A$ qui fournit la meilleure 
-action possible pour tout \'etat du jeu.
-
-Le probl\`eme auquel on est confront\'es se r\'eduit alors \`a 
-partitionner l'espace de repr\'esentation en $p=|A|$ parties 
-$\mathcal{X}_1,\mathcal{X}_2,\dotsc,\mathcal{X}_p$ de sorte que 
-$f([\mathcal{X}_i]) = \{ a_i \} \subset A$, $i = 1,\dotsc,p$. On utilise les 
-arbres de d\'ecisions pour repr\'esenter ce partionnement. Ceci 
-implique que chaque n\oe ud interne correspond \`a un test sur une des $n$ 
-dimensions de $\mathcal{X}$ et que chaque feuille correspond \`a l'action \`a 
-entreprendre pour l'\'etat donn\'e par le chemin suivi depuis la racine.
-
-On nous a fourni une strat\'egie sp\'eciale \texttt{KeyboardStrategy} 
-comportant les outils de base n\'ecessaires \`a la mise en place de cette 
-m\'ethode, allant de la g\'en\'eration de l'ensemble d'apprentissage au 
-partionnement de l'espace de repr\'esentation, en passant par l'application de 
-la fonction lors des matches. 
-Elle permet d'associer des touches clavier aux diff\'erentes strat\'egies de 
-sorte que l'on puisse pr\'eciser la strat\'egie pr\'econis\'ee pour les 
-diff\'erentes phases du jeu. Ceci conforme ce que l'on appelle l'ensemble 
-d'apprentissage. Cet ensemble est trait\'e \`a l'aide des $n$ carat\'eristiques 
-g\'en\'eralis\'ees d\'efinies auparavant et, \`a l'issue de ceci, on compte 
-un partionnement de $\mathbb{R}^n$. Cette strat\'egie utilise alors la fonction 
-$f$ lors des matches suivants, ce qui donne un comportement plus intelligent 
-\`a nos joueurs.
-
-Cette m\'ethode d'optimisation n'a pas \'et\'e utilis\'ee pour am\'eliorer la 
-prise de d\'ecisions sur les actions parce que l'on a trouv\'e difficile 
-l'interaction \`a travers le clavier d\`es que le nombre d'actions 
-possibles d\'epasse 5.
-
-\subsection*{Q-learning}
-Cet algorithme d'apprentissage par renforcement r\'epose sur un ensemble 
-d'\'etats $S$, un ensemble d'actions $A$, et une fonction $Q: S \times A \to 
-\mathbb{R}$, appel\'ee {\itshape politique}, pond\'erant une paire form\'ee 
-par un {\itshape \'etat} donn\'e et une {\itshape action} \`a entreprendre pour 
-cet \'etat-ci. Cette pond\'eration est nomm\'ee {\itshape r\'ecompense}. La 
-notion d'\'etat correspond \`a celle donn\'ee dans la section des arbres 
-binaires. Il utilise aussi la notion d'{\itshape \'episode} que l'on associe 
-\`a un match dans le cadre du projet. Son principe est le suivant : on apprend 
-une politique comportementale qui optimise l'esp\'erance des r\'ecompenses.
-
-La premi\`ere phase consiste \`a initialiser $Q$ \`a une valeur fixe 
-arbitraire, ici 0. La deuxi\`eme phase concerne un \'episode, ou encore un 
-match, et est r\'ep\'et\'ee autant de fois qu'il y a d'\'episodes. Pour un 
-\'etat $s_t$ donn\'e, on choisit une action $a_t$ selon la politique $Q$ et 
-observe la r\'ecompense $r_t$ associ\'ee \`a cette paire. Cette action 
-g\'en\`ere un nouvel \'etat $s_{t+1}$. Il est \`a noter qu'il n'y a pas de 
-choix concernant l'\'etat initial $s_0$, puisqu'il est toujours le m\^eme pour 
-un match de football : ceci correspond au coup d'envoi. Ensuite, on met \`a 
-jour la politique selon la formule ci-dessous.
-
-\begin{equation*}
-  Q(s_t,a_t) \gets (1-\alpha) \cdot 
-  \underbrace{Q(s_t,a_t)}_{\mathclap{\text{valeur actuelle}}} + \ \alpha \cdot 
-\underbrace{\Big(r_t + \gamma \cdot \max_a(Q_{t+1},a) 
-  \Big)}_{\mathclap{\text{valeur   apprise}}}
-\end{equation*}
-
-Ici, $\alpha$ repr\'esente la vitesse d'apprentissage et $\gamma$ le facteur 
-d'actualisation. D'un c\^ot\'e, la vitesse d'apprentissage d\'etermine 
-l'\'equilibre entre exploration et exploitation. En effet, une valeur de 
-0 implique l'utilisation exclusive des choix actuels, alors qu'une 
-valeur 1 ne ferait que consid\'erer le dernier r\'esultat.
-D'un autre c\^ot\'e, le facteur d'actualisation d\'etermine l'importance des 
-r\'ecompenses futures. Une valeur de 0 ne prend en consid\'eration que les 
-r\'ecompenses courantes, tandis qu'une valeur de 1 met en valeur les 
-r\'ecompenses plus lointaines. On avait pr\'ecis\'e qu'un \'episode 
-correspondait \`a un match ; par cons\'equent, la r\'eussite d'une succession 
-d'actions d\'epend du r\'esultat final du match. De ce fait, on a int\'er\^et 
-\`a retarder au maximum les r\'ecompenses. Ceci se traduit par le choix d'un 
-facteur $\gamma$ proche de 1.
-
-Juste apr\`es la mise \`a jour de la politique $Q$, on d\'etermine si le 
-nouvel \'etat $s_{t+1}$ est terminal, i.e.\ qu'il correspond au coup de sifflet 
-final. Dans le cas affirmatif, on passe \`a l'\'episode suivant ou on s'arr\^ete 
-selon s'il y en a encore \`a faire ; on r\'eit\`ere cette phase \`a partir du 
-choix d'une action pour $s_{t+1}$ dans le cas contraire.
-
-\`A la fin de l'algorithme, on se retrouve avec une politique qui nous rend 
-l'action la plus ad\'equate pour tout \'etat du jeu. \'Etant donn\'e que les 
-carat\'eristiques utilis\'ees pour d\'efinir un \'etat sont continues, 
-on a d\'efini des intervalles d'\'equivalence. Cela n'emp\^eche que le nombre 
-total d'\'etats est \'enorme et fait donc exploser la m\'emoire. On pourrait 
-mettre en place un r\'eseau de neurones pour pallier cette difficult\'e. Ceci 
-n'a pas \'et\'e le cas pour ce projet et donc, bien qu'impl\'ement\'e, on 
-s'est pas servi de cet algorithme pour am\'eliorer nos strat\'egies. 
 
 \newpage
 

@@ -1,12 +1,12 @@
 \select@language {french}
 \contentsline {part}{Introduction}{2}
 \contentsline {part}{I\hspace {1em}Architecture logicielle}{3}
-\contentsline {part}{II\hspace {1em}Strat\'egies}{5}
-\contentsline {section}{\numberline {1}Un joueur}{5}
-\contentsline {section}{\numberline {2}Deux joueurs}{5}
-\contentsline {section}{\numberline {3}Quatre joueurs}{6}
-\contentsline {part}{III\hspace {1em}M\'ethodes d'optimisation}{8}
-\contentsline {section}{\numberline {4}Recherche en grille}{8}
-\contentsline {section}{\numberline {5}Algorithmes g\'en\'etiques}{8}
-\contentsline {section}{\numberline {6}Apprentissage automatique}{9}
+\contentsline {part}{II\hspace {1em}M\'ethodes d'optimisation}{5}
+\contentsline {section}{\numberline {1}Recherche en grille}{5}
+\contentsline {section}{\numberline {2}Algorithmes g\'en\'etiques}{5}
+\contentsline {section}{\numberline {3}Apprentissage automatique}{6}
+\contentsline {part}{III\hspace {1em}Strat\'egies}{8}
+\contentsline {section}{\numberline {4}Un joueur}{8}
+\contentsline {section}{\numberline {5}Deux joueurs}{8}
+\contentsline {section}{\numberline {6}Quatre joueurs}{9}
 \contentsline {part}{Conclusion}{11}
