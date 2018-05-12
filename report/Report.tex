@@ -96,12 +96,54 @@ matches dans les cat\'egories \`a un, deux et quatre joueurs.
 Dans cette premi\`ere partie, on vous expliquera les choix faits 
 concernant l'architecture logicielle.
 
-Le projet a \'et\'e organis\'e en un module {\bfseries ia} qui contient 
-l'impl\'ementation de nos joueurs et en divers fichiers ex\'ecutables 
+Le projet a \'et\'e organis\'e en un module {\bfseries ia} 
+contenant les fichiers sources de nos joueurs, un r\'epertoire regroupant les 
+diff\'erentes versions des param\`etres et en divers fichiers ex\'ecutables 
 permettant de lancer les algorithmes d'optimisation.
 
-\section*{Strat\'egies}
-% \todo{expliquer arborescence}
+\begin{figure}[!h]
+  \centering
+  \captionsetup{justification=centering}
+  \includegraphics[width=0.8\textwidth]{packages_IA}
+  \caption[La structure du module]{La structure de notre module {\bfseries ia} 
+	d\'evelopp\'e tout au long du semestre}
+  \label{fig:diag_classes}
+\end{figure}
+
+\section{Module de base}
+Au tout d\'ebut du projet, on a r\'ealis\'e une analyse profonde des 
+fonctionnalit\'es \`a impl\'ementer et de la structure du simulateur fourni. On 
+a conclu qu'il \'etait imp\'eratif de s\'eparer les fonctions et classes en 
+plusieurs fichiers pour mieux les rep\'erer. On comptait ainsi de base 
+quatre fichiers.
+
+Dans le fichier {\itshape tools}, on a regroup\'e une classe enveloppe 
+facilitant l'acc\`es aux informations d'un \'etat de jeu donn\'e et des 
+fonctions utilitaires, par exemple, des impl\'ementations de formules 
+math\'ematiques.
+
+Puis on retrouve le fichier {\itshape conditions} qui contient toutes les 
+fonctions bool\'eennes dirigeant la prise de d\'ecisions. Autrement dit, le 
+comportement d'un joueur varie selon les valeurs de v\'erit\'e de ses 
+conditions associ\'ees.
+
+On passe ensuite au c\oe ur du module, \`a savoir le fichier {\itshape 
+actions}. On y retrouve les actions de base qu'un joueur peut effectuer comme 
+frapper, faire une passe ou revenir vers la cage.
+
+Au fur et \`a mesure que le projet avan\c{c}ait, on voyait les fichiers 
+grossir, notamment le fichier {\itshape actions}. On s'est vu alors contraints 
+d'ajouter un autre fichier pour am\'eliorer la structure de base. C'est ainsi 
+que le fichier {\itshape behaviour} est apparu. Il contient en effet des 
+super-actions, i.e.\ le comportement d'un joueur pour une phase du jeu 
+donn\'ee, par exemple, la situation d'attaque avec la possession du ballon.
+
+Par ailleurs, on communique la prise de d\'ecisions de nos joueurs au 
+simulateur du jeu au moyen des classes appel\'ees strat\'egies. Celles-ci sont 
+incluses dans le fichier de m\^eme nom. Ces strat\'egies correspondent alors au 
+comportement d'un joueur pendant plusieurs phases du jeu, c'est-\`a-dire tout 
+au long d'un match.
+
 \begin{figure}[!h]
   \centering
   \captionsetup{justification=centering}
@@ -112,6 +154,16 @@ al\'eatoire et une autre pour l'unique challenge propos\'e}
   \label{fig:strats}
 \end{figure}
 
+\section{Suppl\'ements en cours de route}
+Les strat\'egies con\c{c}ues ont \'evolu\'e pendant tout le semestre. On a vu 
+quatre m\'ethodes d'optimisation en cours pour rendre plus intelligentes 
+ces strat\'egies de base.
+
+Pour chaque m\'ethode d'optimisation, on a eu besoin d'une classe r\'ealisant 
+l'optimisation sur la base de donn\'ees recueillis soit par elle-m\^eme, soit 
+par des nouvelles strat\'egies r\'eposant sur celles d\'ej\`a cod\'ees.
+obtenues.
+
 \begin{figure}[!h]
   \centering
   \captionsetup{justification=centering}
@@ -120,6 +172,28 @@ al\'eatoire et une autre pour l'unique challenge propos\'e}
 am\'eliorer \`a l'aide de la recherche en grille}
   \label{fig:gs}
 \end{figure}
+
+La figure \ref{fig:gs} contient le diagramme de classes des strat\'egies 
+sp\'ecialement con\c{c}ues pour la recherche en grille de param\`etres. Ces 
+strat\'egies ont \'et\'e utilis\'ees par des {\itshape observateurs} des 
+matches pour obtenir les valeurs optimales cherch\'ees. Les fichiers 
+concern\'es par cette m\'ethode sont rep\'er\'es par le pr\'efixe 
+\enquote{gs}, abr\'eg\'e du terme en anglais {\itshape grid search}.
+
+\begin{figure}[!h]
+  \centering
+  \captionsetup{justification=centering}
+  \includegraphics[width=0.3\textwidth]{genetic_mod}
+  \caption[Les classes pour l'algorithme g\'en\'etique]{Le diagramme des 
+	classes pour la mise en \oe uvre d'un algorithme g\'en\'etique}
+  \label{fig:gene}
+\end{figure}
+
+Pour la m\'ethode par un algorithme g\'en\'etique, on a d\'evelopp\'e deux 
+classes g\'en\'eriques pour traiter le bilan des r\'esultats des strat\'egies 
+de base dans plusieurs matches. On voit dans la figure \ref{fig:gene} le 
+diagramme de classes r\'esultant. Le fichier cr\'ee pour cette m\'ethode 
+est rep\'er\'e par le pr\'efixe \enquote{gene}.
 
 \begin{figure}[!h]
   \centering
@@ -130,15 +204,13 @@ utilis\'ees pour l'application de la m\'ethode par arbres de d\'ecision}
   \label{fig:dt}
 \end{figure}
 
-\section*{Classes suppl\'ementaires}
-\begin{figure}[!h]
-  \centering
-  \captionsetup{justification=centering}
-  \includegraphics[width=0.3\textwidth]{genetic_mod}
-  \caption[Les classes pour l'algorithme g\'en\'etique]{Le diagramme des 
-classes pour la mise en \oe uvre d'un algorithme g\'en\'etique}
-  \label{fig:gene}
-\end{figure}
+La m\'ethode d'optimisation par arbres de d\'ecision est diff\'erente des 
+autres en ce qui concerne la conception. En effet, la classe l'impl\'ementant 
+\'etant d\'ej\`a fournie, il a suffi de d\'evelopper les strat\'egies briques 
+qui allaient former une strat\'egie intelligente. Vous pouvez les apercevoir 
+dans la figure \ref{fig:dt}. Le fichier contenant ces strat\'egies est 
+pr\'efix\'e par \enquote{dt}, abr\'eg\'e du terme en anglais {\itshape 
+decision tree}.
 
 \begin{figure}[!h]
   \centering
@@ -150,17 +222,25 @@ l'impl\'ementation de l'algorithme Q-learning}
   \label{fig:ml}
 \end{figure}
 
-\section*{Structure r\'esultante}
-On vous pr\'esente la structure finale du module contenant tout notre travail.
+La derni\`ere m\'ethode d'optimisation \'etait facultative, mais on a voulu 
+suivre le module jusqu'au bout. On a d\^u coder tout l'algorithme et les 
+briques n\'ecessaires pour sa mise en place. Tout comme la m\'ethode 
+pr\'ec\'edente, celle-ci a utilis\'e des strat\'egies briques. Par ailleurs, on 
+a impl\'ement\'e l'algorithme \`a l'aide de deux classes dites 
+d'{\itshape apprentissage}.
+Le pr\'efixe utilis\'e pour cette m\'ethode a \'et\'e \enquote{ml}, abr\'eg\'e 
+du terme en anglais {\itshape machine learning}.
 
-\begin{figure}[!h]
-  \centering
-  \captionsetup{justification=centering}
-  \includegraphics[width=0.8\textwidth]{packages_IA}
-  \caption[La structure du module]{La structure de notre module {\bfseries ia} 
-d\'evelopp\'e tout au long du semestre}
-  \label{fig:diag_classes}
-\end{figure}
+\section{Librairies externes}
+Il est important de rappeler que l'on compte \`a pr\'esent des nombreuses 
+librairies disponibles et tr\`es souvent performantes qui ont \'et\'e le fruit 
+du travail de beaucoup d'informaticiens avant nous. Ceci dit, on doit remarquer 
+que l'on en a utilis\'e quelques-unes durant le d\'eveloppement du projet. On 
+peut citer notamment {\itshape math} puisque la physique du jeu comporte un 
+gros composant math\'ematique ; {\itshape random}, en raison de notre 
+engouement pour l'al\'eatoire ; {\itshape pickle} pour la s\'erialisation des 
+donn\'ees ; {\itshape os.path} pour l'acc\`es au syst\`eme de fichiers de 
+l'ordinateur ; et {\itshape numpy} pour les calculs faciles sur les tableaux.
 
 \newpage
 
@@ -267,7 +347,7 @@ de nombreuses ex\'ecutions de cette m\'ethode.
 
 \section{Apprentissage automatique}
 Dans la derni\`ere partie du semestre, on s'est concentr\'e sur l'apprentissage 
-automatique. On nous a pr\'esent\'e les deux grandes familles 
+automatique. Les enseignants ont pr\'esent\'e les deux grandes familles 
 d'algorithmes d'apprentissage : supervis\'es et non supervis\'es, ainsi que 
 l'apprentissage par renforcement. Deux m\'ethodes ont \'et\'e impl\'ement\'ees 
 lors du projet.

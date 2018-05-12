@@ -8,10 +8,12 @@
 \usepackage[pdftex]{graphicx}
 \usepackage{comment}
 \usepackage{csquotes}
+\usepackage{caption}
 \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
 \usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
 \author{Angelo Ortiz}
 \title{Rapport du Projet}
+\graphicspath{ {../img/} }
 
 \begin{document}
 \begin{titlepage}
@@ -35,7 +37,7 @@
  
 %\newpage
 \tableofcontents
-  
+\listoffigures
 \newpage
   
 \part*{Introduction}
@@ -44,8 +46,37 @@ L'unit\'e d'enseignement 2I013 consiste en un projet d'application des
 connaissances et de d\'ecouverte de nouveaux algorithmes. La th\'ematique du 
 projet du groupe 1 a \'et\'e le football.
 
+Le jeu comporte un terrain, deux \'equipes de joueurs et une 
+balle. \'Etant donn\'e qu'une grille rectangulaire sous forme matricielle, 
+c'est-\`a-dire discr\`ete, n'\'etait pas envisageable, un rep\`ere 
+orthonorm\'e a \'et\'e choisi comme repr\'esentation du terrain. Pour ce faire, 
+il y a deux droites en plus des axes qui d\'elimitent la surface du terrain.
+
+\begin{figure}[!h]
+  \centering
+  \captionsetup{justification=centering}  
+  \includegraphics[width=0.7\textwidth]{apercu}
+  \caption[Un aper\c{c}u du jeu]{Voici un aper\c{c}u du simulateur de football 
+  lors d'une partie de notre \'equipe {\itshape ChPerFusion} en rouge face \`a 
+  l'\'equipe d'un de nos camarades de classe.}
+  \label{fig:apercu}
+\end{figure}
+
+Les r\`egles du football ont \'et\'e l\'eg\`erement simplifi\'ees dans le cadre 
+du projet. En effet, il n'existe pas de notion de touche, mais de rebond : la 
+balle ne peut pas sortir du terrain et elle choque \'elastiquement dans les 
+bordures. Par ailleurs, les objets physiques du jeu, \`a savoir les joueurs et 
+la balle, sont intangibles. Ceci veut dire que la balle peut passer \`a travers 
+les joueurs sans modifier sa direction. C'est le cas notamment lorsque le 
+joueur d\'ecide de ne pas frapper.
+
+Pour rendre le jeu plus r\'ealiste, la notion de frottement \`a \'et\'e prise 
+en compte, ce qui facilite le contr\^ole de la balle aux joueurs.
+Le moteur du jeu g\'erant toutes ces r\`egles et les interactions entre les 
+objets a \'et\'e fourni.
+
 \section*{Objectifs}
-L’objectif du travail a \'et\'e d'apprendre \`a bien mener un projet long 
+L’objectif du module a \'et\'e d'apprendre \`a bien mener un projet long 
 sur un nouvel environnement de d\'eveloppement, \`a savoir 
 Python. 
 Sachant que travail \`a \'et\'e fait en bin\^ome, on a eu besoin d'un outil 
@@ -53,19 +84,10 @@ collaboratif, en l'occurrence {\bfseries git} qui est un logiciel de gestion de
 versions d\'ecentralis\'e. 
 On a ainsi appris \`a g\'erer l'avancement d'un projet \`a travers la m\'ethode 
 par fonctionnalit\'es.
-Le simulateur du jeu \'etant d\'ej\`a fourni, le travail a consist\'e \`a 
-d\'evelopper des intelligences artificielles dirigeant la prise de d\'ecisions 
-des joueurs pour r\'eussir au mieux les matches dans les cat\'egories \`a un, 
-deux et quatre joueurs.
 
-\section*{Aper\c{c}u}
-Voici un aper\c{c}u du simulateur de football lors d'une partie de notre 
-\'equipe {\itshape ChPerFusion} en rouge face \`a l'\'equipe d'un de nos 
-camarades de classe.
-
-\begin{center}
-\includegraphics[width=0.8\textwidth]{../img/apercu.png}\par%\vspace{1cm}
-\end{center}
+Le travail a consist\'e \`a d\'evelopper des intelligences artificielles 
+dirigeant la prise de d\'ecisions des joueurs pour r\'eussir au mieux les 
+matches dans les cat\'egories \`a un, deux et quatre joueurs.
 
 \addcontentsline{toc}{part}{Introduction}
 \newpage
@@ -74,38 +96,133 @@ camarades de classe.
 Dans cette premi\`ere partie, on vous expliquera les choix faits 
 concernant l'architecture logicielle.
 
-Le projet a \'et\'e organis\'e en un module {\bfseries ia} qui contient 
-l'impl\'ementation de nos joueurs et en divers fichiers ex\'ecutables 
+Le projet a \'et\'e organis\'e en un module {\bfseries ia} 
+contenant les fichiers sources de nos joueurs, un r\'epertoire regroupant les 
+diff\'erentes versions des param\`etres et en divers fichiers ex\'ecutables 
 permettant de lancer les algorithmes d'optimisation.
 
-\section*{Strat\'egies}
-\begin{center}  
-  \includegraphics[width=1.\textwidth]{../img/baseStrategies.png}\par
-\end{center}
+\begin{figure}[!h]
+  \centering
+  \captionsetup{justification=centering}
+  \includegraphics[width=0.8\textwidth]{packages_IA}
+  \caption[La structure du module]{La structure de notre module {\bfseries ia} 
+	d\'evelopp\'e tout au long du semestre}
+  \label{fig:diag_classes}
+\end{figure}
 
-\begin{center}
-  \includegraphics[width=0.9\textwidth]{../img/gridSearch.png}\par
-\end{center}
+\section{Module de base}
+Au tout d\'ebut du projet, on a \'et\'e recommand\'es de bien structurer notre 
+module. Suivant ce conseil, on a r\'ealis\'e une analyse profonde des 
+fonctionnalit\'es \`a impl\'ementer et de la structure du simulateur fourni. On 
+a conclu qu'il \'etait imp\'eratif de s\'eparer les fonctions et classes en 
+plusieurs fichiers pour mieux les rep\'erer. On comptait ainsi de base 
+quatre fichiers.
 
-\begin{center}
-\includegraphics[width=1.\textwidth]{../img/decisionTree.png}\par
-\end{center}
+Dans le fichier {\itshape tools}, on a regroup\'e une classe enveloppe 
+facilitant l'acc\`es aux informations d'un \'etat de jeu donn\'e et des 
+fonctions utilitaires, par exemple, des impl\'ementations de formules 
+math\'ematiques.
 
-\section*{Classes suppl\'ementaires}
-\begin{center}
-  \includegraphics[width=0.3\textwidth]{../img/genetic_mod.png}\par
-\end{center}
+Puis on retrouve le fichier {\itshape conditions} qui contient toutes les 
+fonctions bool\'eennes dirigeant la prise de d\'ecisions. Autrement dit, le 
+comportement d'un joueur varie selon les valeurs de v\'erit\'e de ses 
+conditions associ\'ees.
 
-\begin{center}
-\includegraphics[width=0.8\textwidth]{../img/machineLearning_mod.png}\par
-\end{center}
+On passe ensuite au c\oe ur du module, \`a savoir le fichier {\itshape 
+actions}. On y retrouve les actions de base qu'un joueur peut effectuer comme 
+frapper, faire une passe ou revenir vers la cage.
 
-\section*{Structure r\'esultante}
-On vous pr\'esente la structure finale du module contenant tout notre travail.
+Au fur et \`a mesure que le projet avan\c{c}ait, on voyait les fichiers 
+grossir, notamment le fichier {\itshape actions}. On s'est vu alors contraints 
+d'ajouter un autre fichier pour am\'eliorer la structure de base. C'est ainsi 
+que le fichier {\itshape behaviour} est apparu. Il contient en effet des 
+super-actions, i.e.\ le comportement d'un joueur pour une phase du jeu 
+donn\'ee, par exemple, la situation d'attaque avec la possession du ballon.
 
-\begin{center}
-  \includegraphics[width=0.8\textwidth]{../img/packages_IA.png}\par%\vspace{1cm}
-\end{center}
+Par ailleurs, on communique la prise de d\'ecisions de nos joueurs au 
+simulateur du jeu au moyen des classes appel\'ees strat\'egies. Celles-ci sont 
+incluses dans le fichier de m\^eme nom. Ces strat\'egies correspondent alors au 
+comportement d'un joueur pendant plusieurs phases du jeu, c'est-\`a-dire tout 
+au long d'un match.
+
+\begin{figure}[!h]
+  \centering
+  \captionsetup{justification=centering}
+  \includegraphics[width=1.\textwidth]{baseStrategies}
+  \caption[Les strat\'egies de base]{Les diff\'erentes strat\'egies pour les 
+\'equipes \`a un, deux ou quatre joueurs, une strat\'egie compl\`etement 
+al\'eatoire et une autre pour l'unique challenge propos\'e}
+  \label{fig:strats}
+\end{figure}
+
+\section{Suppl\'ements en cours de route}
+Les strat\'egies con\c{c}ues ont \'evolu\'e pendant tout le semestre. On a vu 
+quatre m\'ethodes d'optimisation en cours pour rendre plus intelligentes 
+ces strat\'egies de base.
+
+Pour chaque m\'ethode d'optimisation, on a eu besoin d'une classe r\'ealisant 
+l'optimisation sur la base de donn\'ees recueillis soit par elle-m\^eme, soit 
+par des nouvelles strat\'egies r\'eposant sur celles d\'ej\`a cod\'ees.
+obtenues.
+
+\begin{figure}[!h]
+  \centering
+  \captionsetup{justification=centering}
+  \includegraphics[width=0.9\textwidth]{gridSearch}
+  \caption[Les strat\'egies pour la recherche en grille]{Les strat\'egies \`a 
+am\'eliorer \`a l'aide de la recherche en grille}
+  \label{fig:gs}
+\end{figure}
+
+La figure \ref{fig:gs} contient le diagramme de classes des strat\'egies 
+sp\'ecialement con\c{c}ues pour la recherche en grille de param\`etres. Ces 
+strat\'egies ont \'et\'e utilis\'ees par des {\itshape observateurs} des 
+matches pour obtenir les valeurs optimales cherch\'ees. Les fichiers 
+concern\'es par cette m\'ethode sont rep\'er\'es par le pr\'efixe 
+\enquote{gs}, abr\'eg\'e du terme en anglais {\itshape grid search}.
+
+\begin{figure}[!h]
+  \centering
+  \captionsetup{justification=centering}
+  \includegraphics[width=0.3\textwidth]{genetic_mod}
+  \caption[Les classes pour l'algorithme g\'en\'etique]{Le diagramme des 
+	classes pour la mise en \oe uvre d'un algorithme g\'en\'etique}
+  \label{fig:gene}
+\end{figure}
+
+Pour la m\'ethode par un algorithme g\'en\'etique, on a d\'evelopp\'e deux 
+classes g\'en\'eriques pour traiter le bilan des r\'esultats des strat\'egies 
+de base dans plusieurs matches. On voit dans la figure \ref{fig:gene} le 
+diagramme de classes r\'esultant.
+
+\begin{figure}[!h]
+  \centering
+  \captionsetup{justification=centering}
+  \includegraphics[width=1.\textwidth]{decisionTree}
+  \caption[Les strat\'egies pour l'arbre de d\'ecision]{Les strat\'egies 
+utilis\'ees pour l'application de la m\'ethode par arbres de d\'ecision}
+  \label{fig:dt}
+\end{figure}
+
+La m\'ethode d'optimisation par arbres de d\'ecision est diff\'erente des 
+autres en ce qui concerne la conception. En effet, la classe l'impl\'ementant 
+\'etant d\'ej\`a fournie, il a suffi de d\'evelopper les strat\'egies briques 
+qui allaient former une strat\'egie intelligente. Vous pouvez les apercevoir 
+dans la figure \ref{fig:dt}.
+
+\begin{figure}[!h]
+  \centering
+  \captionsetup{justification=centering}
+  \includegraphics[width=0.8\textwidth]{machineLearning_mod}
+  \caption[Les classes pour l'apprentissage automatique]{Le diagramme de 
+d\'ependances des classes \texttt{LearningState} et \texttt{LearningTeam} pour 
+l'impl\'ementation de l'algorithme Q-learning}
+  \label{fig:ml}
+\end{figure}
+
+La derni\`ere m\'ethode d'optimisation \'etait facultative, mais on a voulu 
+suivre le module jusqu'au bout. On a d\^u coder tout l'algorithme et les 
+briques n\'ecessaires pour sa mise en place.
 
 \newpage
 
@@ -212,7 +329,7 @@ de nombreuses ex\'ecutions de cette m\'ethode.
 
 \section{Apprentissage automatique}
 Dans la derni\`ere partie du semestre, on s'est concentr\'e sur l'apprentissage 
-automatique. On nous a pr\'esent\'e les deux grandes familles 
+automatique. Les enseignants ont pr\'esent\'e les deux grandes familles 
 d'algorithmes d'apprentissage : supervis\'es et non supervis\'es, ainsi que 
 l'apprentissage par renforcement. Deux m\'ethodes ont \'et\'e impl\'ement\'ees 
 lors du projet.

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.3.31)  12 MAY 2018 00:52
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.3.31)  12 MAY 2018 15:05
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1028,64 +1028,64 @@ File: ../img/apercu.png Graphic file (type png)
 Package pdftex.def Info: ../img/apercu.png used on input line 58.
 (pdftex.def)             Requested size: 338.58632pt x 225.72067pt.
  [2 <../img/apercu.png (PNG copy)>]
-<../img/baseStrategies.png, id=28, 1769.61125pt x 157.58875pt>
+<../img/packages_IA.png, id=28, 979.66pt x 637.38126pt>
+File: ../img/packages_IA.png Graphic file (type png)
+
+<use ../img/packages_IA.png>
+Package pdftex.def Info: ../img/packages_IA.png used on input line 107.
+(pdftex.def)             Requested size: 386.95897pt x 251.75797pt.
+ [3 <../img/packages_IA.png>]
+<../img/baseStrategies.png, id=34, 1769.61125pt x 157.58875pt>
 File: ../img/baseStrategies.png Graphic file (type png)
 
 <use ../img/baseStrategies.png>
-Package pdftex.def Info: ../img/baseStrategies.png used on input line 108.
+Package pdftex.def Info: ../img/baseStrategies.png used on input line 150.
 (pdftex.def)             Requested size: 483.69687pt x 43.07373pt.
 
-<../img/gridSearch.png, id=29, 1327.96124pt x 157.58875pt>
+<../img/gridSearch.png, id=35, 1327.96124pt x 157.58875pt>
 File: ../img/gridSearch.png Graphic file (type png)
 
 <use ../img/gridSearch.png>
-Package pdftex.def Info: ../img/gridSearch.png used on input line 118.
+Package pdftex.def Info: ../img/gridSearch.png used on input line 170.
 (pdftex.def)             Requested size: 435.32422pt x 51.65817pt.
 
-<../img/decisionTree.png, id=31, 1517.67pt x 157.58875pt>
-File: ../img/decisionTree.png Graphic file (type png)
-
-<use ../img/decisionTree.png>
-Package pdftex.def Info: ../img/decisionTree.png used on input line 127.
-(pdftex.def)             Requested size: 483.69687pt x 50.22502pt.
-
-<../img/genetic_mod.png, id=32, 403.5075pt x 424.58624pt>
+<../img/genetic_mod.png, id=36, 403.5075pt x 424.58624pt>
 File: ../img/genetic_mod.png Graphic file (type png)
 
 <use ../img/genetic_mod.png>
-Package pdftex.def Info: ../img/genetic_mod.png used on input line 137.
+Package pdftex.def Info: ../img/genetic_mod.png used on input line 186.
 (pdftex.def)             Requested size: 145.11053pt x 152.68896pt.
 
-<../img/machineLearning_mod.png, id=33, 1014.79124pt x 649.42625pt>
+<../img/decisionTree.png, id=37, 1517.67pt x 157.58875pt>
+File: ../img/decisionTree.png Graphic file (type png)
+
+<use ../img/decisionTree.png>
+Package pdftex.def Info: ../img/decisionTree.png used on input line 201.
+(pdftex.def)             Requested size: 483.69687pt x 50.22502pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[4 <../img/baseStrategies.png> <../img/gridSearch.png> <../img/genetic_mod.png>
+] <../img/machineLearning_mod.png, id=43, 1014.79124pt x 649.42625pt>
 File: ../img/machineLearning_mod.png Graphic file (type png)
 
 <use ../img/machineLearning_mod.png>
-Package pdftex.def Info: ../img/machineLearning_mod.png used on input line 146.
+Package pdftex.def Info: ../img/machineLearning_mod.png used on input line 218.
 
 (pdftex.def)             Requested size: 386.95897pt x 247.63675pt.
-LaTeX Font Info:    Try loading font information for T1+cmtt on input line 149.
+LaTeX Font Info:    Try loading font information for T1+cmtt on input line 221.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 2014/09/29 v2.5h Standard LaTeX font definitions
-)
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-<../img/packages_IA.png, id=34, 979.66pt x 637.38126pt>
-File: ../img/packages_IA.png Graphic file (type png)
-
-<use ../img/packages_IA.png>
-Package pdftex.def Info: ../img/packages_IA.png used on input line 159.
-(pdftex.def)             Requested size: 386.95897pt x 251.75797pt.
- [3 <../img/baseStrategies.png> <../img/gridSearch.png> <../img/decisionTree.pn
-g> <../img/genetic_mod.png>] [4 <../img/machineLearning_mod.png> <../img/packag
-es_IA.png>] [5] [6] [7] [8] [9] [10] [11]
+) [5 <../img/decisionTree.png> <../img/machineLearning_mod.png>] [6] [7] [8] [9
+] [10] [11] [12]
 (./Report.aux) ) 
 Here is how much of TeX's memory you used:
  17287 strings out of 493029
  320178 string characters out of 6136234
- 385432 words of memory out of 5000000
+ 385433 words of memory out of 5000000
  20459 multiletter control sequences out of 15000+600000
  19699 words of font info for 48 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -1108,10 +1108,10 @@ frm1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1440.pfb></usr/sh
 are/texmf/fonts/type1/public/cm-super/sfti1200.pfb></usr/share/texmf/fonts/type
 1/public/cm-super/sfti1728.pfb></usr/share/texmf/fonts/type1/public/cm-super/sf
 tt1200.pfb>
-Output written on Report.pdf (12 pages, 1671701 bytes).
+Output written on Report.pdf (13 pages, 1680582 bytes).
 PDF statistics:
- 140 PDF objects out of 1000 (max. 8388607)
- 93 compressed objects within 1 object stream
+ 144 PDF objects out of 1000 (max. 8388607)
+ 96 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  53 words of extra memory for PDF output out of 10000 (max. 10000000)
 
