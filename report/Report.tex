@@ -245,7 +245,7 @@ l'ordinateur ; et {\itshape numpy} pour les calculs faciles sur les tableaux.
 \newpage
 
 \part{M\'ethodes d'optimisation}
-Dans cette deuxi\`eme partie, on vous d\'etaille les diff\'erents 
+Dans cette deuxi\`eme partie, on vous pr\'esente les diff\'erents 
 algorithmes appris tout au long du semestre pour am\'eliorer 
 les strat\'egies propos\'ees.
 
@@ -455,7 +455,7 @@ l'action la plus ad\'equate pour tout \'etat du jeu. \'Etant donn\'e que les
 carat\'eristiques utilis\'ees pour d\'efinir un \'etat sont continues, 
 on a d\'efini des intervalles d'\'equivalence. Cela n'emp\^eche que le nombre 
 total d'\'etats est \'enorme et fait donc exploser la m\'emoire. Bien 
-qu'impl\'ement\'e, on s'est pas servi de cet algorithme pour am\'eliorer nos 
+qu'impl\'ement\'e, on ne s'est pas servi de cet algorithme pour am\'eliorer nos 
 strat\'egies. 
 
 \newpage
@@ -477,7 +477,8 @@ Il s'agit du point de d\'epart du projet. Le but des premi\`eres semaines
 \'etant de se familiariser avec le code source fourni, on a cr\'e\'e une 
 strat\'egie tr\`es simple et na\"ive. 
 Ainsi, il faisait tout au maximum : il devait se rapprocher de la balle \`a 
-toute vitesse lorsqu'il ne la contr\^olait pas et il frappait avec toute sa 
+toute vitesse lorsqu'il n'en avait pas la possession et il 
+frappait avec toute sa 
 puissance dans le cas contraire. 
 Compte tenu que ce comportement ressemblait beacoup aux autres fonceurs de la 
 classe \`a une param\'etrisation pr\`es et que les matches finissaint en nul, on 
@@ -486,10 +487,10 @@ dribble.
 Ceci a rapport\'e de bons r\'esultats contre les \'equipes restant 
 na\"ives, mais n'a pas suffit pour battre les \'equipes plus d\'evelopp\'ees. 
 En effet, il est tr\`es difficile de devancer un adversaire qui fait une 
-pression sur le ballon \`a une distance moyenne de sorte que les tentatives de 
+pression de pr\`es sur le ballon de sorte que les tentatives de 
 dribbles du fonceur \'echouent.
 De plus, ses essais de dribble dans sa propre surface de r\'eparation 
-\'etaient souvent insuffisants pour \'echapper au danger que signifie 
+\'etaient souvent trop faibles pour \'echapper au danger que signifie 
 l'adversaire venant le presser. Il d\'egage \`a pres\'ent la balle le plus loin 
 possible pour pallier cette difficult\'e.
 
