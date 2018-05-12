@@ -1,0 +1,15 @@
+\select@language {french}
+\contentsline {part}{Introduction}{2}
+\contentsline {part}{I\hspace {1em}Architecture logicielle}{3}
+\contentsline {section}{\numberline {1}Module de base}{3}
+\contentsline {section}{\numberline {2}Suppl\'ements en cours de route}{4}
+\contentsline {section}{\numberline {3}Librairies externes}{5}
+\contentsline {part}{II\hspace {1em}M\'ethodes d'optimisation}{6}
+\contentsline {section}{\numberline {4}Recherche en grille}{6}
+\contentsline {section}{\numberline {5}Algorithmes g\'en\'etiques}{6}
+\contentsline {section}{\numberline {6}Apprentissage automatique}{7}
+\contentsline {part}{III\hspace {1em}Strat\'egies}{9}
+\contentsline {section}{\numberline {7}Un joueur}{9}
+\contentsline {section}{\numberline {8}Deux joueurs}{9}
+\contentsline {section}{\numberline {9}Quatre joueurs}{10}
+\contentsline {part}{Conclusion}{12}
