@@ -111,8 +111,7 @@ permettant de lancer les algorithmes d'optimisation.
 \end{figure}
 
 \section{Module de base}
-Au tout d\'ebut du projet, on a \'et\'e recommand\'es de bien structurer notre 
-module. Suivant ce conseil, on a r\'ealis\'e une analyse profonde des 
+Au tout d\'ebut du projet, on a r\'ealis\'e une analyse profonde des 
 fonctionnalit\'es \`a impl\'ementer et de la structure du simulateur fourni. On 
 a conclu qu'il \'etait imp\'eratif de s\'eparer les fonctions et classes en 
 plusieurs fichiers pour mieux les rep\'erer. On comptait ainsi de base 
@@ -193,7 +192,8 @@ concern\'es par cette m\'ethode sont rep\'er\'es par le pr\'efixe
 Pour la m\'ethode par un algorithme g\'en\'etique, on a d\'evelopp\'e deux 
 classes g\'en\'eriques pour traiter le bilan des r\'esultats des strat\'egies 
 de base dans plusieurs matches. On voit dans la figure \ref{fig:gene} le 
-diagramme de classes r\'esultant.
+diagramme de classes r\'esultant. Le fichier cr\'ee pour cette m\'ethode 
+est rep\'er\'e par le pr\'efixe \enquote{gene}.
 
 \begin{figure}[!h]
   \centering
@@ -208,7 +208,9 @@ La m\'ethode d'optimisation par arbres de d\'ecision est diff\'erente des
 autres en ce qui concerne la conception. En effet, la classe l'impl\'ementant 
 \'etant d\'ej\`a fournie, il a suffi de d\'evelopper les strat\'egies briques 
 qui allaient former une strat\'egie intelligente. Vous pouvez les apercevoir 
-dans la figure \ref{fig:dt}.
+dans la figure \ref{fig:dt}. Le fichier contenant ces strat\'egies est 
+pr\'efix\'e par \enquote{dt}, abr\'eg\'e du terme en anglais {\itshape 
+decision tree}.
 
 \begin{figure}[!h]
   \centering
@@ -222,12 +224,28 @@ l'impl\'ementation de l'algorithme Q-learning}
 
 La derni\`ere m\'ethode d'optimisation \'etait facultative, mais on a voulu 
 suivre le module jusqu'au bout. On a d\^u coder tout l'algorithme et les 
-briques n\'ecessaires pour sa mise en place.
+briques n\'ecessaires pour sa mise en place. Tout comme la m\'ethode 
+pr\'ec\'edente, celle-ci a utilis\'e des strat\'egies briques. Par ailleurs, on 
+a impl\'ement\'e l'algorithme \`a l'aide de deux classes dites 
+d'{\itshape apprentissage}.
+Le pr\'efixe utilis\'e pour cette m\'ethode a \'et\'e \enquote{ml}, abr\'eg\'e 
+du terme en anglais {\itshape machine learning}.
+
+\section{Librairies externes}
+Il est important de rappeler que l'on compte \`a pr\'esent des nombreuses 
+librairies disponibles et tr\`es souvent performantes qui ont \'et\'e le fruit 
+du travail de beaucoup d'informaticiens avant nous. Ceci dit, on doit remarquer 
+que l'on en a utilis\'e quelques-unes durant le d\'eveloppement du projet. On 
+peut citer notamment {\itshape math} puisque la physique du jeu comporte un 
+gros composant math\'ematique ; {\itshape random}, en raison de notre 
+engouement pour l'al\'eatoire ; {\itshape pickle} pour la s\'erialisation des 
+donn\'ees ; {\itshape os.path} pour l'acc\`es au syst\`eme de fichiers de 
+l'ordinateur ; et {\itshape numpy} pour les calculs faciles sur les tableaux.
 
 \newpage
 
 \part{M\'ethodes d'optimisation}
-Dans cette deuxi\`eme partie, on vous d\'etaille les diff\'erents 
+Dans cette deuxi\`eme partie, on vous pr\'esente les diff\'erents 
 algorithmes appris tout au long du semestre pour am\'eliorer 
 les strat\'egies propos\'ees.
 
@@ -437,7 +455,7 @@ l'action la plus ad\'equate pour tout \'etat du jeu. \'Etant donn\'e que les
 carat\'eristiques utilis\'ees pour d\'efinir un \'etat sont continues, 
 on a d\'efini des intervalles d'\'equivalence. Cela n'emp\^eche que le nombre 
 total d'\'etats est \'enorme et fait donc exploser la m\'emoire. Bien 
-qu'impl\'ement\'e, on s'est pas servi de cet algorithme pour am\'eliorer nos 
+qu'impl\'ement\'e, on ne s'est pas servi de cet algorithme pour am\'eliorer nos 
 strat\'egies. 
 
 \newpage
@@ -459,19 +477,41 @@ Il s'agit du point de d\'epart du projet. Le but des premi\`eres semaines
 \'etant de se familiariser avec le code source fourni, on a cr\'e\'e une 
 strat\'egie tr\`es simple et na\"ive. 
 Ainsi, il faisait tout au maximum : il devait se rapprocher de la balle \`a 
-toute vitesse lorsqu'il ne la contr\^olait pas et il frappait avec toute sa 
-puissance dans le cas contraire. 
+toute vitesse lorsqu'il n'en avait pas la possession et il 
+frappait avec toute sa 
+puissance dans le cas contraire.
 Compte tenu que ce comportement ressemblait beacoup aux autres fonceurs de la 
 classe \`a une param\'etrisation pr\`es et que les matches finissaint en nul, on 
 a ajout\'e les fonctionnalit\'es suivantes : l'avanc\'ee balle au pied et le 
-dribble. 
-Ceci a rapport\'e de bons r\'esultats contre les \'equipes restant 
+dribble.
+Pour ce faire, on a utilis\'e la recherche en grille des param\`etres. En 
+effet, les valeurs optimales pour la puissance du contr\^ole de la balle et 
+le dribble \'etaient inconnues.
+Comme on ne connaissait m\^eme pas quel \'etait le bon sous-intervalle des 
+valeurs, on a commenc\'e par discr\'etiser tout l'intervalle $\left[0;6\right]$ 
+avec un pas de 0,5. Puis on a r\'ep\'et\'e le m\^eme proc\'ed\'e pour le 
+sous-intervalle avec les m\'eilleurs r\'esultats avec des pas de 
+discr\'etisation de plus en plus petits.
+
+Par ailleurs, on savait que la frappe \'etait plus r\'ealiste avec une 
+variation sur la pr\'ecision selon les vitesses du joueur et de la balle, 
+l'angle entre ces deux vecteurs et la puissance de la frappe, en plus d'un 
+param\`etre al\'eatoire. C'est pourquoi on ne pouvait plus maintenir 
+une puissance de frappe constante. On a donc d\'ecid\'e de la faire varier 
+seulement dans le cas d'une frappe vers le but adverse. En effet, on a pris en 
+consid\'eration la distance du joueur \`a la cage adverse et l'angle du vecteur 
+partant de la position du joueur et allant vers le centre de la cage adverse 
+par rapport \`a l'horizontale. Ceci a donn\'e lieu \`a deux param\`etres 
+optimis\'es aussi gr\^ace \`a la recherche en grille. On a utilis\'e d'ailleurs 
+le m\^eme proc\'ed\'e que pour les param\`etres pr\'ec\'edents.
+
+Cela a rapport\'e de bons r\'esultats contre les \'equipes restant 
 na\"ives, mais n'a pas suffit pour battre les \'equipes plus d\'evelopp\'ees. 
 En effet, il est tr\`es difficile de devancer un adversaire qui fait une 
-pression sur le ballon \`a une distance moyenne de sorte que les tentatives de 
+pression de pr\`es sur le ballon de sorte que les tentatives de 
 dribbles du fonceur \'echouent.
 De plus, ses essais de dribble dans sa propre surface de r\'eparation 
-\'etaient souvent insuffisants pour \'echapper au danger que signifie 
+\'etaient souvent trop faibles pour \'echapper au danger que signifie 
 l'adversaire venant le presser. Il d\'egage \`a pres\'ent la balle le plus loin 
 possible pour pallier cette difficult\'e.
 

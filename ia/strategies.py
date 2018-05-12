@@ -45,7 +45,7 @@ class Fonceur1v1Strategy(Strategy):
         else:
             self.dico = dict()
         self.dico['n'] = -1
-        self.dico['distShoot'] = 45.
+        # self.dico['distShoot'] = 45.
     def compute_strategy(self, state, id_team, id_player):
         me = StateFoot(state, id_team, id_player, 1)
         if is_kick_off(me):

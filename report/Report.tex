@@ -479,12 +479,33 @@ strat\'egie tr\`es simple et na\"ive.
 Ainsi, il faisait tout au maximum : il devait se rapprocher de la balle \`a 
 toute vitesse lorsqu'il n'en avait pas la possession et il 
 frappait avec toute sa 
-puissance dans le cas contraire. 
+puissance dans le cas contraire.
 Compte tenu que ce comportement ressemblait beacoup aux autres fonceurs de la 
 classe \`a une param\'etrisation pr\`es et que les matches finissaint en nul, on 
 a ajout\'e les fonctionnalit\'es suivantes : l'avanc\'ee balle au pied et le 
-dribble. 
-Ceci a rapport\'e de bons r\'esultats contre les \'equipes restant 
+dribble.
+Pour ce faire, on a utilis\'e la recherche en grille des param\`etres. En 
+effet, les valeurs optimales pour la puissance du contr\^ole de la balle et 
+le dribble \'etaient inconnues.
+Comme on ne connaissait m\^eme pas quel \'etait le bon sous-intervalle des 
+valeurs, on a commenc\'e par discr\'etiser tout l'intervalle 
+de valeurs possibles $\left[0;6\right]$ avec un pas de 0,5. Puis on a 
+r\'ep\'et\'e le m\^eme proc\'ed\'e pour le sous-intervalle avec les m\'eilleurs 
+r\'esultats avec des pas de discr\'etisation de plus en plus petits.
+
+Par ailleurs, on savait que la frappe \'etait plus r\'ealiste avec une 
+variation sur la pr\'ecision selon les vitesses du joueur et de la balle, 
+l'angle entre ces deux vecteurs et la puissance de la frappe, en plus d'un 
+param\`etre al\'eatoire. C'est pourquoi on ne pouvait plus maintenir 
+une puissance de frappe constante. On a donc d\'ecid\'e de la faire varier 
+seulement dans le cas d'une frappe vers le but adverse. En effet, on a pris en 
+consid\'eration la distance du joueur \`a la cage adverse et l'angle du vecteur 
+partant de la position du joueur et allant vers le centre de la cage adverse 
+par rapport \`a l'horizontale. Ceci a donn\'e lieu \`a deux param\`etres 
+optimis\'es aussi gr\^ace \`a la recherche en grille. On a utilis\'e d'ailleurs 
+le m\^eme proc\'ed\'e que pour les param\`etres pr\'ec\'edents.
+
+Cela a rapport\'e de bons r\'esultats contre les \'equipes restant 
 na\"ives, mais n'a pas suffit pour battre les \'equipes plus d\'evelopp\'ees. 
 En effet, il est tr\`es difficile de devancer un adversaire qui fait une 
 pression de pr\`es sur le ballon de sorte que les tentatives de 
@@ -494,12 +515,27 @@ De plus, ses essais de dribble dans sa propre surface de r\'eparation
 l'adversaire venant le presser. Il d\'egage \`a pres\'ent la balle le plus loin 
 possible pour pallier cette difficult\'e.
 
-Cette strat\'egie est rest\'ee assez basique \`a l'\'egard de celles de nos 
-camarades de classe vu les r\'esultats des derniers tournois hebdomadaires et 
-de nos tests. Autrement dit, le dribble est tr\`es peu r\'eussi et les 
-contre-attaques arrivent lorsque le joueur est dans sa course vers l'avant, ce 
-qui le surprend et fait que l'adversaire se trouve facilement seul face \`a 
-notre cage.
+On a finalement trouv\'e les valeurs optimales pour tous les param\`etres en 
+m\^eme temps gr\^ace \`a notre algorithme g\'en\'etique.
+Il n'emp\^eche que cette strat\'egie est rest\'ee assez basique \`a l'\'egard 
+de celles de nos camarades de classe vu les r\'esultats des derniers tournois 
+hebdomadaires et de nos tests. 
+Autrement dit, le dribble est tr\`es peu r\'eussi et les contre-attaques 
+arrivent lorsque le joueur est dans sa course vers l'avant, ce qui le surprend 
+et fait que l'adversaire se trouve facilement seul face \`a notre cage.
+
+\subsection*{Cas particulier : challenge}
+Au d\'ebut du semestre, les enseignants nous ont pr\'esent\'e un challenge, \`a 
+savoir marquer le plus de buts en 2000 pas de temps. On a r\'eutilis\'e notre 
+fonceur pour ce cas particulier. \`A ce moment-l\`a, le fonceur ne comptait que 
+la frappe na\"ive. 
+
+Puisqu'il est tr\`es peu probable que la balle rentre dans 
+la cage adverse d'un seul coup, le fonceur fait son travail en deux phases. 
+Tout d'abord, il frappe doucement la balle de sorte qu'elle reste dans une 
+position axiale. Puis il fait une frappe plus forte pour mettre la balle au 
+fond. On a aussi utilis\'e la recherche en grille pour optimiser cette 
+strat\'egie. 
 
 \section{Deux joueurs}
 Cette cat\'egorie a \'et\'e celle sur laquelle on a consacr\'e la plupart du 
@@ -507,6 +543,7 @@ projet. On compte trois joueurs fonctionnels que l'on appelle
 {\itshape Attaquant}, {\itshape Gardien} et {\itshape D\'efenseur}. 
 
 \subsection*{Attaquant}
+\todo{reprendre ici}
 Il a une vocation plut\^ot offensive. Son comportement initial \'etait celui 
 d'un attaquant classique. 
 Sa conduite sans la balle d\'ependait de la zone dans laquelle se trouvait le 

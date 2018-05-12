@@ -10,6 +10,6 @@
 \contentsline {section}{\numberline {6}Apprentissage automatique}{7}
 \contentsline {part}{III\hspace {1em}Strat\'egies}{9}
 \contentsline {section}{\numberline {7}Un joueur}{9}
-\contentsline {section}{\numberline {8}Deux joueurs}{9}
-\contentsline {section}{\numberline {9}Quatre joueurs}{10}
-\contentsline {part}{Conclusion}{12}
+\contentsline {section}{\numberline {8}Deux joueurs}{10}
+\contentsline {section}{\numberline {9}Quatre joueurs}{11}
+\contentsline {part}{Conclusion}{13}
