@@ -5,7 +5,7 @@ from .conditions import must_intercept, has_ball_control, is_close_goal, \
     opponent_approaches_my_goal, free_teammate, is_kick_off
 from .actions import clearSolo, goToBall, goToMyGoal, cutDownAngle, pushUp, \
     passBall, goForwardsPA, goForwardsMF
-from .behaviour import WithBallControl_2v2
+from .behaviour import WithoutBallControl_GK_2v4
 from .strategies import loadPath
 import pickle
 
@@ -13,15 +13,14 @@ import pickle
 class DribbleShootStrategy(Strategy):
     def __init__(self, fn_gk=None, fn_st=None):
         Strategy.__init__(self,"DribbleShoot")
-        with open(loadPath(fn_st),"rb") as f:
-            self.dico = pickle.load(f)
-        with open(loadPath(fn_gk),"rb") as f:
-            self.dico.update(pickle.load(f))
+        if fn_st is not None:
+            with open(loadPath(fn_st),"rb") as f:
+                self.dico = pickle.load(f)
+            with open(loadPath(fn_gk),"rb") as f:
+                self.dico.update(pickle.load(f))
+        else:
+            self.dico = dict()
         self.dico['n'] = -1
-        self.dico['tempsI'] = 4.8
-        self.dico['rayDribble'] = 23.
-        self.dico['rayRecept'] = 30.
-        self.dico['coeffPushUp'] = 6.
     def compute_strategy(self, state, id_team, id_player):
         me = StateFoot(state, id_team, id_player, 2)
         if has_ball_control(me):
@@ -32,15 +31,14 @@ class DribbleShootStrategy(Strategy):
 class ControlDribbleStrategy(Strategy):
     def __init__(self, fn_gk=None, fn_st=None):
         Strategy.__init__(self,"ControlDribble")
-        with open(loadPath(fn_st),"rb") as f:
-            self.dico = pickle.load(f)
-        with open(loadPath(fn_gk),"rb") as f:
-            self.dico.update(pickle.load(f))
+        if fn_st is not None:
+            with open(loadPath(fn_st),"rb") as f:
+                self.dico = pickle.load(f)
+            with open(loadPath(fn_gk),"rb") as f:
+                self.dico.update(pickle.load(f))
+        else:
+            self.dico = dict()
         self.dico['n'] = -1
-        self.dico['tempsI'] = 4.8
-        self.dico['rayDribble'] = 23.
-        self.dico['rayRecept'] = 30.
-        self.dico['coeffPushUp'] = 6.
     def compute_strategy(self, state, id_team, id_player):
         me = StateFoot(state, id_team, id_player, 2)
         if has_ball_control(me):
@@ -79,18 +77,17 @@ class PassStrategy(Strategy):
 class PassiveSituationStrategy(Strategy):
     def __init__(self, fn_gk=None, fn_st=None):
         Strategy.__init__(self,"PassiveSituation")
-        with open(loadPath(fn_st),"rb") as f:
-            self.dico = pickle.load(f)
-        with open(loadPath(fn_gk),"rb") as f:
-            self.dico.update(pickle.load(f))
+        if fn_st is not None:
+            with open(loadPath(fn_st),"rb") as f:
+                self.dico = pickle.load(f)
+            with open(loadPath(fn_gk),"rb") as f:
+                self.dico.update(pickle.load(f))
+        else:
+            self.dico = dict()
         self.dico['n'] = -1
-        self.dico['tempsI'] = 4.8
-        self.dico['rayDribble'] = 23.
-        self.dico['rayRecept'] = 30.
-        self.dico['coeffPushUp'] = 6.
     def compute_strategy(self, state, id_team, id_player):
         me = StateFoot(state, id_team, id_player, 2)
-        return WithBallControl_2v2(me, self.dico)
+        return WithoutBallControl_GK_2v4(me, self.dico)
 
 ## Strategie Reduire l'angle de l'attaquant adverse
 class CutDownAngleStrategy(Strategy):

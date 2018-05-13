@@ -455,8 +455,8 @@ l'action la plus ad\'equate pour tout \'etat du jeu. \'Etant donn\'e que les
 carat\'eristiques utilis\'ees pour d\'efinir un \'etat sont continues, 
 on a d\'efini des intervalles d'\'equivalence. Cela n'emp\^eche que le nombre 
 total d'\'etats est \'enorme et fait donc exploser la m\'emoire. Bien 
-qu'impl\'ement\'e, on ne s'est pas servi de cet algorithme pour am\'eliorer nos 
-strat\'egies. 
+qu'impl\'ement\'e, on ne s'est pas servi de cet algorithme pour les 
+versions compl\`etement fonctionnelles de nos \'equipes de football. 
 
 \newpage
 
@@ -480,7 +480,7 @@ Ainsi, il faisait tout au maximum : il devait se rapprocher de la balle \`a
 toute vitesse lorsqu'il n'en avait pas la possession et il 
 frappait avec toute sa 
 puissance dans le cas contraire.
-Compte tenu que ce comportement ressemblait beacoup aux autres fonceurs de la 
+Compte tenu que ce comportement ressemblait beaucoup aux autres fonceurs de la 
 classe \`a une param\'etrisation pr\`es et que les matches finissaint en nul, on 
 a ajout\'e les fonctionnalit\'es suivantes : l'avanc\'ee balle au pied et le 
 dribble.
@@ -488,10 +488,10 @@ Pour ce faire, on a utilis\'e la recherche en grille des param\`etres. En
 effet, les valeurs optimales pour la puissance du contr\^ole de la balle et 
 le dribble \'etaient inconnues.
 Comme on ne connaissait m\^eme pas quel \'etait le bon sous-intervalle des 
-valeurs, on a commenc\'e par discr\'etiser tout l'intervalle $\left[0;6\right]$ 
-avec un pas de 0,5. Puis on a r\'ep\'et\'e le m\^eme proc\'ed\'e pour le 
-sous-intervalle avec les m\'eilleurs r\'esultats avec des pas de 
-discr\'etisation de plus en plus petits.
+valeurs, on a commenc\'e par discr\'etiser tout l'intervalle 
+de valeurs possibles $\left[0;6\right]$ avec un pas de 0,5. Puis on a 
+r\'ep\'et\'e le m\^eme proc\'ed\'e pour le sous-intervalle avec les m\'eilleurs 
+r\'esultats avec des pas de discr\'etisation de plus en plus petits.
 
 Par ailleurs, on savait que la frappe \'etait plus r\'ealiste avec une 
 variation sur la pr\'ecision selon les vitesses du joueur et de la balle, 
@@ -515,12 +515,35 @@ De plus, ses essais de dribble dans sa propre surface de r\'eparation
 l'adversaire venant le presser. Il d\'egage \`a pres\'ent la balle le plus loin 
 possible pour pallier cette difficult\'e.
 
-Cette strat\'egie est rest\'ee assez basique \`a l'\'egard de celles de nos 
-camarades de classe vu les r\'esultats des derniers tournois hebdomadaires et 
-de nos tests. Autrement dit, le dribble est tr\`es peu r\'eussi et les 
-contre-attaques arrivent lorsque le joueur est dans sa course vers l'avant, ce 
-qui le surprend et fait que l'adversaire se trouve facilement seul face \`a 
-notre cage.
+On a ensuite trouv\'e les valeurs optimales pour tous les param\`etres en 
+m\^eme temps gr\^ace \`a notre algorithme g\'en\'etique.
+Il n'emp\^eche que cette strat\'egie est rest\'ee assez basique \`a l'\'egard 
+de celles de nos camarades de classe vu les r\'esultats des derniers tournois 
+hebdomadaires et de nos tests. 
+Autrement dit, le dribble est tr\`es peu r\'eussi et les contre-attaques 
+arrivent lorsque le joueur est dans sa course vers l'avant, ce qui le surprend 
+et fait que l'adversaire se trouve facilement seul face \`a notre cage.
+
+Finalement, on a voulu tester la performance de notre algorithme 
+d'apprentissage par renforcement. Pour ce faire, on a d\'evelopp\'e plusieurs 
+strat\'egies simples sur la base du comportement pr\'esent \`a ce moment-l\`a.
+On l'a d\'eroul\'e pour le cas particulier de l'\'equipe \`a un seul joueur. On 
+a bien v\'erifi\'e que l'algorithme n\'ecessite de beaucoup d'espace m\'emoire 
+pour offrir des bons r\'esultats. En effet, on compte un fichier d'un peu plus 
+de 400MB qui montre des indices d'un comportement plus intelligent.
+
+\subsection*{Cas particulier : challenge}
+Au d\'ebut du semestre, les enseignants nous ont pr\'esent\'e un challenge, \`a 
+savoir marquer le plus de buts en 2000 pas de temps. On a r\'eutilis\'e notre 
+fonceur pour ce cas particulier. \`A ce moment-l\`a, le fonceur ne comptait que 
+la frappe na\"ive. 
+
+Puisqu'il est tr\`es peu probable que la balle rentre dans 
+la cage adverse d'un seul coup, le fonceur fait son travail en deux phases. 
+Tout d'abord, il frappe doucement la balle de sorte qu'elle reste dans une 
+position axiale. Puis il fait une frappe plus forte pour mettre la balle au 
+fond. On a aussi utilis\'e la recherche en grille pour optimiser cette 
+strat\'egie. 
 
 \section{Deux joueurs}
 Cette cat\'egorie a \'et\'e celle sur laquelle on a consacr\'e la plupart du 
@@ -529,7 +552,9 @@ projet. On compte trois joueurs fonctionnels que l'on appelle
 
 \subsection*{Attaquant}
 Il a une vocation plut\^ot offensive. Son comportement initial \'etait celui 
-d'un attaquant classique. 
+d'un attaquant classique. Effectivement, il l'a h\'erit\'e du fonceur, \'etant 
+jusqu'\`a alors optimis\'e seulement par la recherche en grille.
+
 Sa conduite sans la balle d\'ependait de la zone dans laquelle se trouvait le 
 porteur de la balle : il le pressait si l'adversaire \'etait \'eloign\'e de sa 
 surface et se d\'ecalait vers les c\^ot\'es pour faciliter les contre-attaques 
@@ -539,7 +564,15 @@ distances sur le terrain et frappait la balle lorsqu'il se trouvait dans la
 surface de r\'eparation adverse. Tout comme pour le fonceur, il perdait la balle 
 trop facilement. 
 C'est pourquoi on a ajout\'e le dribble al\'eatoire, ce qui l'a rendu 
-impr\'evisible face aux tentatives adverses de lui arracher le ballon. 
+impr\'evisible face aux tentatives adverses de lui arracher le ballon. C'est 
+avec cette modification que l'on a utilis\'e pour la toute premi\`ere fois 
+notre impl\'ementation d'algorithme g\'en\'etique pour optimiser la strat\'egie 
+au complet. On a donc d\'evelopp\'e les classes \texttt{dictParams}, 
+correspondant au dictionnaire des param\`etres, et \texttt{GeneTeam}, une 
+classe g\'en\'erique permettant de lancer l'algorithme. Pour le cas particulier 
+de l'\'equipe \`a deux joueurs dont l'attaquant fait partie, on a d\'evelopp\'e 
+la classe \texttt{GKStrikerTeam} h\'eritant de \texttt{GeneTeam}.
+
 Lorsque le contr\^ole de la balle avait lieu en sa zone d\'efensive et qu'un 
 adversaire \'etait si proche de lui qu'il pouvait aussi la frapper, la 
 puissance de son dribble \'etait d\'epass\'ee par celle de la frappe. On a 
@@ -568,7 +601,7 @@ la cage \`a tous les coups. En effet, il se positionnait dans le point central
 sur la ligne de sa cage et n'en sortait que pour d\'egager la balle lorsqu'un 
 adversaire se rapprochait avec elle. 
 Ce d\'egagement consistait en fait \`a faire une pseudopasse vers son 
-co\'equipier, c'est-\`a-dire qu'il l'adressait vers l'un de deux points 
+co\'equipier, c'est-\`a-dire qu'il l'adressait vers l'un des deux points 
 axialement sym\'etriques selon si le co\'equipier se trouvait en la partie haute 
 ou basse du terrain. 
 Le point faible de cette conduite \'etait que certains attaquants adverses 
@@ -577,7 +610,9 @@ d'attraper la balle avec des trajectoires circulaires. On a donc d\'ecid\'e
 d'am\'eliorer la trajectoire d'interception de la balle avec une certaine 
 pr\'evision de sorte \`a y arriver en ligne de droite et plus rapidement. De 
 plus, sa position de base passerait \`a une certaine distance de sa cage 
-align\'ee avec une potentielle trajectoire de la balle vers la cage.
+align\'ee avec une potentielle trajectoire de la balle vers la cage. Ces 
+modifications ont \'et\'e ajout\'ees au dictionnaire de param\`etres pour les 
+optimiser \`a l'aide de la classe \texttt{GKStrikerTeam}.
 
 On n'est jamais parvenus \`a perfectionner l'interception de la balle et on 
 compte ainsi jusqu'\`a pres\'ent un taux non n\'egligeable d'\'echec. De plus, 
@@ -590,6 +625,30 @@ modifications : c'est exactement le m\^eme que celui de l'attaquant.
 On peut donc r\'esumer le comportement de notre \'equipe \`a deux joueurs en 
 l'expression footballistique \enquote{la meilleure d\'efense, c'est l'attaque.}
 
+\subsubsection*{Optimisations non r\'eussies}
+La m\'ethode d'optimisation par arbres de d\'ecision a aussi \'et\'e test\'ee 
+pour l'\'equipe \`a deux joueurs. On a voulu comparer ses r\'esultats avec ceux 
+obtenus gr\^ace \`a l'algorithme g\'en\'etique. On a ainsi d\'efini plusieurs 
+caract\'eristiques g\'en\'eralisables permettant de repr\'esenter au mieux 
+l'espace d'\'etats du jeu. On a notamment utilis\'e les distances entre les 
+joueurs et la balle, ainsi que la distance entre deux co\'equipiers. Comme 
+mentionn\'e pr\'ec\'edemment, on n'a pas trouv\'e de moyens de faire les 
+instantan\'es de mani\`ere automatis\'ee. Ceci nous a donc demand\'e d'avoir une 
+tr\`es bonne coordination pour pr\'eciser les strat\'egies pr\'econis\'ees pour 
+les diff\'erentes phases du jeu, \'etant donn\'e que l'on avait d\'efini plus 
+de quatre strat\'egies de base pour cette m\'ethode. Malgr\'e les efforts mis 
+en place, les captures n'ont pas \'et\'e suffisamment pr\'ecises, ce qui s'est 
+traduit par un arbre de d\'ecision qui ne correspondait pas \`a nos exigences.
+On a d\'ecid\'e en cons\'equence de ne l'utiliser pour la version 
+fonctionnelle d'aucune de nos \'equipes.
+
+De la m\^eme mani\`ere que pour le fonceur, on a aussi test\'e le 
+fonctionnement de notre impl\'ementation de l'algorithme \texttt{Q-learning} 
+pour l'\'equipe \`a deux joueurs. Malheureusement pour nous, ce cas pr\'ecis 
+demandait beaucoup plus d'espace m\'emoire que pour le fonceur. En effet, pour 
+le m\^eme espace m\'emoire du fichier, le comportement restait trop na\"if : 
+ils se d\'epla\c{c}aient \`a peine et ne faisaient pas de frappe.
+
 \subsection*{D\'efenseur}
 Il est \`a noter que ce joueur ne fait pas partie de l'\'equipe pr\'econis\'ee.
 Il correspond \`a la derni\`ere strat\'egie impl\'ement\'ee dans cette 
@@ -598,12 +657,16 @@ vocation d\'efensive.
 En effet, s'il a la balle, il s'en d\'efait le plus rapidement possible soit \`a 
 l'aide d'une passe vers son co\'equipier si d\'emarqu\'e, soit via le 
 d\'egagement le moins risqu\'e possible. 
-Quant \`a son effort d\'efensif, il demeure \`a une certaine distance radial \`a 
-partir de sa cage et s'approche de la balle en vue d'une interception s'il en 
-suffisamment proche.
+Quant \`a son effort d\'efensif, il demeure \`a une certaine distance radiale 
+\`a partir de sa cage et s'approche de la balle en vue d'une interception s'il 
+en est suffisamment proche.
+
+Cette strat\'egie n'a fait l'objet d'aucune optimisation. Elle a \'et\'e 
+con\c{c}ue pour faire des tests et a ainsi repris les valeurs des param\`etres 
+d\'ej\`a d\'efinies pour ses pairs de la cat\'egorie. 
 
 \section{Quatre joueurs}
-Il s'agit de la cat\'egorie que l'on a trouv\'e la plus int\'eressante en 
+Il s'agit de la cat\'egorie que l'on a trouv\'ee la plus int\'eressante en 
 raison de la difficult\'e de la gestion des espaces et la r\'epartition des 
 fonctions. Tout comme pour la cat\'egorie pr\'ecedente, on compte trois 
 joueurs fonctionnels que l'on rep\`ere d'ailleurs par les m\^emes noms. 
@@ -645,6 +708,9 @@ modification est le produit de la constatation que l'effort d\'efensif des
 autres joueurs de cette cat\'egorie n'\'egale pas celui du d\'efenseur et que 
 l'abandon de position d\'efensive entra\^ine des terribles risques pour le 
 score.
+
+\subsubsection*{Optimisation finale}
+
 
 \newpage
 
