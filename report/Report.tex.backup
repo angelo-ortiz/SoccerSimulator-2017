@@ -12,7 +12,7 @@
 \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
 \usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
 \author{Angelo Ortiz}
-\title{Rapport du Projet}
+\title{Rapport du Projet 2I013}
 \graphicspath{ {../img/} }
 
 \begin{document}
@@ -43,7 +43,8 @@
 \part*{Introduction}
 \section*{Pr\'esentation}
 L'unit\'e d'enseignement 2I013 consiste en un projet d'application des 
-connaissances et de d\'ecouverte de nouveaux algorithmes. La th\'ematique du 
+connaissances en programmation et de d\'ecouverte de nouveaux algorithmes. La 
+th\'ematique du 
 projet du groupe 1 a \'et\'e le football.
 
 Le jeu comporte un terrain, deux \'equipes de joueurs et une 
@@ -111,7 +112,7 @@ permettant de lancer les algorithmes d'optimisation.
 \end{figure}
 
 \section{Module de base}
-Au tout d\'ebut du projet, on a r\'ealis\'e une analyse profonde des 
+Au tout d\'ebut du projet, on a r\'ealis\'e une analyse approfondie des 
 fonctionnalit\'es \`a impl\'ementer et de la structure du simulateur fourni. On 
 a conclu qu'il \'etait imp\'eratif de s\'eparer les fonctions et classes en 
 plusieurs fichiers pour mieux les rep\'erer. On comptait ainsi de base 
@@ -131,8 +132,8 @@ On passe ensuite au c\oe ur du module, \`a savoir le fichier {\itshape
 actions}. On y retrouve les actions de base qu'un joueur peut effectuer comme 
 frapper, faire une passe ou revenir vers la cage.
 
-Au fur et \`a mesure que le projet avan\c{c}ait, on voyait les fichiers 
-grossir, notamment le fichier {\itshape actions}. On s'est vu alors contraints 
+On a vu ces fichiers grossir au fur et \`a mesure que le projet avan\c{c}ait, 
+notamment {\itshape actions}. On s'est alors vu contraints 
 d'ajouter un autre fichier pour am\'eliorer la structure de base. C'est ainsi 
 que le fichier {\itshape behaviour} est apparu. Il contient en effet des 
 super-actions, i.e.\ le comportement d'un joueur pour une phase du jeu 
@@ -154,15 +155,14 @@ al\'eatoire et une autre pour l'unique challenge propos\'e}
   \label{fig:strats}
 \end{figure}
 
-\section{Suppl\'ements en cours de route}
+\section{Additions chemin faisant}
 Les strat\'egies con\c{c}ues ont \'evolu\'e pendant tout le semestre. On a vu 
 quatre m\'ethodes d'optimisation en cours pour rendre plus intelligentes 
 ces strat\'egies de base.
 
 Pour chaque m\'ethode d'optimisation, on a eu besoin d'une classe r\'ealisant 
-l'optimisation sur la base de donn\'ees recueillis soit par elle-m\^eme, soit 
+l'optimisation sur la base des donn\'ees recueillies soit par elle-m\^eme, soit 
 par des nouvelles strat\'egies r\'eposant sur celles d\'ej\`a cod\'ees.
-obtenues.
 
 \begin{figure}[!h]
   \centering
@@ -183,8 +183,8 @@ concern\'es par cette m\'ethode sont rep\'er\'es par le pr\'efixe
 \begin{figure}[!h]
   \centering
   \captionsetup{justification=centering}
-  \includegraphics[width=0.3\textwidth]{genetic_mod}
-  \caption[Les classes pour l'algorithme g\'en\'etique]{Le diagramme des 
+  \includegraphics[width=0.6\textwidth]{genetic}
+  \caption[Les classes pour l'algorithme g\'en\'etique]{Le diagramme de 
 	classes pour la mise en \oe uvre d'un algorithme g\'en\'etique}
   \label{fig:gene}
 \end{figure}
@@ -231,16 +231,22 @@ d'{\itshape apprentissage}.
 Le pr\'efixe utilis\'e pour cette m\'ethode a \'et\'e \enquote{ml}, abr\'eg\'e 
 du terme en anglais {\itshape machine learning}.
 
+\medskip
+Les fichiers ex\'ecutables utilis\'es pour tester nos algorithmes 
+d'optimisation se trouvent au m\^eme niveau que le module {\bfseries ia} 
+pr\'efix\'es par \enquote{exe}.
+
 \section{Librairies externes}
 Il est important de rappeler que l'on compte \`a pr\'esent des nombreuses 
 librairies disponibles et tr\`es souvent performantes qui ont \'et\'e le fruit 
 du travail de beaucoup d'informaticiens avant nous. Ceci dit, on doit remarquer 
 que l'on en a utilis\'e quelques-unes durant le d\'eveloppement du projet. On 
-peut citer notamment {\itshape math} puisque la physique du jeu comporte un 
+peut citer notamment {\itshape math}, puisque la physique du jeu comporte un 
 gros composant math\'ematique ; {\itshape random}, en raison de notre 
 engouement pour l'al\'eatoire ; {\itshape pickle} pour la s\'erialisation des 
 donn\'ees ; {\itshape os.path} pour l'acc\`es au syst\`eme de fichiers de 
-l'ordinateur ; et {\itshape numpy} pour les calculs faciles sur les tableaux.
+l'ordinateur ; et {\itshape numpy} pour les op\'erations simplifi\'ees sur les 
+tableaux.
 
 \newpage
 
@@ -260,19 +266,19 @@ d'optimalit\'e correspond alors \`a la fonction $f: \mathbb{R}^n \to \{0,1\}$.
 
 Puis on obtient l'ensemble $\mathbb{E}_i$ de valeurs possibles pour chaque 
 param\`etre. 
-Pour les param\`etres discrets, il suffit de prendre l'ensemble 
-fini des valeurs qu'il peut prendre. 
+Pour les param\`etres discrets, il suffit d'utiliser l'ensemble fini des valeurs 
+qu'il peut prendre. 
 Quant aux param\`etres continus, on compte un intervalle ferm\'e $I_i$ de 
 valeurs possibles pour chaque $x_i$. Il est alors n\'ecessaire de faire en 
 amont une discr\'etisation, i.e.\ on divise l'intervalle selon un pas de 
 pr\'ecision. La fonction se transforme alors en $f: \mathbb{E} \to \{0,1\}$, 
 o\`u $\mathbb{E} =  \mathbb{E}_1 \times \cdots \times \mathbb{E}_n$.
 
-On fait ensuite une recherche exhaustive sur tout l'espace $\mathbb{E}$ : 
-on teste chaque vecteur $x \in \mathbb{E}$ sous diff\'erents conditions 
-environnementales et on moyenne les \'evaluations par $f(x)$ dans lesdites 
-conditions. Finalement, on prend la valeur optimale et son vecteur $x$ 
-associ\'e.
+On fait ensuite une recherche exhaustive sur tout l'espace de 
+points $\mathbb{E}$ : on teste chaque vecteur $x \in \mathbb{E}$ sous 
+diff\'erents conditions environnementales et on moyenne les \'evaluations par 
+$f(x)$ dans lesdites conditions. Finalement, on prend la valeur optimale et son 
+vecteur $x$ associ\'e.
 
 Il est important de remarquer que la plupart de nos param\`etres sont continus. 
 Pour obtenir des valeurs plus pr\'ecises et un meilleur comportement, on a 
@@ -284,8 +290,8 @@ d\'ecid\'e que l'algorithme mis en place ne convenait pas \`a moyen terme.
 Dans un deuxi\`eme temps, on est pass\'es \`a une m\'ethode heuristique au 
 lieu d'une recherche exhaustive de l'espace de repr\'esentation. En effet, 
 une solution approch\'ee est suffisante dans un certain intervalle de 
-confiance. Ceci a donn\'e lieu aux algorithmes g\'en\'etiques. On en a mis en 
-place une impl\'ementation pour optimiser toutes nos \'equipes.
+confiance. Ceci a donn\'e lieu \`a la mise en place d'une impl\'ementation 
+d'algorithme g\'en\'etique pour optimiser toutes nos \'equipes.
 
 Cette classe d'algorithmes se base sur la th\'eorie de l'\'evolution. En effet, 
 la notion de s\'election naturelle est le m\'ecanisme permettant de choisir des 
@@ -306,6 +312,9 @@ bilan apr\`es avoir disput\'e plusieurs matches avec les m\^emes valeurs des
 param\`etres donn\'ees par $x$, i.e.\ le tuple compos\'e du nombre de 
 victoires, matches nuls, d\'efaites, buts marqu\'es et buts encaiss\'es. La 
 relation d'ordre suit les r\`egles du classement d'un tournoi de football.
+De plus, l'ensemble $\mathbb{R}^n$ a \'et\'e r\'eduit \`a $I_1 \times 
+\dotsm \times I_n$, avec $I_i$ l'intervalle de valeurs optimales pour le 
+param\`etre $x_i$ pour chaque $i = 1,\dotsc, n$.
 
 Cette classe d'algorithmes comportent quatre \'etapes.
 
@@ -330,8 +339,8 @@ obtenue de mani\`ere al\'eatoire.
   leur g\'enotype. Le croisement s'arr\^ete \`a ce stade-l\`a, tandis que la 
   mutation ajoute du bruit al\'eatoirement dans un g\`ene pour chacun 
   des nouveaux chromosomes. On a d\'ecid\'e de faire une petite modification 
-  \`a cette \'etape-l\`a lors de l'impl\'ementation pour avoir plus de 
-  diversification : une minorit\'e des places libres est attrribu\'ee \`a des 
+  \`a cette \'etape-l\`a lors de l'impl\'ementation pour avoir encore plus de 
+  diversification : une minorit\'e des places libres est attribu\'ee \`a des 
   candidats g\'en\'er\'es al\'eatoirement.
 \end{enumerate}
 
@@ -346,11 +355,11 @@ valeurs de tous les param\`etres mis en place ont \'et\'e d\'efinies au moyen
 de nombreuses ex\'ecutions de cette m\'ethode.
 
 \section{Apprentissage automatique}
-Dans la derni\`ere partie du semestre, on s'est concentr\'e sur l'apprentissage 
-automatique. Les enseignants ont pr\'esent\'e les deux grandes familles 
-d'algorithmes d'apprentissage : supervis\'es et non supervis\'es, ainsi que 
-l'apprentissage par renforcement. Deux m\'ethodes ont \'et\'e impl\'ement\'ees 
-lors du projet.
+Dans la derni\`ere partie du semestre, on s'est concentr\'es sur 
+l'apprentissage automatique. Les enseignants ont pr\'esent\'e les deux grandes 
+familles d'algorithmes d'apprentissage : supervis\'es et non supervis\'es, ainsi 
+que l'apprentissage par renforcement. Deux m\'ethodes ont \'et\'e 
+impl\'ement\'ees lors du projet.
 
 \subsection*{Arbres de d\'ecision (de classification)}
 Il s'agit d'une technique d'apprentissage supervis\'e. Pour l'appliquer, on 
@@ -381,6 +390,15 @@ implique que chaque n\oe ud interne correspond \`a un test sur une des $n$
 dimensions de $\mathcal{X}$ et que chaque feuille correspond \`a l'action \`a 
 entreprendre pour l'\'etat donn\'e par le chemin suivi depuis la racine.
 
+\begin{figure}[!h]
+  \centering
+  \captionsetup{justification=centering}
+  \includegraphics[width=0.8\textwidth]{dt_example}
+  \caption[Un exemple d'arbre de d\'ecision]{Voici un exemple d'arbre de 
+d\'ecision obtenu \`a l'issue de l'ex\'ecution de l'algorithme propos\'e}
+  \label{fig:dt_ex}
+\end{figure}
+
 On nous a fourni une strat\'egie sp\'eciale \texttt{KeyboardStrategy} 
 comportant les outils de base n\'ecessaires \`a la mise en place de cette 
 m\'ethode, allant de la g\'en\'eration de l'ensemble d'apprentissage au 
@@ -406,9 +424,10 @@ d'\'etats $S$, un ensemble d'actions $A$, et une fonction $Q: S \times A \to
 par un {\itshape \'etat} donn\'e et une {\itshape action} \`a entreprendre pour 
 cet \'etat-ci. Cette pond\'eration est nomm\'ee {\itshape r\'ecompense}. La 
 notion d'\'etat correspond \`a celle donn\'ee dans la section des arbres 
-binaires. Il utilise aussi la notion d'{\itshape \'episode} que l'on associe 
-\`a un match dans le cadre du projet. Son principe est le suivant : on apprend 
-une politique comportementale qui optimise l'esp\'erance des r\'ecompenses.
+binaires de d\'ecision. Il utilise aussi la notion d'{\itshape \'episode} que 
+l'on associe \`a un match dans le cadre du projet. Son principe est le suivant : 
+on apprend une politique comportementale qui optimise l'esp\'erance des 
+r\'ecompenses.
 
 La phase d'initialisation consiste \`a attribuer \`a $Q$ une valeur fixe 
 arbitraire, ici 0. La phase it\'erative concerne un \'episode, ou encore un 
@@ -433,7 +452,7 @@ l'\'equilibre entre exploration et exploitation. En effet, une valeur de
 0 implique l'utilisation exclusive des choix actuels, alors qu'une 
 valeur 1 ne ferait que consid\'erer le dernier r\'esultat.
 Comme notre agent est cens\'e \^etre plus intelligent au fur et \`a mesure des 
-\'episodes, il doit apprendre de moins en moins des it\'erations suivant. 
+\'episodes, il doit apprendre de moins en moins des it\'erations restantes. 
 C'est pourquoi on a choisi une vitesse d'apprentissage polyn\^omiale, i.e.\ 
 $\alpha(k)=\dfrac{1}{k^\omega}$, avec $\omega \in \left] 0,5;1 \right[$ fix\'e.
 
@@ -461,7 +480,7 @@ versions compl\`etement fonctionnelles de nos \'equipes de football.
 \newpage
 
 \part{Strat\'egies}
-Dans cette deuxi\`eme partie, on vous d\'etaille le comportement de nos 
+Dans cette derni\`ere partie, on vous d\'etaille le comportement de nos 
 diff\'erents joueurs.
 Compte tenu de la taille du terrain de jeu, le nombre maximum de joueurs par 
 \'equipe est limit\'e \`a quatre. 
@@ -478,10 +497,10 @@ Il s'agit du point de d\'epart du projet. Le but des premi\`eres semaines
 strat\'egie tr\`es simple et na\"ive. 
 Ainsi, il faisait tout au maximum : il devait se rapprocher de la balle \`a 
 toute vitesse lorsqu'il n'en avait pas la possession et il 
-frappait avec toute sa 
-puissance dans le cas contraire.
+frappait avec toute sa puissance dans le cas contraire.
 Compte tenu que ce comportement ressemblait beaucoup aux autres fonceurs de la 
-classe \`a une param\'etrisation pr\`es et que les matches finissaint en nul, on 
+classe \`a une param\'etrisation pr\`es et que les matches finissaient en nul, 
+on 
 a ajout\'e les fonctionnalit\'es suivantes : l'avanc\'ee balle au pied et le 
 dribble.
 Pour ce faire, on a utilis\'e la recherche en grille des param\`etres. En 
@@ -500,13 +519,13 @@ param\`etre al\'eatoire. C'est pourquoi on ne pouvait plus maintenir
 une puissance de frappe constante. On a donc d\'ecid\'e de la faire varier 
 seulement dans le cas d'une frappe vers le but adverse. En effet, on a pris en 
 consid\'eration la distance du joueur \`a la cage adverse et l'angle du vecteur 
-partant de la position du joueur et allant vers le centre de la cage adverse 
+allant de la position du joueur vers le centre de la cage adverse 
 par rapport \`a l'horizontale. Ceci a donn\'e lieu \`a deux param\`etres 
 optimis\'es aussi gr\^ace \`a la recherche en grille. On a utilis\'e d'ailleurs 
 le m\^eme proc\'ed\'e que pour les param\`etres pr\'ec\'edents.
 
 Cela a rapport\'e de bons r\'esultats contre les \'equipes restant 
-na\"ives, mais n'a pas suffit pour battre les \'equipes plus d\'evelopp\'ees. 
+na\"ives, mais n'a pas suffi pour battre les \'equipes plus d\'evelopp\'ees. 
 En effet, il est tr\`es difficile de devancer un adversaire qui fait une 
 pression de pr\`es sur le ballon de sorte que les tentatives de 
 dribbles du fonceur \'echouent.
@@ -516,10 +535,11 @@ l'adversaire venant le presser. Il d\'egage \`a pres\'ent la balle le plus loin
 possible pour pallier cette difficult\'e.
 
 On a ensuite trouv\'e les valeurs optimales pour tous les param\`etres en 
-m\^eme temps gr\^ace \`a notre algorithme g\'en\'etique.
+m\^eme temps gr\^ace \`a notre algorithme g\'en\'etique, plus pr\'ecis\'ement 
+au travers de la classe \texttt{STTeam}.
 Il n'emp\^eche que cette strat\'egie est rest\'ee assez basique \`a l'\'egard 
-de celles de nos camarades de classe vu les r\'esultats des derniers tournois 
-hebdomadaires et de nos tests. 
+de celles de nos camarades de classe vu les r\'esultats des tournois 
+hebdomadaires. 
 Autrement dit, le dribble est tr\`es peu r\'eussi et les contre-attaques 
 arrivent lorsque le joueur est dans sa course vers l'avant, ce qui le surprend 
 et fait que l'adversaire se trouve facilement seul face \`a notre cage.
@@ -530,7 +550,9 @@ strat\'egies simples sur la base du comportement pr\'esent \`a ce moment-l\`a.
 On l'a d\'eroul\'e pour le cas particulier de l'\'equipe \`a un seul joueur. On 
 a bien v\'erifi\'e que l'algorithme n\'ecessite de beaucoup d'espace m\'emoire 
 pour offrir des bons r\'esultats. En effet, on compte un fichier d'un peu plus 
-de 400MB qui montre des indices d'un comportement plus intelligent.
+de 400MB qui montre des indices d'un comportement plus intelligent. Cette 
+optimisation n'ainsi pas \'et\'e prise en compte pour la version fonctionnelle 
+de l'\'equipe \`a un joueur.
 
 \subsection*{Cas particulier : challenge}
 Au d\'ebut du semestre, les enseignants nous ont pr\'esent\'e un challenge, \`a 
@@ -569,9 +591,16 @@ avec cette modification que l'on a utilis\'e pour la toute premi\`ere fois
 notre impl\'ementation d'algorithme g\'en\'etique pour optimiser la strat\'egie 
 au complet. On a donc d\'evelopp\'e les classes \texttt{dictParams}, 
 correspondant au dictionnaire des param\`etres, et \texttt{GeneTeam}, une 
-classe g\'en\'erique permettant de lancer l'algorithme. Pour le cas particulier 
-de l'\'equipe \`a deux joueurs dont l'attaquant fait partie, on a d\'evelopp\'e 
-la classe \texttt{GKStrikerTeam} h\'eritant de \texttt{GeneTeam}.
+classe g\'en\'erique permettant de lancer l'algorithme. 
+Ce dictionnaire g\'erait aussi bien les valeurs des param\`etres que 
+leurs intervalles optimaux. Pour les param\`etres d\'ej\`a optimis\'es par la 
+recherche en grille, on a juste repris leurs intervalles optimaux. Quant aux 
+autres, on a d'abord encadr\'e les valeurs de mani\`ere analytique et 
+coh\'erente avec le rendu attendu. Puis on a utilis\'e de nouveau la m\'ethode 
+essai et erreur pour trouver des intervalles plus petits et appropri\'es.
+Pour le cas particulier de l'\'equipe \`a deux joueurs dont l'attaquant fait 
+partie, on a d\'evelopp\'e la classe \texttt{GKStrikerTeam} h\'eritant de 
+\texttt{GeneTeam}.
 
 Lorsque le contr\^ole de la balle avait lieu en sa zone d\'efensive et qu'un 
 adversaire \'etait si proche de lui qu'il pouvait aussi la frapper, la 
@@ -579,10 +608,10 @@ puissance de son dribble \'etait d\'epass\'ee par celle de la frappe. On a
 ajout\'e le d\'egagement vers un point quelconque tel que le tir soit le moins 
 risqu\'e possible pour \'eviter ce genre de situations.
 
-Puis on s'est rendu compte qu'il se trouvait en inf\'eriorit\'e num\'erique face 
-\`a l'\'equipe adverse dans la plupart des matches. Cette contrainte a motiv\'e 
-l'id\'ee de faire monter le co\'equipier dans le terrain et, par cons\'equent, 
-le d\'eveloppement de l'action de passe de la balle.
+Puis on s'est rendu compte que dans la plupart des matches il se trouvait en 
+inf\'eriorit\'e num\'erique face \`a l'\'equipe adverse. Cette contrainte a 
+motiv\'e l'id\'ee de faire monter le co\'equipier dans le terrain et, par 
+cons\'equent, le d\'eveloppement de l'action de passe de la balle.
 Ce comportement s'est r\'ev\'el\'e tr\`es efficace en situation d'attaque vu 
 que les autres \'equipes utilisent seulement un attaquant, mais les 
 contre-attaques s'av\'eraient tr\`es dangereuses. Celles-ci arrivaient comme 
@@ -602,7 +631,8 @@ sur la ligne de sa cage et n'en sortait que pour d\'egager la balle lorsqu'un
 adversaire se rapprochait avec elle. 
 Ce d\'egagement consistait en fait \`a faire une pseudopasse vers son 
 co\'equipier, c'est-\`a-dire qu'il l'adressait vers l'un des deux points 
-axialement sym\'etriques selon si le co\'equipier se trouvait en la partie haute 
+axialement sym\'etriques fix\'es \`a l'avance selon si le co\'equipier se 
+trouvait en la partie haute 
 ou basse du terrain. 
 Le point faible de cette conduite \'etait que certains attaquants adverses 
 tiraient vers notre cage depuis des longues distances et on essayait ainsi 
@@ -638,7 +668,8 @@ tr\`es bonne coordination pour pr\'eciser les strat\'egies pr\'econis\'ees pour
 les diff\'erentes phases du jeu, \'etant donn\'e que l'on avait d\'efini plus 
 de quatre strat\'egies de base pour cette m\'ethode. Malgr\'e les efforts mis 
 en place, les captures n'ont pas \'et\'e suffisamment pr\'ecises, ce qui s'est 
-traduit par un arbre de d\'ecision qui ne correspondait pas \`a nos exigences.
+traduit par un arbre de d\'ecision qui ne correspondait pas tout \`a fait \`a 
+nos exigences.
 On a d\'ecid\'e en cons\'equence de ne l'utiliser pour la version 
 fonctionnelle d'aucune de nos \'equipes.
 
@@ -658,11 +689,11 @@ En effet, s'il a la balle, il s'en d\'efait le plus rapidement possible soit \`a
 l'aide d'une passe vers son co\'equipier si d\'emarqu\'e, soit via le 
 d\'egagement le moins risqu\'e possible. 
 Quant \`a son effort d\'efensif, il demeure \`a une certaine distance radiale 
-\`a partir de sa cage et s'approche de la balle en vue d'une interception s'il 
-en est suffisamment proche.
+de sa cage et s'appr\^ete \`a intercepter la balle s'il en est 
+suffisamment proche.
 
 Cette strat\'egie n'a fait l'objet d'aucune optimisation. Elle a \'et\'e 
-con\c{c}ue pour faire des tests et a ainsi repris les valeurs des param\`etres 
+con\c{c}ue pour faire des tests et a ainsi repris les valeurs de param\`etres 
 d\'ej\`a d\'efinies pour ses pairs de la cat\'egorie. 
 
 \section{Quatre joueurs}
@@ -694,9 +725,9 @@ rapides et efficaces.
 \subsection*{Gardien}
 Ce joueur combine le comportement de son pair de la cat\'egorie ci-dessus et de 
 l'attaquant de cette cat\'egorie \`a des valeurs des param\`etres pr\`es. En 
-effet, il suit les m\^emes indications que 
-l'attaquant lorsqu'il contr\^ole et r\'ealise les m\^emes mouvements sans ballon 
-que le d\'efenseur de l'\'equipe \`a deux joueurs.
+effet, il suit les m\^emes indications que l'attaquant lorsqu'il contr\^ole 
+la balle et r\'ealise les m\^emes mouvements sans ballon que le gardien de 
+l'\'equipe \`a deux joueurs.
 
 \subsection*{D\'efenseur}
 Ce d\'efenseur prend les m\^emes d\'ecisions que celui de l'\'equipe \`a 
@@ -706,16 +737,46 @@ intercepter la balle, i.e.\ il en est plus proche que le d\'efenseur, celui-ci
 continue de positionner radialement \`a une certaine distance de sa cage. Cette 
 modification est le produit de la constatation que l'effort d\'efensif des 
 autres joueurs de cette cat\'egorie n'\'egale pas celui du d\'efenseur et que 
-l'abandon de position d\'efensive entra\^ine des terribles risques pour le 
-score.
+l'abandon de sa position d\'efensive entra\^ine des terribles risques au 
+niveau du score.
 
 \subsubsection*{Optimisation finale}
-
+Vue la longue attente n\'ecessaire pour que l'algorithme g\'en\'etique offre 
+des r\'esultats pr\'ecis dans le cas de l'\'equipe \`a deux joueurs, on avait 
+pr\'evu dans un premier temps de n'utiliser que les valeurs de param\`etres 
+d\'efinies pour ladite \'equipe. Puis on a chang\'e d'avis et on a 
+d\'evelopp\'e la classe \texttt{FullTeam} h\'eritant de \texttt{GeneTeam} pour 
+appliquer l'algorithme g\'en\'etique \`a cette \'equipe. Les r\'esultats se 
+sont r\'ev\'el\'es plus efficaces, malgr\'e les peu nombreuses it\'erations 
+faites.
 
 \newpage
 
 \part*{Conclusion}
-...
+Ce projet a \'et\'e tr\`es enrichissant pour nous car il nous a permis de 
+d\'ecouvrir et approfondir nos connaissances sur Python qui est un 
+environnement de d\'eveloppement tr\`es utilis\'e de nos jours, et 
+\texttt{git} qui est un logiciel collaboratif tr\`es r\'epandu et, m\^eme 
+n\'ecessaire, dans les projets Informatiques. 
+Ce projet nous a aussi appris des bonnes pratiques de programmation et des 
+patrons de conception, ce qui nous sera tr\`es utile dans la suite de notre 
+formation et vie professionnelle.
+
+Le code source \'etant public pour tous les bin\^omes, on a \'et\'e rappel\'es 
+qu'il y a toujours de tr\`es diverses mani\`eres de penser et de concevoir des 
+id\'ees. Ceci nous a aussi oblig\'e \`a travailler constamment de fa\c{c}on \`a 
+accomplir la planification initiale du projet.
+
+Par ailleurs, en mati\`ere informatique, les enseignements du projet 
+comprennent des m\'ethodes d'optimisation hors du parcours de la licence 
+d'informatique, mais qui ont confirm\'e que le choix de ce sujet correspond 
+bien \`a nos attentes.
+
+\'e la possibilit\'e de mettre en 
+pratique l Il nous a permis de mener un projet long 
+besoin d'organisation
+avancement par fonctionnalit\'es
+
 \addcontentsline{toc}{part}{Conclusion}
 
 \end{document}
