@@ -11,5 +11,5 @@
 \contentsline {part}{III\hspace {1em}Strat\'egies}{10}
 \contentsline {section}{\numberline {7}Un joueur}{10}
 \contentsline {section}{\numberline {8}Deux joueurs}{11}
-\contentsline {section}{\numberline {9}Quatre joueurs}{13}
-\contentsline {part}{Conclusion}{15}
+\contentsline {section}{\numberline {9}Quatre joueurs}{14}
+\contentsline {part}{Conclusion}{16}
