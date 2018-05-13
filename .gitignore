@@ -3,7 +3,6 @@ __pycache__/
 *$py.class
 module*/
 jouer.py
-confronter*.py
 match2equipes.py
 testPoints.py
 test[124]*.py
