@@ -9,6 +9,13 @@ from .actions import goTo, kickAt, shoot, control, dribble, passBall, mark, clea
     tryInterception, pushUp, goToBall, cutDownAngle, cutDownAngle_gk, cutDownAngle_def
 from math import atan2
 
+def st_kick_off_solo(state, dico):
+    if has_ball_control(state):
+        if both_must_kick(state) == 0:
+            return control(state, dico['controleMT'])
+        return shoot(state, 6.)
+    return goToBall(state)
+
 def st_kick_off(state, dico):
     if has_ball_control(state):
         count = both_must_kick(state)
@@ -237,6 +244,21 @@ def clear_cutDownAngle_gk(state, dico):
     if has_ball_control(state):
         return clear(state, angleClear=1.2)
     return cutDownAngle_def(state, dico['distMontee']+10., dico['rayInter'])#60., 20.)
+
+fonDict = {
+    0: shoot_intercept,
+    1: shoot_goToBall,
+    2: shoot_cutDownAngle_gk,
+    3: dribble_intercept,
+    4: dribblet_goToBall,
+    5: dribble_cutDownAngle_gk,
+    6: control_intercept,
+    7: control_goToBall,
+    8: control_cutDownAngle_gk,
+    9: clear_intercept,
+    10: clear_goToBall,
+    11: clear_cutDownAngle_gk
+}
 
 attDict = {
     5: shoot_mark,

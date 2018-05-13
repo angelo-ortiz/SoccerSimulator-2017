@@ -4,7 +4,7 @@ from soccersimulator import SoccerTeam, Simulation, show_simu
 from ia.tools import StateFoot, nearest
 from ia.strategies import loadPath
 from ia.gene_optimisation import savePath
-from ia.ml_behaviour import attDict, defDict
+from ia.ml_behaviour import fonDict, attDict, defDict
 from ia.ml_strategies import Attaquant2v2Strategy, Defenseur2v2Strategy
 from math import floor
 import numpy as np
@@ -23,15 +23,19 @@ class LearningState(object):
         self.distances['JoG'] = LearningState.discretize(stateFoot.distance(stateFoot.opp_goal))
         #self.distances['BmG'] = stateFoot.distance_ball(stateFoot.my_goal)
         #self.distances['BoG'] = stateFoot.distance_ball(stateFoot.opp_goal)
-        nearestOpp = stateFoot.opponent_nearest_ball.position
+        if stateFoot.numPlayers > 1:
+            nearestOpp = stateFoot.opponent_nearest_ball.position
+        else:
+            nearestOpp = stateFoot.opponent_1v1().position
         self.distances['JnO'] = LearningState.discretize(stateFoot.distance(nearestOpp))
         #self.distances['nOoG'] = nearestOpp.distance(stateFoot.opp_goal)
-        nearestTm = nearest(stateFoot.my_pos, stateFoot.teammates)
-        nearestOppTm = nearest(nearestTm, stateFoot.opponents)
-        self.distances['TmnO'] = LearningState.discretize(nearestTm.distance(nearestOppTm))
-        #self.distances['nTmoG'] = nearestTm.distance(stateFoot.opp_goal)
-        #self.distances['nOnTmoG'] = nearestOppTm.distance(stateFoot.opp_goal)
-        self.distances['nJnT'] = LearningState.discretize(stateFoot.distance(nearestTm))
+        if stateFoot.numPlayers > 1:
+            nearestTm = nearest(stateFoot.my_pos, stateFoot.teammates)
+            nearestOppTm = nearest(nearestTm, stateFoot.opponents)
+            self.distances['TmnO'] = LearningState.discretize(nearestTm.distance(nearestOppTm))
+            #self.distances['nTmoG'] = nearestTm.distance(stateFoot.opp_goal)
+            #self.distances['nOnTmoG'] = nearestOppTm.distance(stateFoot.opp_goal)
+            self.distances['nJnT'] = LearningState.discretize(stateFoot.distance(nearestTm))
         self.ballDir = stateFoot.attacking_vector.dot(stateFoot.ball_speed.copy().normalize())
 
     @classmethod
@@ -58,7 +62,7 @@ class LearningState(object):
 
 class LearningTeam(object):
 
-    actionsDict = {'Attaquant2v2': len(attDict), 'Defenseur2v2': len(defDict)}
+    actionsDict = {'Fonceur1v1': len(fonDict), 'Attaquant2v2': len(attDict), 'Defenseur2v2': len(defDict)}
 
     def __init__(self, numPlayers=2, playerStrats=[None]*4, gamma=0.8, omega=0.85, t=0, eps=0.1, \
                  oppList=[], numIter=10, numMatches=3, graphical=False):

@@ -7,3 +7,4 @@ confronter*.py
 match2equipes.py
 testPoints.py
 test[124]*.py
+parameters/ml_*
